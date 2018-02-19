@@ -1,0 +1,2 @@
+# parametrizadorclaro
+Parametrizador Claro
