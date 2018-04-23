@@ -25,8 +25,8 @@ class AdminThemplete extends React.Component{
   }
 
   render(){
-    //console.log("Params ==>>>")
-    //console.log(this.props.params)
+    console.log("Params ==>>>")
+    console.log(this.props.params)
     return(
       <div data-reactroot="" className="container-fluid">
           <Choose>
@@ -34,9 +34,6 @@ class AdminThemplete extends React.Component{
                 <Toolbar/>
                 <If condition={this.props.location.pathname.substr(1,9) == 'politicas'}>
                   <Choose>
-                    <When condition={this.props.params.idpoliticafilter}>
-                      <IPolitica registro={this.props.params.idpoliticafilter}/>
-                    </When>
                     <When condition={this.props.params.idpolitica}>
                       <IPoliticaForm registro={this.props.params}/>
                     </When>
@@ -57,8 +54,8 @@ class AdminThemplete extends React.Component{
                     <When condition={this.props.params.idconciliaciondelete}>
                       <IConciliacionDelete registro={this.props.params}/>
                     </When>
-                    <When condition={this.props.params.idconciliacionfilter}>
-                      <IConciliacion registro={this.props.params.idconciliacionfilter}/>
+                    <When condition={this.props.params.idpolitica}>
+                      <IConciliacion registro={this.props.params.idpolitica}/>
                     </When>
                     <Otherwise>
                       <IConciliacionForm/>

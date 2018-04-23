@@ -25,6 +25,9 @@ import { browserHistory } from 'react-router'
 import update from 'react-addons-update'
 import config from '../../config'
 
+var configuration = require('../../config')
+const usarJsonServer = configuration.usarJsonServer
+
 /*
 * A C C I O N E S   D E L   C O M P O N E N T E  L O G I N  F O R M  ILogin
 */
@@ -33,10 +36,28 @@ export const updateLoginForm = (field, value) => (dispatch,getState) => {
 }
 
 export const loginRequest = () => (dispatch, getState) => {
+  if(configuration.usarJsonServer==false){
     //Con el API REST sin modulo de logueo
     window.localStorage.setItem("token","#$%EGt2eT##$EG%Y$Y&U&/IETRH45W$%whth$Y$%YGRT")
     window.localStorage.setItem("username", "emulado")
     window.location='/';
+  }else{
+    //Con json server
+    let usuario = getState().loginFormReducer.username
+    let clave = getState().loginFormReducer.password
+
+    APIInvoker.invokeGET('/login',response =>{
+      if(usuario == response.user && clave == response.password){
+        window.localStorage.setItem("token",response.token)
+        window.localStorage.setItem("username", response.profile.userName)
+        window.location='/';
+      }else{
+        dispatch(loginFailForm('Nombre de usuario o contraseña errados'))
+      }
+    },error =>{
+      dispatch(loginFailForm('NO SE LOGUEO'))
+    })
+  }
 }
 
 const updateLoginFormRequest = (field,value) => ({
@@ -66,6 +87,7 @@ const loginFail = () => ({
 })
 
 export const relogin = () => (dispatch,getState) => {
+  if(configuration.usarJsonServer==false){
     //con API REST sin modulo de logueo
     let token = window.localStorage.getItem("token")
     if(token == null){
@@ -78,6 +100,24 @@ export const relogin = () => (dispatch,getState) => {
         "userName": "Nombre de Usuario Test"
       }))
     }
+  }else{
+    //con json-server
+    let token = window.localStorage.getItem("token")
+    if(token == null){
+      dispatch(loginFail())
+      browserHistory.push('/login');
+    }else{
+      APIInvoker.invokeGET('/login', response => {
+        window.localStorage.setItem("token",response.token)
+        window.localStorage.setItem("username",response.profile.userName)
+        dispatch(loginSuccess(response.profile))
+      },error => {
+        window.localStorage.removeItem("token")
+        window.localStorage.removeItem("username")
+        browserHistory.push('/login');
+      })
+    }
+  }
 }
 
 /*
@@ -108,14 +148,23 @@ const updateTextPoliticaFindRequest = (field,value) => ({
 })
 //Realizar la búsqueda
 export const findTextPolitica = () => (dispatch,getState) => {
+  if(configuration.usarJsonServer==false){
     //con API REST
     let txtBuscar = getState().politicaReducer.textoBuscar
-    APIInvoker.invokeGET('/politicas/findAnyColumn?texto='+txtBuscar, response => {
+    APIInvoker.invokeGET('/politicas/queryAny?texto='+txtBuscar, response => {
       dispatch(refreshListPolitica(response))
     })
+  }else{
+    //con json-server
+    let txtBuscar = getState().politicaReducer.textoBuscar
+    APIInvoker.invokeGET('/politicas/'+txtBuscar, response => {
+      dispatch(refreshListPolitica(response))
+    })
+  }
 }
 //Actualizar el listado de politicas
 export const refreshListPolitica = (resp) =>(dispatch,getState) => {
+  if(configuration.usarJsonServer==false){
     //Usando la Api
     let pagActual = getState().politicaReducer.paginaActual
     let regPagina = getState().politicaReducer.registrosPorPagina
@@ -131,13 +180,37 @@ export const refreshListPolitica = (resp) =>(dispatch,getState) => {
       })
     }else{
       APIInvoker.invokeGET('/politicas/'+resp+'?_page'+pagActual+'&_limit'+regPagina, response => {
+        if(Array.isArray(resp) == true){
+          dispatch(verPoliticas(resp))
+        }else{
+          dispatch(verPoliticas([resp]))
+        }
+      })
+    }
+  }else{
+    //Usando Json Sever
+    let pagActual = getState().politicaReducer.paginaActual
+    let regPagina = getState().politicaReducer.registrosPorPagina
+    let totRegistros = getState().politicaReducer.totalRegistros
+    let totPaginas = Math.ceil(totRegistros / regPagina)
+    if(resp == null){
+      APIInvoker.invokeGET('/politicas/?_page'+pagActual+'&_limit'+regPagina, response => {
         if(Array.isArray(response) == true){
           dispatch(verPoliticas(response))
         }else{
           dispatch(verPoliticas([response]))
         }
       })
+    }else{
+      APIInvoker.invokeGET('/politicas/'+resp+'?_page'+pagActual+'&_limit'+regPagina, response => {
+        if(Array.isArray(resp) == true){
+          dispatch(verPoliticas(resp))
+        }else{
+          dispatch(verPoliticas([resp]))
+        }
+      })
     }
+  }
 }
 //Enviar la accion de ver politicas al Reducer STORE
 const verPoliticas = (res) =>({
@@ -156,31 +229,33 @@ const updateFormPoliticasRequest = (field,value) => ({
 })
 //Funcion para guardar o actualizar la politica
 export const savePolitica = () => (dispatch,getState)=>{
-  let id_politica = getState().politicaFormReducer.codigo
+  let id_politica = getState().politicaFormReducer.id
+  if(id_politica == 0){
+    //Si es un registro nuevo
     let politica_salvar = {
-      codigo : getState().politicaFormReducer.codigo,
       nombre : getState().politicaFormReducer.nombre,
       descripcion : getState().politicaFormReducer.descripcion,
-      objetivo : getState().politicaFormReducer.objetivo,
-      fecha_creacion : '',
-      fecha_actualizacion : '',
-      usuario : getState().loginReducer.profile.userName
+      objetivo : getState().politicaFormReducer.objetivo
     }
-    if(id_politica == 0){
-      //Si es un registro nuevo
-      APIInvoker.invokePOST('/politicas',politica_salvar,response =>{
-        dispatch(refreshListPolitica(),limpiarFormPolitica())
-      },error =>{
-        console.log('No se ha podido crear la politica')
-      })
-    }else{
-      //Si es actualizar un existente
-      APIInvoker.invokePUT('/politicas',politica_salvar,response =>{
-        dispatch(limpiarFormPolitica(),browserHistory.push('/politicas'))
-      },error =>{
-        console.log('No se ha podido actualizar la politica')
-      })
+    APIInvoker.invokePOST('/politicas',politica_salvar,response =>{
+      dispatch(refreshListPolitica(),limpiarFormPolitica())
+    },error =>{
+      console.log('No se ha podido crear la politica')
+    })
+  }else{
+    //Si es actualizar un existente
+    let politica_salvar = {
+      id :  getState().politicaFormReducer.id,
+      nombre : getState().politicaFormReducer.nombre,
+      descripcion : getState().politicaFormReducer.descripcion,
+      objetivo : getState().politicaFormReducer.objetivo
     }
+    APIInvoker.invokePUT('/politicas/'+id_politica,politica_salvar,response =>{
+      dispatch(limpiarFormPolitica(),browserHistory.push('/politicas'))
+    },error =>{
+      console.log('No se ha podido actualizar la politica')
+    })
+  }
 }
 //Funcion para limpiar los campos del formulario de Politicas
 export const limpiarFormPolitica = () =>({
@@ -205,7 +280,7 @@ const cargarPoliticaEnForm = (politica) => ({
 })
 //Funcion que elimina una politica
 export const borrarPolitica = () => (dispatch,getState) =>{
-  let idpolitica = getState().politicaFormReducer.codigo
+  let idpolitica = getState().politicaFormReducer.id
   APIInvoker.invokeDELETE('/politicas/'+idpolitica, response => {
     if(response.status == 200){
       dispatch(limpiarFormPolitica(),browserHistory.push('/politicas'))
@@ -243,15 +318,10 @@ export const refreshListConciliacion = (resp) =>(dispatch,getState) => {
   //si no existe resp
   if(resp == null){
     APIInvoker.invokeGET('/conciliaciones', response => {
-      console.log("en actions status ==>"+response.codigo)
-      if(response.codigo==404){
-        alert(response.mensaje)
+      if(Array.isArray(response) == true){
+        dispatch(verConciliaciones(response))
       }else{
-        if(Array.isArray(response) == true){
-          dispatch(verConciliaciones(response))
-        }else{
-          dispatch(verConciliaciones([response]))
-        }
+        dispatch(verConciliaciones([response]))
       }
     })
   }else{
@@ -291,15 +361,14 @@ const updateFormConciliacionesRequest = (field,value) => ({
 })
 //Funcion para guardar o actualizar la conciliacion
 export const saveConciliacion = () => (dispatch,getState)=>{
-  let id_conciliacion = getState().conciliacionFormReducer.codigo
-  let conciliacion_salvar = {
-    codigo :  getState().conciliacionFormReducer.codigo,
-    nombre : getState().conciliacionFormReducer.nombre,
-    shell : getState().conciliacionFormReducer.shell,
-    descripcion : getState().conciliacionFormReducer.descripcion
-  }
+  let id_conciliacion = getState().conciliacionFormReducer.id
   if(id_conciliacion == 0 || id_conciliacion == undefined){
     //Si es un registro nuevo
+    let conciliacion_salvar = {
+      nombre : getState().conciliacionFormReducer.nombre,
+      shell : getState().conciliacionFormReducer.shell,
+      descripcion : getState().conciliacionFormReducer.descripcion
+    }
     APIInvoker.invokePOST('/conciliaciones',conciliacion_salvar,response =>{
       dispatch(refreshListConciliacion(),limpiarFormConciliacion())
     },error =>{
@@ -307,8 +376,14 @@ export const saveConciliacion = () => (dispatch,getState)=>{
     })
   }else{
     //Si es actualizar un existente
-    APIInvoker.invokePUT('/conciliaciones',conciliacion_salvar,response =>{
-      dispatch(limpiarFormConciliacion(),browserHistory.push('/conciliaciones'))
+    let conciliacion_salvar = {
+      id :  getState().conciliacionFormReducer.id,
+      nombre : getState().conciliacionFormReducer.nombre,
+      shell : getState().conciliacionFormReducer.shell,
+      descripcion : getState().conciliacionFormReducer.descripcion
+    }
+    APIInvoker.invokePUT('/conciliaciones/'+id_conciliacion,conciliacion_salvar,response =>{
+      dispatch(limpiarFormConciliacion(),browserHistory.push('/politicas'))
     },error =>{
       console.log('No se ha podido actualizar la conciliacion')
     })
@@ -337,7 +412,7 @@ const cargarConciliacionEnForm = (conciliacion) => ({
 })
 //Funcion que elimina una conciliacion
 export const borrarConciliacion = () => (dispatch,getState) =>{
-  let idconciliacion = getState().conciliacionFormReducer.codigo
+  let idconciliacion = getState().conciliacionFormReducer.id
   APIInvoker.invokeDELETE('/conciliaciones/'+idconciliacion, response => {
     if(response.status == 200){
       dispatch(limpiarFormConciliacion(),browserHistory.push('/conciliaciones'))

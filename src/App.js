@@ -42,11 +42,10 @@ render((
           <Route path="/login" component={ILogin}></Route>
           <Route path="/" component={ AdminThemplete } >
             <Route path="/politicas" component={IPolitica}></Route>
-            <Route path="/politicas/:idpoliticafilter" component={IPolitica}></Route>
             <Route path="/politicas/edit/:idpolitica" component={IPoliticaForm}></Route>
             <Route path="/politicas/delete/:idpoliticadelete" component={IPoliticaDelete}></Route>
             <Route path="/conciliaciones" component={IConciliacion}></Route>
-            <Route path="/conciliaciones/:idconciliacionfilter" component={IConciliacion}></Route>
+            <Route path="/conciliaciones/:idpolitica" component={IConciliacion}></Route>
             <Route path="/conciliaciones/edit/:idconciliacion" component={IConciliacionForm}></Route>
             <Route path="/conciliaciones/delete/:idconciliaciondelete" component={IConciliacionDelete}></Route>
             <Route path="/escenarios" component={IEscenario}></Route>

@@ -1,0 +1,32 @@
+body {
+	
+	//Button styles
+	.btn-primary {
+		background-color: $marine !important;
+	}
+
+	.page-item.active .page-link {
+	    z-index: 1;
+	    color: #fff;
+	    background-color: $marine;
+	    border-color: $marine;
+	}
+
+	.page-link {
+		color: $marine;
+	}
+
+	//MOdal Styles
+	.modal-dialog {
+		.modal-content {
+			.modal-header {
+				background-color: $red;
+				color: white;
+				border-radius: 0;
+			}
+			.modal-body {
+				margin-top: em(30);
+			}
+		}
+	}
+}
