@@ -36,7 +36,7 @@ class Toolbar extends React.Component{
             <ul className="navigation-nav">
               <li className="nav-item active">
                 <a className="nav-link" href="#">
-                  Home
+                  <i className="fa fa-home"/>
                   <span className="sr-only">
                     (current)
                   </span>
@@ -52,8 +52,11 @@ class Toolbar extends React.Component{
                 <Link to="/escenarios" className="nav-link">Escenarios</Link>
               </li>
               <li className="nav-item">
+                <Link to="/ejecucion" className="nav-link">Ejecución</Link>
+              </li>
+              <li className="nav-item">
                 <a href="#" className="nav-link"  onClick={this.logout.bind(this)}>
-                    Cerrar Sesión
+                    <i className="fa fa-power-off"/>
                 </a>
               </li>
             </ul>

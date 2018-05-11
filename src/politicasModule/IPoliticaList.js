@@ -14,12 +14,17 @@ class IPoliticaList extends React.Component{
 
   //Seccion de listar politicas
   componentWillMount(){
-    this.props.refreshListPolitica()
-  }
-  //Fin seccion Politicas
-
-  editarRegistro(e){
-    this.props.editarRegistro(e.target.name)
+    if(this.props.registro == undefined){
+      //console.log("Props en IPoliticaList registro undefined==>")
+      //console.log(this.props)
+      //Listado completo
+      this.props.refreshListPolitica()
+    }else{
+      //console.log("Props en IPoliticaList registro existente ==>")
+      //console.log(this.props)
+      //Mostrar una politica que viniendo desde la pantalla de conciliaciones
+      this.props.refreshListPolitica(this.props.registro)
+    }
   }
 
   render(){

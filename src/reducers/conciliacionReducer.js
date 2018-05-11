@@ -1,52 +1,51 @@
 import {
   UPDATE_FINDER,
-  MOVE_PAGE_FIRST,
-  MOVE_PAGE_PREV,
-  MOVE_PAGE_NEXT,
-  MOVE_PAGE_LAST,
-  CARGAR_CONCILIACIONES
+  CARGAR_CONCILIACIONES,
+  UPDATE_POLITICA_EN_CONCILIACIONES,
+  ACTUALIZA_PAGINADOR_CONCILIACIONES,
+  IR_PAGINA_CONCILIACIONES,
+  CARGA_POLITICAS
 } from '../actions/const'
 import update from 'react-addons-update'
 
 const initialState = {
   paginaActual:1,
-  registrosPorPagina:10,
-  totalRegistros:15,
+  registrosPorPagina:7,
+  totalRegistros:1,
   textoBuscar:"",
-  conciliaciones:[]
+  conciliaciones:[],
+  politica:{"id":0,"nombre":"Ninguna política"},
+  politicas:[],
+  paginador: []
 }
 
 export const conciliacionReducer = (state = initialState,action) =>{
   switch (action.type) {
-    case UPDATE_FINDER:
+      case UPDATE_FINDER:
         return update(state,{
           [action.field] : {$set: action.value}
         })
-  /*  case MOVE_PAGE_FIRST:
-      return update(state,{
-        paginaActual: {$set: 1}
-      })
-    case MOVE_PAGE_PREV:
-      return update(state,{
-        if( this.paginaActual > 1 ){
-          paginaActual: {$set: paginaActual - 1}
-        }
-      })
-    case MOVE_PAGE_NEXT:
-      return update(state,{
-        let maxpage = int(this.totalRegistros/this.registrosPorPagina)
-        if( this.paginaActual < maxpage ){
-          paginaActual: {$set: paginaActual + 1}
-        }
-      })
-    case MOVE_PAGE_LAST:
-      return update(state,{
-        let maxpage = int(this.totalRegistros/this.registrosPorPagina);
-        paginaActual: {$set: maxpage}
-      })*/
+      case ACTUALIZA_PAGINADOR_CONCILIACIONES:
+          return update(state,{
+            totalRegistros : {$set: action.lista.totalRegistros},
+            registrosPorPagina : {$set: action.lista.registrosPorPagina},
+            paginador : {$set: action.lista.paginador}
+          })
+      case IR_PAGINA_CONCILIACIONES:
+          return update(state,{
+            paginaActual : {$set: action.pagina}
+          })
       case CARGAR_CONCILIACIONES:
         return update(state,{
           conciliaciones : {$set: action.lista}
+        })
+      case UPDATE_POLITICA_EN_CONCILIACIONES:
+        return update(state,{
+          politica: {$set: JSON.parse(action.value)}
+        })
+      case CARGA_POLITICAS:
+        return update(state,{
+          politicas: {$set: action.lista}
         })
     default:
       return state

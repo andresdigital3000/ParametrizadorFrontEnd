@@ -8,8 +8,10 @@ import update from 'react-addons-update'
 const initialState = {
   id : 0,
   nombre : '',
-  shell : '',
-  descripcion : ''
+  webservice : '',
+  descripcion : '',
+  idPolitica : '',
+  nombrePolitica : ''
 }
 
 export const conciliacionFormReducer = (state = initialState,action) =>{
@@ -22,13 +24,19 @@ export const conciliacionFormReducer = (state = initialState,action) =>{
         return update(state,{
           id : {$set: action.conciliacion[0].id},
           nombre : {$set: action.conciliacion[0].nombre},
-          descripcion : {$set: action.conciliacion[0].descripcion}
+          webservice : {$set: action.conciliacion[0].webservice},
+          descripcion : {$set: action.conciliacion[0].descripcion},
+          idPolitica : {$set: action.conciliacion[0].idPolitica},
+          nombrePolitica : {$set: action.conciliacion[0].nombrePolitica}
         })
     case LIMPIAR_FORM_CONCILIACION:
         return update(state,{
           id : {$set: 0},
           nombre : {$set: ''},
-          descripcion : {$set: ''}
+          webservice : {$set: ''},
+          descripcion : {$set: ''},
+          idPolitica : {$set: ''},
+          nombrePolitica : {$set: ''}
         })
     default:
         return state

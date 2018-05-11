@@ -20,9 +20,9 @@ class IPolitica extends React.Component{
               </div>
               <div className="row">
                 <div className="col-sm-4">
-                  <center>
-                    <button className="btn btn-primary" data-toggle="modal" data-target="#modalAdd">+ Adicionar</button>
-                  </center>
+                  <If condition={this.props.registro==undefined}>
+                      <button className="btn btn-primary" data-toggle="modal" data-target="#modalAdd"><i className="fa fa-plus-circle"/> Adicionar</button>
+                  </If>
                 </div>
                 <div className="col-sm-4">
                   <center>
@@ -30,15 +30,13 @@ class IPolitica extends React.Component{
                   </center>
                 </div>
                 <div className="col-sm-4">
-                    <center>
-                      <IPoliticaFinder ref="buscador"/>
-                    </center>
+                  <IPoliticaFinder ref="buscador"/>
                 </div>
               </div>
               <hr/>
               <div className="row-fluid">
                 <div className="table-container">
-                  <IPoliticaList/>
+                  <IPoliticaList registro={this.props.registro}/>
                 </div>
               </div>
               <hr/>

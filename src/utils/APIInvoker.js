@@ -66,7 +66,7 @@ class APIInvoker {
         .then((response)=>{
         if(debug){
           console.log("Invoke Response => ");
-          console.log(response);
+          console.log(response.status);
         }
         return response.json()
       })

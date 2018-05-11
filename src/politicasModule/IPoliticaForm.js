@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-//import ConciliacionForm from './ConciliacionForm'
 import APIInvoker from '../utils/APIInvoker'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { Link } from 'react-router';
@@ -56,17 +55,21 @@ class IPoliticaForm extends React.Component{
             </div>
             <div className="form-group">
               <label htmlFor='descripcion'>Descripción</label>
-              <input id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite una descripcion de la política' />
+              <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite una descripcion de la política' />
               <small id="descripcionHelp" className="form-text text-muted">Defina para la política</small>
             </div>
             <div className="form-group">
               <label htmlFor='objetivo'>Objetivo</label>
-              <input id='objetivo' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.objetivo} onChange={this.handleInput.bind(this)} placeholder='Digite el objetivo de la política' />
+              <textarea id='objetivo' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.objetivo} onChange={this.handleInput.bind(this)} placeholder='Digite el objetivo de la política' />
               <small id="objetivoHelp" className="form-text text-muted">Defina para la política</small>
             </div>
             <div className="form-group">
               <Link to={"/politicas"} onClick={this.props.limpiarFormPolitica.bind(this)} className="btn btn-warning">Regresar</Link>&nbsp;&nbsp;&nbsp;
-              <button onClick={this.props.savePolitica.bind(this)} className="btn btn-primary" data-dismiss="modal">Grabar</button>
+              {
+                this.props.state.nombre!="" && this.props.state.objetivo!="" && this.props.state.descripcion!="" ?
+                <button onClick={this.props.savePolitica.bind(this)} className="btn btn-primary" data-dismiss="modal">Grabar</button> :
+                <button onClick={this.props.savePolitica.bind(this)} className="btn btn-primary" data-dismiss="modal" disabled>Formulario incompleto</button>
+              }
             </div>
           </div>
         </When>
@@ -89,18 +92,22 @@ class IPoliticaForm extends React.Component{
                     </div>
                     <div className="form-group">
                       <label htmlFor='descripcion'>Descripcion</label>
-                      <input id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite una descripción para la política' />
+                      <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite una descripción para la política' />
                       <small id="descripcionHelp" className="form-text text-muted">Defina para la política</small>
                     </div>
                     <div className="form-group">
                       <label htmlFor='objetivo'>Objetivo</label>
-                      <input id='objetivo' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.objetivo} onChange={this.handleInput.bind(this)} placeholder='Digite el objetivo de la política' />
+                      <textarea id='objetivo' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.objetivo} onChange={this.handleInput.bind(this)} placeholder='Digite el objetivo de la política' />
                       <small id="objetivoHelp" className="form-text text-muted">Defina para la política</small>
                     </div>
                   </div>
                   <div className="modal-footer">
                     <button onClick={this.props.limpiarFormPolitica.bind(this)} type="button" className="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                    <button onClick={this.props.savePolitica.bind(this)} className="btn btn-primary" data-dismiss="modal">Grabar</button>
+                    {
+                      this.props.state.nombre!="" && this.props.state.objetivo!="" && this.props.state.descripcion!="" ?
+                      <button onClick={this.props.savePolitica.bind(this)} className="btn btn-primary" data-dismiss="modal">Grabar</button> :
+                      <button onClick={this.props.savePolitica.bind(this)} className="btn btn-primary" data-dismiss="modal" disabled>Formulario incompleto</button>
+                    }
                   </div>
               </div>
             </div>

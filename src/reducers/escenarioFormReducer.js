@@ -8,7 +8,10 @@ import update from 'react-addons-update'
 const initialState = {
   id : 0,
   nombre : '',
-  impacto : ''
+  impacto : '',
+  conciliacion : {},
+  idConciliacion:'',
+  nombreConciliacion:''
 }
 
 export const escenarioFormReducer = (state = initialState,action) =>{
@@ -21,13 +24,19 @@ export const escenarioFormReducer = (state = initialState,action) =>{
         return update(state,{
           id : {$set: action.escenario[0].id},
           nombre : {$set: action.escenario[0].nombre},
-          impacto : {$set: action.escenario[0].impacto}
+          impacto : {$set: action.escenario[0].impacto},
+          conciliacion : {$set: action.escenario[0].conciliacion},
+          idConciliacion : {$set: action.escenario[0].idConciliacion},
+          nombreConciliacion : {$set: action.escenario[0].nombreConciliacion}
         })
     case LIMPIAR_FORM_ESCENARIO:
         return update(state,{
           id : {$set: 0},
           nombre : {$set: ''},
-          impacto : {$set: ''}
+          impacto : {$set: ''},
+          conciliacion: {$set: {}},
+          idConciliacion : {$set: ''},
+          nombreConciliacion : {$set: ''}
         })
     default:
         return state

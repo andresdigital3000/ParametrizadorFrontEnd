@@ -30,13 +30,16 @@ class IConciliacionFinder extends React.Component{
 
   render(){
     return(
-      <div>
+      <div className="input-group row">
         <input type="text" value={this.props.textoBuscar}
           placeholder="Digite un texto para buscar"
           name="textoBuscar"
           id="textoBuscar"
-          onChange={this.handleInput.bind(this)} />
-        <button className="btn btn-info" onClick={this.findTextConciliacion.bind(this)}>Buscar</button>
+          onChange={this.handleInput.bind(this)}
+          className='form-control form-control-sm'/>
+          <span className="input-group-addon">
+            <button className="btn btn-info" onClick={this.findTextConciliacion.bind(this)}><i className="fa fa-search"/></button>
+          </span>
       </div>
     )
   }

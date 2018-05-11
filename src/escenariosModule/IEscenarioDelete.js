@@ -4,7 +4,7 @@ import APIInvoker from '../utils/APIInvoker'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { Link } from 'react-router';
 import { connect } from 'react-redux'
-import { cargarEscenario,borrarEscenario } from '../actions/Actions';
+import { cargarEscenario,borrarEscenario,limpiarFormEscenario } from '../actions/Actions';
 
 
 class IEscenarioDelete extends React.Component{
@@ -18,6 +18,11 @@ class IEscenarioDelete extends React.Component{
     }
   }
 
+  //Limpiar el formulario
+  limpiarFormEscenario(e){
+    this.props.limpiarFormEscenario()
+  }
+
   borrarEscenario(e){
     this.props.borrarEscenario()
   }
@@ -28,7 +33,7 @@ class IEscenarioDelete extends React.Component{
           <div className="form-wrapper">
             <header className="head-table">
               <div className="form-group">
-                <div class="col-sm-6">
+                <div className="col-sm-6">
                   <center>
                       <h2>Eliminando Escenario</h2>
                   </center>
@@ -66,7 +71,7 @@ class IEscenarioDelete extends React.Component{
               <div className="col-sm-3"></div>
               <div className="col-sm-3">
                   <center>
-                    <Link to={"/escenarios"} className="btn btn-success">&nbsp;&nbsp;&nbsp;No&nbsp;&nbsp;&nbsp;</Link>&nbsp;&nbsp;&nbsp;
+                    <Link to={"/escenarios"} onClick={this.props.limpiarFormEscenario.bind(this)} className="btn btn-success">&nbsp;&nbsp;&nbsp;No&nbsp;&nbsp;&nbsp;</Link>&nbsp;&nbsp;&nbsp;
                   </center>
               </div>
               <div className="col-sm-3">
@@ -92,5 +97,5 @@ const mapStateToProps = (state) =>{
   }
 }
 export default connect (mapStateToProps,{
-  cargarEscenario, borrarEscenario
+  cargarEscenario, borrarEscenario, limpiarFormEscenario
 })(IEscenarioDelete)

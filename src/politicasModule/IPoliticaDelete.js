@@ -32,7 +32,7 @@ class IPoliticaDelete extends React.Component{
           <div className="form-wrapper">
             <header className="head-table">
               <div className="form-group">
-                <div class="col-sm-6">
+                <div className="col-sm-6">
                   <center>
                       <h2>Eliminando Política</h2>
                   </center>

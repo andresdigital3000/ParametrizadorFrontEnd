@@ -21,6 +21,8 @@ import IEscenario from './escenariosModule/IEscenario'
 import IEscenarioList from './escenariosModule/IEscenarioList'
 import IEscenarioForm from './escenariosModule/IEscenarioForm'
 import IEscenarioDelete from './escenariosModule/IEscenarioDelete'
+import IEjecucion from './ejecucionModule/IEjecucion'
+import IProgramar from './ejecucionModule/IProgramar'
 
 //import APIInvoker from './utils/APIInvoker'
 
@@ -42,6 +44,7 @@ render((
           <Route path="/login" component={ILogin}></Route>
           <Route path="/" component={ AdminThemplete } >
             <Route path="/politicas" component={IPolitica}></Route>
+            <Route path="/politicas/:idpolitica" component={IPolitica}></Route>
             <Route path="/politicas/edit/:idpolitica" component={IPoliticaForm}></Route>
             <Route path="/politicas/delete/:idpoliticadelete" component={IPoliticaDelete}></Route>
             <Route path="/conciliaciones" component={IConciliacion}></Route>
@@ -52,6 +55,8 @@ render((
             <Route path="/escenarios/:idconciliacion" component={IEscenario}></Route>
             <Route path="/escenarios/edit/:idescenario" component={IEscenarioForm}></Route>
             <Route path="/escenarios/delete/:idescenariodelete" component={IEscenarioDelete}></Route>
+            <Route path="/ejecucion" component={IEjecucion}></Route>
+            <Route path="/ejecucion/programar" component={IProgramar}></Route>
           </Route>
       </Router>
     </Provider>

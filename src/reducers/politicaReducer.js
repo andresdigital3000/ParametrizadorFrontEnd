@@ -4,16 +4,19 @@ import {
   MOVE_PAGE_PREV,
   MOVE_PAGE_NEXT,
   MOVE_PAGE_LAST,
-  CARGAR_POLITICAS
+  CARGAR_POLITICAS,
+  ACTUALIZA_PAGINADOR_POLITICAS,
+  IR_PAGINA_POLITICAS
 } from '../actions/const'
 import update from 'react-addons-update'
 
 const initialState = {
   paginaActual:1,
-  registrosPorPagina:10,
-  totalRegistros:15,
+  registrosPorPagina:7,
+  totalRegistros:1,
   textoBuscar:"",
-  politicas:[]
+  politicas:[],
+  paginador: []
 }
 
 export const politicaReducer = (state = initialState,action) =>{
@@ -22,30 +25,18 @@ export const politicaReducer = (state = initialState,action) =>{
         return update(state,{
           [action.field] : {$set: action.value}
         })
-  /*  case MOVE_PAGE_FIRST:
-      return update(state,{
-        paginaActual: {$set: 1}
-      })
-    case MOVE_PAGE_PREV:
-      return update(state,{
-        if( this.paginaActual > 1 ){
-          paginaActual: {$set: paginaActual - 1}
-        }
-      })
-    case MOVE_PAGE_NEXT:
-      return update(state,{
-        let maxpage = int(this.totalRegistros/this.registrosPorPagina)
-        if( this.paginaActual < maxpage ){
-          paginaActual: {$set: paginaActual + 1}
-        }
-      })
-    case MOVE_PAGE_LAST:
-      return update(state,{
-        let maxpage = int(this.totalRegistros/this.registrosPorPagina);
-        paginaActual: {$set: maxpage}
-      })*/
-      case CARGAR_POLITICAS:
-        console.log("Lista de politicas: "+ JSON.stringify(action.lista))
+    case ACTUALIZA_PAGINADOR_POLITICAS:
+        return update(state,{
+          totalRegistros : {$set: action.lista.totalRegistros},
+          registrosPorPagina : {$set: action.lista.registrosPorPagina},
+          paginador : {$set: action.lista.paginador}
+        })
+    case IR_PAGINA_POLITICAS:
+        return update(state,{
+          paginaActual : {$set: action.pagina}
+        })
+    case CARGAR_POLITICAS:
+        //console.log("Lista de politicas: "+ JSON.stringify(action.lista))
         return update(state,{
           politicas : {$set: action.lista}
         })

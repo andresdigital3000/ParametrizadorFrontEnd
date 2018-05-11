@@ -5,16 +5,23 @@ import IConciliacionList from './IConciliacionList'
 import IConciliacionFinder from './IConciliacionFinder'
 import IConciliacionPaginador from './IConciliacionPaginador'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
+import { connect } from 'react-redux'
+import { updPolitica } from '../actions/Actions';
 
 class IConciliacion extends React.Component{
   constructor(){
     super(...arguments)
   }
 
-  /*componentWillMount(){
-    console.log("IConciliacion recibe parametros =>>")
-    console.log(this.props.registro)
-  }*/
+  componentWillMount(){
+    if(this.props.registro != undefined){
+      this.props.updPolitica(this.props.registro)
+    }else{
+      this.props.updPolitica(0)
+    }
+    //console.log("IConciliacion props =>>")
+    //console.log(this.props)
+  }
 
 
   render(){
@@ -27,9 +34,7 @@ class IConciliacion extends React.Component{
             <div className="row">
               <div className="col-sm-4">
                 <If condition={this.props.registro==undefined}>
-                <center>
-                  <button className="btn btn-primary" data-toggle="modal" data-target="#modalAdd">+ Adicionar</button>
-                </center>
+                  <button className="btn btn-primary" data-toggle="modal" data-target="#modalAdd"><i className="fa fa-plus-circle"/> Adicionar</button>
                 </If>
               </div>
               <div className="col-sm-4">
@@ -39,16 +44,12 @@ class IConciliacion extends React.Component{
               </div>
               <div className="col-sm-4">
                   <If condition={this.props.registro==undefined}>
-                    <center>
                       <IConciliacionFinder ref="buscador"/>
-                    </center>
                   </If>
               </div>
             </div>
             <hr/>
-            <div className="table-container">
-              <IConciliacionList registro={this.props.registro}/>
-            </div>
+            <IConciliacionList registro={this.props.registro}/>
             <hr/>
             <div className="row">
               <div className="col-sm-1">
@@ -67,4 +68,14 @@ class IConciliacion extends React.Component{
   }
 }
 
-export default IConciliacion
+const mapStateToProps = (state) =>{
+  return{
+    state: {
+      politica: state.conciliacionReducer.politica
+    }
+  }
+}
+
+export default connect (mapStateToProps,{
+  updPolitica
+})(IConciliacion)

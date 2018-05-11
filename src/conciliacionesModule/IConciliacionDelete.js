@@ -4,7 +4,7 @@ import APIInvoker from '../utils/APIInvoker'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { Link } from 'react-router';
 import { connect } from 'react-redux'
-import { cargarConciliacion,borrarConciliacion } from '../actions/Actions';
+import { cargarConciliacion, borrarConciliacion, limpiarFormConciliacion } from '../actions/Actions';
 
 
 class IConciliacionDelete extends React.Component{
@@ -22,13 +22,18 @@ class IConciliacionDelete extends React.Component{
     this.props.borrarConciliacion()
   }
 
+  //Limpiar el formulario
+  limpiarFormConciliacion(e){
+    this.props.limpiarFormConciliacion()
+  }
+
   render(){
     return(
         <div className="container">
           <div className="form-wrapper">
             <header className="head-table">
               <div className="form-group">
-                <div class="col-sm-6">
+                <div className="col-sm-6">
                   <center>
                       <h2>Eliminando Conciliación</h2>
                   </center>
@@ -66,7 +71,7 @@ class IConciliacionDelete extends React.Component{
               <div className="col-sm-3"></div>
               <div className="col-sm-3">
                   <center>
-                    <Link to={"/conciliaciones"} className="btn btn-success">&nbsp;&nbsp;&nbsp;No&nbsp;&nbsp;&nbsp;</Link>&nbsp;&nbsp;&nbsp;
+                    <Link to={"/conciliaciones"} onClick={this.props.limpiarFormConciliacion.bind(this)} className="btn btn-success">&nbsp;&nbsp;&nbsp;No&nbsp;&nbsp;&nbsp;</Link>&nbsp;&nbsp;&nbsp;
                   </center>
               </div>
               <div className="col-sm-3">
@@ -92,5 +97,5 @@ const mapStateToProps = (state) =>{
   }
 }
 export default connect (mapStateToProps,{
-  cargarConciliacion, borrarConciliacion
+  cargarConciliacion, borrarConciliacion, limpiarFormConciliacion
 })(IConciliacionDelete)

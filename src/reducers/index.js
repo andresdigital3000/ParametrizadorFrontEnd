@@ -7,6 +7,7 @@ import conciliacionReducer from './ConciliacionReducer'
 import conciliacionFormReducer from './ConciliacionFormReducer'
 import escenarioReducer from './EscenarioReducer'
 import escenarioFormReducer from './EscenarioFormReducer'
+import ejecucionReducer from './EjecucionReducer'
 
 
 
@@ -18,5 +19,6 @@ export default combineReducers({
   conciliacionReducer,
   conciliacionFormReducer,
   escenarioReducer,
-  escenarioFormReducer
+  escenarioFormReducer,
+  ejecucionReducer
 })

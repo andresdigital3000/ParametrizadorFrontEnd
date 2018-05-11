@@ -4,6 +4,7 @@ import { Link } from 'react-router';
 import APIInvoker from '../utils/APIInvoker'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { connect } from 'react-redux'
+import { refreshListConciliacion } from '../actions/Actions';
 
 class IConciliacionItem extends React.Component{
   constructor(){
@@ -13,7 +14,7 @@ class IConciliacionItem extends React.Component{
   render(){
     return(
           <tbody>
-            {this.props.items.map(function(currentValue,index,array){
+            {this.props.state.items.map(function(currentValue,index,array){
               return (
                 <tr key={currentValue.id}>
                   <td title={"ID : "+currentValue.id}>
@@ -23,20 +24,29 @@ class IConciliacionItem extends React.Component{
                     {currentValue.descripcion}
                   </td>
                   <td>
-                    {currentValue.id}
+                    <If condition={currentValue.idPolitica != 0}>
+                      <Link to={"/politicas/"+currentValue.idPolitica}>{currentValue.nombrePolitica}</Link>
+                    </If>
+                    <If condition={currentValue.idPolitica == 0}>
+                      No tiene
+                    </If>
                   </td>
                   <td>
-                    <Link to={"#"} className="btn btn-info">Link</Link>
+                    <center>
+                      <Link to={"#"}><i className="fa fa-table"/></Link>
+                    </center>
                   </td>
                   <td>
-                    <Link to={"/escenarios/"+currentValue.id} className="btn btn-info">Link</Link>
+                    <center>
+                      <Link to={"/escenarios/"+currentValue.id}><i className="fa fa-tasks"/></Link>
+                    </center>
                   </td>
                   <td>
                     <div className="button-wrap">
-                      <Link to={"/conciliaciones/edit/"+currentValue.id} className="btn btn-info">Editar</Link>
+                      <Link to={"/conciliaciones/edit/"+currentValue.id} className="btn btn-info"><i className="fa fa-list"/></Link>
                     </div>
                     <div className="button-wrap">
-                      <Link to={"/conciliaciones/delete/"+currentValue.id} className="btn btn-danger">Borrar</Link>
+                      <Link to={"/conciliaciones/delete/"+currentValue.id} className="btn btn-danger"><i className="fa fa-trash-o"/></Link>
                     </div>
                   </td>
               </tr>
@@ -47,4 +57,14 @@ class IConciliacionItem extends React.Component{
   }
 }
 
-export default IConciliacionItem
+const mapStateToProps = (state) =>{
+  return{
+    state: {
+      items: state.conciliacionReducer.conciliaciones
+    }
+  }
+}
+
+export default connect (mapStateToProps,{
+  refreshListConciliacion
+})(IConciliacionItem)

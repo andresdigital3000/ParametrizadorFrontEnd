@@ -28,38 +28,47 @@ class IConciliacionList extends React.Component{
 
   render(){
     return(
-          <div className="table-responsive">
-            <table className="table table-hover">
-              <thead>
-                <tr>
-                    <th>
-                      NOMBRE
-                    </th>
-                    <th>
-                      DESCRIPCION
-                    </th>
-                    <th>
-                      POLITICA
-                    </th>
-                    <th>
-                      TABLA RESULTADOS
-                    </th>
-                    <th>
-                      ESCENARIOS
-                    </th>
-                    <th>
-                        ACCIONES
-                    </th>
-                </tr>
-              </thead>
-                <If condition={JSON.stringify(this.props.state.conciliaciones)!='{}' && Object.entries(this.props.state.conciliaciones).length > 0}>
-                  <IConciliacionItem items={this.props.state.conciliaciones} registro={this.props.registro}/>
-                </If>
-                <If condition={JSON.stringify(this.props.state.conciliaciones)=='{}' && Object.entries(this.props.state.conciliaciones).length == 1}>
-                  <div className="alert alert-warning">No hay registros</div>
-                </If>
-            </table>
-          </div>
+        <div className="row">
+          <If condition={Object.entries(this.props.state.conciliaciones).length > 0}>
+            <div className="table-container">
+              <div className="table-responsive">
+                <table className="table table-hover">
+                  <thead>
+                    <tr>
+                        <th>
+                          NOMBRE
+                        </th>
+                        <th>
+                          DESCRIPCION
+                        </th>
+                        <th>
+                          POLITICA
+                        </th>
+                        <th>
+                          TABLA RESULTADOS
+                        </th>
+                        <th>
+                          ESCENARIOS
+                        </th>
+                        <th>
+                            ACCIONES
+                        </th>
+                    </tr>
+                  </thead>
+                      <IConciliacionItem/>
+                </table>
+              </div>
+            </div>
+          </If>
+          <If condition={Object.entries(this.props.state.conciliaciones).length == 0}>
+            <If condition={this.props.state.politica.id != 0}>
+              <div className="alert alert-warning col-sm-12">No hay registros para {this.props.state.politica.nombre}</div>
+            </If>
+            <If condition={this.props.state.politica.id == 0}>
+              <div className="alert alert-warning col-sm-12">No hay registros</div>
+            </If>
+          </If>
+        </div>
     )
   }
 }
@@ -67,7 +76,8 @@ class IConciliacionList extends React.Component{
 const mapStateToProps = (state) =>{
   return{
     state: {
-      conciliaciones: state.conciliacionReducer.conciliaciones
+      conciliaciones: state.conciliacionReducer.conciliaciones,
+      politica: state.conciliacionReducer.politica
     }
   }
 }

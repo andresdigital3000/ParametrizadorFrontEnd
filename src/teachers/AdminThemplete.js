@@ -10,6 +10,8 @@ import IConciliacionDelete from '../conciliacionesModule/IConciliacionDelete'
 import IEscenario from '../escenariosModule/IEscenario'
 import IEscenarioForm from '../escenariosModule/IEscenarioForm'
 import IEscenarioDelete from '../escenariosModule/IEscenarioDelete'
+import IEjecucion from '../ejecucionModule/IEjecucion'
+import IProgramar from '../ejecucionModule/IProgramar'
 import Loading from '../politicasModule/Loading.js'
 import { browserHistory } from 'react-router'
 import { connect } from 'react-redux'
@@ -25,8 +27,8 @@ class AdminThemplete extends React.Component{
   }
 
   render(){
-    console.log("Params ==>>>")
-    console.log(this.props.params)
+    //console.log("Props ==>>>")
+    //console.log(this.props)
     return(
       <div data-reactroot="" className="container-fluid">
           <Choose>
@@ -34,11 +36,17 @@ class AdminThemplete extends React.Component{
                 <Toolbar/>
                 <If condition={this.props.location.pathname.substr(1,9) == 'politicas'}>
                   <Choose>
-                    <When condition={this.props.params.idpolitica}>
+                    <When condition={this.props.params.idpolitica && this.props.location.pathname.substr(1,14) == 'politicas/edit'}>
                       <IPoliticaForm registro={this.props.params}/>
+                    </When>
+                    <When condition={this.props.params.idpolitica && this.props.location.pathname.substr(1,14) != 'politicas/edit'}>
+                      <IPolitica registro={this.props.params.idpolitica}/>
                     </When>
                     <When condition={this.props.params.idpoliticadelete}>
                       <IPoliticaDelete registro={this.props.params}/>
+                    </When>
+                    <When condition={this.props.params.idpoliticafiltro}>
+                      <IPolitica registro={this.props.params}/>
                     </When>
                     <Otherwise>
                       <IPoliticaForm/>
@@ -58,7 +66,7 @@ class AdminThemplete extends React.Component{
                       <IConciliacion registro={this.props.params.idpolitica}/>
                     </When>
                     <Otherwise>
-                      <IConciliacionForm/>
+                      <IConciliacionForm />
                       <IConciliacion/>
                     </Otherwise>
                   </Choose>
@@ -74,11 +82,21 @@ class AdminThemplete extends React.Component{
                     <When condition={this.props.params.idescenario}>
                       <IEscenario registro={this.props.params.idescenario}/>
                     </When>
+                    <When condition={this.props.params.idconciliacion}>
+                      <IEscenarioForm conciliacion={this.props.params.idconciliacion}/>
+                      <IEscenario conciliacion={this.props.params.idconciliacion}/>
+                    </When>
                     <Otherwise>
                       <IEscenarioForm/>
                       <IEscenario/>
                     </Otherwise>
                   </Choose>
+                </If>
+                <If condition={this.props.location.pathname.substr(1,10) == 'ejecucion'}>
+                    <IEjecucion/>
+                </If>
+                <If condition={this.props.location.pathname.substr(1,19) == 'ejecucion/programar'}>
+                    <IProgramar/>
                 </If>
             </When>
             <Otherwise>

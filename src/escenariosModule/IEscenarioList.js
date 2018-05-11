@@ -14,10 +14,14 @@ class IEscenarioList extends React.Component{
 
   //Seccion de listar Escenarios
   componentWillMount(){
-    if(this.props.registro == undefined){
-      this.props.refreshListEscenario()
-    }else{
+    //console.log("IEscenarioList props ===>>>>")
+    //console.log(this.props)
+    if(this.props.registro!=undefined && this.props.registro != 0){
       this.props.refreshListEscenario(this.props.registro)
+    }else if(this.props.conciliacion!=undefined && this.props.conciliacion!=0){
+      this.props.refreshListEscenario(this.props.conciliacion)
+    }else{
+      this.props.refreshListEscenario()
     }
   }
   //Fin seccion Escenarios
@@ -28,38 +32,44 @@ class IEscenarioList extends React.Component{
 
   render(){
     return(
-          <div className="table-responsive">
-            <table className="table table-hover">
-              <thead>
-                <tr>
-                    <th>
-                      NOMBRE
-                    </th>
-                    <th>
-                      IMPACTO
-                    </th>
-                    <th>
-                      CONCILIACIÓN
-                    </th>
-                    <th>
-                      QUERY DINAMICO
-                    </th>
-                    <th>
-                      PARAMETROS
-                    </th>
-                    <th>
+      <div className="row">
+        <If condition={Object.entries(this.props.state.escenarios).length > 0}>
+          <div className="table-container">
+            <div className="table-responsive">
+              <table className="table table-hover">
+                <thead>
+                  <tr>
+                      <th>
+                        NOMBRE
+                      </th>
+                      <th>
+                        IMPACTO
+                      </th>
+                      <th>
+                        CONCILIACIÓN
+                      </th>
+                      <th>
+                        QUERY DINAMICO
+                      </th>
+                      <th>
+                        PARAMETROS
+                      </th>
+                      <th>
                         ACCIONES
-                    </th>
-                </tr>
-              </thead>
-                <If condition={JSON.stringify(this.props.state.escenarios)!='{}' && Object.entries(this.props.state.escenarios).length > 0}>
-                  <IEscenarioItem items={this.props.state.escenarios} registro={this.props.registro}/>
+                      </th>
+                  </tr>
+                </thead>
+                <If condition={Object.entries(this.props.state.escenarios).length > 0}>
+                  <IEscenarioItem/>
                 </If>
-                <If condition={JSON.stringify(this.props.state.escenarios)=='{}' && Object.entries(this.props.state.escenarios).length == 1}>
-                  <div className="alert alert-warning">No hay registros</div>
-                </If>
-            </table>
+              </table>
+            </div>
           </div>
+        </If>
+        <If condition={Object.entries(this.props.state.escenarios).length == 0}>
+          <div className="alert alert-warning col-sm-12">No hay registros</div>
+        </If>
+      </div>
     )
   }
 }
@@ -67,10 +77,12 @@ class IEscenarioList extends React.Component{
 const mapStateToProps = (state) =>{
   return{
     state: {
-      escenarios: state.escenarioReducer.escenarios
+      escenarios: state.escenarioReducer.escenarios,
+      conciliacion: state.escenarioReducer.conciliacion
     }
   }
 }
+
 export default connect (mapStateToProps,{
   refreshListEscenario
 })(IEscenarioList)

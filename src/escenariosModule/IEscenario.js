@@ -5,17 +5,24 @@ import IEscenarioList from './IEscenarioList'
 import IEscenarioFinder from './IEscenarioFinder'
 import IEscenarioPaginador from './IEscenarioPaginador'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
+import { connect } from 'react-redux'
+import { updConciliacion,refreshListEscenario } from '../actions/Actions';
 
 class IEscenario extends React.Component{
   constructor(){
     super(...arguments)
   }
 
-  /*componentWillMount(){
-    console.log("IConciliacion recibe parametros =>>")
-    console.log(this.props.registro)
-  }*/
-
+  componentWillMount(){
+    //Traer al reducer la conciliacion seleccionada
+    if(this.props.conciliacion != undefined){
+      this.props.updConciliacion(this.props.conciliacion)
+    }else if(this.props.registro != undefined){
+      this.props.updConciliacion(this.props.registro)
+    }else{
+      this.props.updConciliacion(0)
+    }
+  }
 
   render(){
     return(
@@ -27,9 +34,7 @@ class IEscenario extends React.Component{
             <div className="row">
               <div className="col-sm-4">
                 <If condition={this.props.registro==undefined}>
-                <center>
-                  <button className="btn btn-primary" data-toggle="modal" data-target="#modalAdd">+ Adicionar</button>
-                </center>
+                    <button className="btn btn-primary" id="buttonadd" data-toggle="modal" data-target="#modalAdd"><i className="fa fa-plus-circle"/> Adicionar</button>
                 </If>
               </div>
               <div className="col-sm-4">
@@ -39,16 +44,22 @@ class IEscenario extends React.Component{
               </div>
               <div className="col-sm-4">
                   <If condition={this.props.registro==undefined}>
-                    <center>
                       <IEscenarioFinder ref="buscador"/>
-                    </center>
                   </If>
               </div>
             </div>
             <hr/>
-            <div className="table-container">
+            <Choose>
+            <When condition={this.props.registro != undefined}>
               <IEscenarioList registro={this.props.registro}/>
-            </div>
+            </When>
+            <When condition={this.props.conciliacion != undefined}>
+              <IEscenarioList registro={this.props.conciliacion}/>
+            </When>
+            <Otherwise>
+              <IEscenarioList conciliacion={0}/>
+            </Otherwise>
+            </Choose>
             <hr/>
             <div className="row">
               <div className="col-sm-1">
@@ -67,4 +78,14 @@ class IEscenario extends React.Component{
   }
 }
 
-export default IEscenario
+const mapStateToProps = (state) =>{
+  return{
+    state: {
+      conciliacion: JSON.stringify(state.escenarioReducer.conciliacion)
+    }
+  }
+}
+
+export default connect (mapStateToProps,{
+  updConciliacion, refreshListEscenario
+})(IEscenario)
