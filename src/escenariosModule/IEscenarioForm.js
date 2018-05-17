@@ -4,7 +4,7 @@ import APIInvoker from '../utils/APIInvoker'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { Link } from 'react-router';
 import { connect } from 'react-redux'
-import { updateFormEscenarios, saveEscenario, cargarEscenario, limpiarFormEscenario, cargarComboConciliaciones, updConciliacion } from '../actions/Actions';
+import { updateFormEscenarios, saveEscenario, cargarEscenario, limpiarFormEscenario, cargarComboConciliaciones, updConciliacion, refreshListEscenario } from '../actions/Actions';
 
 class IEscenarioForm extends React.Component{
   constructor(){
@@ -13,14 +13,18 @@ class IEscenarioForm extends React.Component{
 
   componentWillMount(){
     //Cargar el combo de conciliaciones
-    if(!this.props.registro){
-      this.props.cargarComboConciliaciones()
-    }
+    //if(this.props.conciliacion==undefined){
+    //  this.props.cargarComboConciliaciones()
+    //}
   }
 
   componentDidMount(){
-    if(this.props.registro){
+    //console.log("PROPS en foem ==>>")
+    //console.log(this.props)
+    if(this.props.registro!=undefined){
       this.props.cargarEscenario(this.props.registro.idescenario)
+    }else{
+      this.props.limpiarFormEscenario()
     }
   }
 
@@ -33,11 +37,13 @@ class IEscenarioForm extends React.Component{
   cambioConciliaciones(e){
     let idcon=JSON.parse(e.target.value)
     this.props.updConciliacion(idcon.id)
+    this.props.refreshListEscenario()
   }
 
   //Salvar el nuevo registro
   saveEscenario(e){
     this.props.saveEscenario()
+    this.props.refreshListEscenario()
   }
 
   //Limpiar el formulario
@@ -148,5 +154,5 @@ const mapStateToProps = (state) =>{
   }
 }
 export default connect (mapStateToProps,{
-  updateFormEscenarios, saveEscenario, cargarEscenario, limpiarFormEscenario, cargarComboConciliaciones, updConciliacion
+  updateFormEscenarios, saveEscenario, cargarEscenario, limpiarFormEscenario, cargarComboConciliaciones, updConciliacion, refreshListEscenario
 })(IEscenarioForm)

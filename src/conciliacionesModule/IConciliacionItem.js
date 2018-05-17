@@ -4,11 +4,16 @@ import { Link } from 'react-router';
 import APIInvoker from '../utils/APIInvoker'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { connect } from 'react-redux'
-import { refreshListConciliacion } from '../actions/Actions';
+import { refreshListConciliacion, cargarComboPoliticas, calculaPaginadorConciliaciones } from '../actions/Actions';
 
 class IConciliacionItem extends React.Component{
   constructor(){
     super(...arguments)
+  }
+
+  componentDidMount(){
+    this.props.cargarComboPoliticas()
+    this.props.calculaPaginadorConciliaciones()
   }
 
   render(){
@@ -66,5 +71,5 @@ const mapStateToProps = (state) =>{
 }
 
 export default connect (mapStateToProps,{
-  refreshListConciliacion
+  refreshListConciliacion, cargarComboPoliticas, calculaPaginadorConciliaciones
 })(IConciliacionItem)

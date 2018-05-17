@@ -4,7 +4,7 @@ import APIInvoker from '../utils/APIInvoker'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { Link } from 'react-router';
 import { connect } from 'react-redux'
-import { updateFormConciliaciones, saveConciliacion, cargarConciliacion, limpiarFormConciliacion, cargarComboPoliticas, updPolitica } from '../actions/Actions';
+import { updateFormConciliaciones, saveConciliacion, cargarConciliacion, limpiarFormConciliacion, cargarComboPoliticas, updPolitica, calculaPaginadorConciliaciones,refreshListConciliacion } from '../actions/Actions';
 
 class IConciliacionForm extends React.Component{
   constructor(){
@@ -30,11 +30,13 @@ class IConciliacionForm extends React.Component{
   cambioPolitica(e){
     let idpol=JSON.parse(e.target.value)
     this.props.updPolitica(idpol.id)
+    this.props.cargarComboPoliticas()
   }
 
   //Salvar el nuevo registro
   saveConciliacion(e){
     this.props.saveConciliacion()
+    this.props.refreshListConciliacion()
   }
 
   //Limpiar el formulario
@@ -155,5 +157,5 @@ const mapStateToProps = (state) =>{
   }
 }
 export default connect (mapStateToProps,{
-  updateFormConciliaciones, saveConciliacion, cargarConciliacion, limpiarFormConciliacion, cargarComboPoliticas, updPolitica
+  updateFormConciliaciones, saveConciliacion, cargarConciliacion, limpiarFormConciliacion, cargarComboPoliticas, updPolitica, calculaPaginadorConciliaciones, refreshListConciliacion
 })(IConciliacionForm)

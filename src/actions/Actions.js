@@ -231,6 +231,7 @@ const actualizarPaginadorPoliticas = (array_paginador) =>({
 //Actualizar el listado de politicas
 export const refreshListPolitica = (resp) =>(dispatch,getState) => {
     //Igual para jsonserver o API
+    let objetoVacio = new Object()
     if(resp == null){
       let regInicial = 0
       //Todos los registros de politicas
@@ -243,10 +244,9 @@ export const refreshListPolitica = (resp) =>(dispatch,getState) => {
         if(Array.isArray(response1) == true){
           //Array con todos los registros
           if(response1[0].id!=undefined){
-            dispatch(
-              antesVerPoliticas(response1)
-            )
+            dispatch(antesVerPoliticas(response1))
           }else{
+            dispatch(antesVerPoliticas(objetoVacio))
             console.log("Error : "+response1[0].codigo+" Mensaje: "+response1[0].mensaje+": "+response1[0].descripcion)
           }
         }else{
@@ -254,6 +254,7 @@ export const refreshListPolitica = (resp) =>(dispatch,getState) => {
           if(response1.id!=undefined){
             dispatch(antesVerPoliticas([response1]))
           }else{
+            dispatch(antesVerPoliticas(objetoVacio))
             console.log("Error : "+response1.codigo+" Mensaje: "+response1.mensaje+": "+response1.descripcion)
           }
         }
@@ -266,6 +267,7 @@ export const refreshListPolitica = (resp) =>(dispatch,getState) => {
           if(response[0].id!=undefined){
             dispatch(antesVerPoliticas(response))
           }else{
+            dispatch(antesVerPoliticas(objetoVacio))
             console.log("Error : "+response[0].codigo+" Mensaje: "+response[0].mensaje+": "+response[0].descripcion)
           }
         }else{
@@ -273,6 +275,7 @@ export const refreshListPolitica = (resp) =>(dispatch,getState) => {
           if(response.id!=undefined){
             dispatch(antesVerPoliticas([response]))
           }else{
+            dispatch(antesVerPoliticas(objetoVacio))
             console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
           }
         }
@@ -501,6 +504,7 @@ const actualizarPaginadorConciliaciones = (array_paginador) =>({
 //Actualizar el listado de conciliacion
 export const refreshListConciliacion = (resp) =>(dispatch,getState) => {
   //si no existe resp
+  let objetoVacio = new Object()
   if(resp == null){
     let regInicial = 0
     let pagActual = getState().conciliacionReducer.paginaActual
@@ -514,12 +518,15 @@ export const refreshListConciliacion = (resp) =>(dispatch,getState) => {
           dispatch(antesVerConciliaciones(response1))
         }else{
           console.log("Error : "+response1[0].codigo+" Mensaje: "+response1[0].mensaje+": "+response1[0].descripcion)
+          dispatch(antesVerConciliaciones(objetoVacio))
         }
       }else{
-        if(response1.id!=undefined){
-          dispatch(antesVerConciliaciones([response1]))
-        }else{
+        if(response1.codigo==404){
+          dispatch(antesVerConciliaciones(objetoVacio))
           console.log("Error : "+response1.codigo+" Mensaje: "+response1.mensaje+": "+response1.descripcion)
+        }else{
+          dispatch(antesVerConciliaciones(objetoVacio))
+          console.log(response1)
         }
       }
     })
@@ -531,12 +538,14 @@ export const refreshListConciliacion = (resp) =>(dispatch,getState) => {
           if(response[0].id!=undefined){
             dispatch(antesVerConciliaciones(response))
           }else{
+            dispatch(antesVerConciliaciones(objetoVacio))
             console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
           }
         }else{
           if(response.id!=undefined){
             dispatch(antesVerConciliaciones([response]))
           }else{
+            dispatch(antesVerConciliaciones(objetoVacio))
             console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
           }
         }
@@ -547,12 +556,14 @@ export const refreshListConciliacion = (resp) =>(dispatch,getState) => {
           if(resp[0].id!=undefined){
             dispatch(antesVerConciliaciones(resp))
           }else{
+            dispatch(antesVerConciliaciones(objetoVacio))
             console.log("Error : "+resp.codigo+" Mensaje: "+resp.mensaje)
           }
       }else{
           if(resp.id!=undefined){
             dispatch(antesVerConciliaciones([resp]))
           }else{
+            dispatch(antesVerConciliaciones(objetoVacio))
             console.log("Error : "+resp.codigo+" Mensaje: "+resp.mensaje)
           }
       }
@@ -613,10 +624,9 @@ export const saveConciliacion = () => (dispatch,getState)=>{
     }
     APIInvoker.invokePOST('/conciliaciones',conciliacion_salvar,response =>{
       if(response.id!=undefined){
-        dispatch(
-          refreshListConciliacion(),
-          limpiarFormConciliacion()
-        )
+        dispatch(refreshListConciliacion())
+        limpiarFormConciliacion(),
+        browserHistory.push('/conciliaciones')
       }else{
         console.log("Error :"+response.codigo+" "+response.mensaje+", "+mensaje.descripcion)
       }
@@ -675,6 +685,7 @@ export const borrarConciliacion = () => (dispatch,getState) =>{
         browserHistory.push('/conciliaciones')
       )
   },error =>{
+      console.log(error)
       dispatch(
         limpiarFormConciliacion(),
         browserHistory.push('/conciliaciones')
@@ -741,15 +752,15 @@ export const calculaPaginadorEscenarios = () => (dispatch,getState) => {
       let array_paginador = new Array()
       let offset = 0
       let regfin = 0
-      console.log("TotRegistros ==")
-      console.log(totRegistros)
+      //console.log("TotRegistros ==")
+      //console.log(totRegistros)
       for(let i=1;i<=totPaginas;i++){
         regfin=offset+regPagina-1
         array_paginador.push({"id":i,"offset":offset})
         offset=regfin+1
       }
-      console.log("Variable de paginador ==>")
-      console.log(array_paginador)
+      //console.log("Variable de paginador ==>")
+      //console.log(array_paginador)
       //preparar variable para Enviar
       let update_paginador={
         totalRegistros :  numregs,
@@ -769,68 +780,50 @@ const actualizarPaginadorEscenarios = (array_paginador) =>({
 })
 
 //Actualizar el listado de escenario
-export const refreshListEscenario = (resp) =>(dispatch,getState) => {
-  //si no existe resp
-  if(resp == null){
+export const refreshListEscenario = () =>(dispatch,getState) => {
+  //console.log("EJECUTA REFRESH ESCENARIO")
+  let objetoVacio = new Object()
+  let conciliacionActual = getState().escenarioReducer.conciliacion.id
+  if(conciliacionActual!=0){
+    APIInvoker.invokeGET('/conciliaciones/'+conciliacionActual, response => {
+      if(response.id!=undefined){
+        //console.log("Detecta conciliacionActual ==>>")
+        //console.log(response.escenarios)
+        dispatch(antesVerEscenarios(response.escenarios))
+      }else{
+        console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
+        dispatch(antesVerEscenarios(objetoVacio))
+      }
+    })
+  }else{
+    //si no existe resp
     let regInicial = 0
     let pagActual = getState().escenarioReducer.paginaActual
     if(getState().escenarioReducer.paginador.length > 0){
       regInicial = getState().escenarioReducer.paginador[pagActual-1].offset
     }
     let regPagina = getState().escenarioReducer.registrosPorPagina
-    APIInvoker.invokeGET('/escenarios?offset='+regInicial+'&limit='+regPagina, response1 => {
-      if(Array.isArray(response1) == true){
-        if(response1[0].id!=undefined){
-          dispatch(antesVerEscenarios(response1))
+    APIInvoker.invokeGET('/escenarios?offset='+regInicial+'&limit='+regPagina, response => {
+      if(Array.isArray(response)){
+        if(response[0].id!=undefined){
+          dispatch(antesVerEscenarios(response))
         }else{
-          console.log("Error : "+response1[0].codigo+" Mensaje: "+response1[0].mensaje+": "+response1[0].descripcion)
+          console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
+          dispatch(antesVerEscenarios(objetoVacio))
         }
       }else{
-        if(response1.id!=undefined){
-          dispatch(antesVerEscenarios([response1]))
-        }else{
-          console.log("Error : "+response1.codigo+" Mensaje: "+response1.mensaje+": "+response1.descripcion)
+        //console.log("****** ******Como es el response ::")
+        //console.log(response)
+        if(response.codigo==404){
+          dispatch(antesVerEscenarios(objetoVacio))
         }
       }
     })
-  }else{
-    //si resp es solo un numero
-    if(Number.isInteger(parseInt(resp))){
-      if(resp!=0){
-        APIInvoker.invokeGET('/conciliaciones/'+resp, response => {
-          if(response.id!=undefined){
-            dispatch(antesVerEscenarios(response.escenarios))
-          }else{
-            console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
-          }
-        })
-      }else{
-        console.log("No se debe intentar buscar la conciliación 0")
-      }
-    }else{
-      //si resp es un response
-      if(Array.isArray(resp) == true){
-        if(resp[0].id!=undefined){
-          dispatch(antesVerEscenarios(resp))
-        }else{
-          console.log("Error : "+response[0].codigo+" Mensaje: "+response[0].mensaje+": "+response[0].descripcion)
-        }
-      }else{
-        if(resp.id!=undefined){
-          //console.log("Al consultar por resp ==>>>>>>")
-          //console.log(resp)
-          //console.log(response)
-          dispatch(antesVerEscenarios([resp]))
-        }else{
-          console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
-        }
-      }
-    }
   }
 }
 
 const antesVerEscenarios = (resp) => (dispatch,getState) =>{
-  calculaPaginadorEscenarios(),
+  //calculaPaginadorEscenarios(),
   dispatch(verEscenarios(resp))
 }
 //Enviar la accion de ver escenarios al Reducer STORE
@@ -840,18 +833,20 @@ const verEscenarios = (res) =>({
 })
 
 //Cargar el id conciliacion en el reducer de escenarios
-export const updConciliacion = (idconciliacion) =>(dispatch,getState) =>{
+export const updConciliacion = (idconciliacion) => (dispatch,getState) =>{
   APIInvoker.invokeGET('/conciliaciones/'+idconciliacion, response => {
     if(response.id!=undefined){
-      dispatch(updConciliacionReducerEscenario(JSON.stringify(response)),refreshListEscenario())
+      dispatch(updConciliacionReducerEscenario(JSON.stringify(response)))
     }else{
       console.log('No se encuentra la conciliacion')
-      dispatch(updConciliacionReducerEscenario(JSON.stringify({"id":0,"nombre":"Ninguna conciliacion","escenarios":[]})),refreshListEscenario())
+      dispatch(updConciliacionReducerEscenario(JSON.stringify({"id":0,"nombre":"Ninguna conciliacion","escenarios":[]})))
     }
+    dispatch(refreshListEscenario())
   },error =>{
     console.log('No se pudo cargar las Propiedades de la conciliacion '+idconciliacion+' en escenarios listar')
   })
 }
+
 const updConciliacionReducerEscenario = (objConciliacion)=>({
   type : UPDATE_CONCILIACION_EN_ESCENARIOS,
   value : objConciliacion
@@ -880,7 +875,7 @@ export const saveEscenario = () => (dispatch,getState)=>{
     }
     APIInvoker.invokePOST('/escenarios',escenario_salvar,response =>{
       if(response.id!=undefined){
-        dispatch(limpiarFormEscenario(),updConciliacion(getState().escenarioReducer.conciliacion.id))
+        dispatch(updConciliacion(getState().escenarioReducer.conciliacion.id))
       }else{
         console.log("Error :"+response.codigo+" "+response.mensaje+", "+mensaje.descripcion)
       }
@@ -899,10 +894,7 @@ export const saveEscenario = () => (dispatch,getState)=>{
     }
     APIInvoker.invokePUT('/escenarios',escenario_salvar,response =>{
       if(response.id!=undefined){
-        dispatch(
-          limpiarFormEscenario(),
-          browserHistory.push('/escenarios')
-        )
+        dispatch(browserHistory.push('/escenarios'))
       }else{
         console.log("Error :"+response.codigo+" "+response.mensaje+", "+mensaje.descripcion)
       }
@@ -936,20 +928,17 @@ const cargarEscenarioEnForm = (escenario) => ({
 export const borrarEscenario = () => (dispatch,getState) =>{
   let idescenario = getState().escenarioFormReducer.id
   APIInvoker.invokeDELETE('/escenarios/'+idescenario, response => {
-    if(response.status == 200){
       dispatch(limpiarFormEscenario(),browserHistory.push('/escenarios'))
-    }
   },error =>{
+    //console.log("Error al intentar eliminar escenario "+idescenario)
     dispatch(limpiarFormEscenario(),browserHistory.push('/escenarios'))
   })
 }
 
 //Funcion de cambio de pagina
 export const moverPaginaEscenarios = (pagina) =>(dispatch,getState) =>{
-  dispatch(
-    irAPaginaEscenarios(pagina),
-    refreshListEscenario()
-  )
+  dispatch(irAPaginaEscenarios(pagina))
+  dispatch(refreshListEscenario())
 }
 const irAPaginaEscenarios = (pagina) =>({
   type : IR_PAGINA_ESCENARIOS,

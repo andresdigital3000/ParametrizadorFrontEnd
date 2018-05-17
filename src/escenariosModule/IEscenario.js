@@ -6,7 +6,7 @@ import IEscenarioFinder from './IEscenarioFinder'
 import IEscenarioPaginador from './IEscenarioPaginador'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { connect } from 'react-redux'
-import { updConciliacion,refreshListEscenario } from '../actions/Actions';
+import { updConciliacion,refreshListEscenario,cargarComboConciliaciones,calculaPaginadorEscenarios } from '../actions/Actions';
 
 class IEscenario extends React.Component{
   constructor(){
@@ -14,10 +14,9 @@ class IEscenario extends React.Component{
   }
 
   componentWillMount(){
-    //Traer al reducer la conciliacion seleccionada
-    if(this.props.conciliacion != undefined){
+    if(this.props.conciliacion != undefined && this.props.conciliacion != 0){
       this.props.updConciliacion(this.props.conciliacion)
-    }else if(this.props.registro != undefined){
+    }else if(this.props.registro != undefined && this.props.registro != 0){
       this.props.updConciliacion(this.props.registro)
     }else{
       this.props.updConciliacion(0)
@@ -51,10 +50,10 @@ class IEscenario extends React.Component{
             <hr/>
             <Choose>
             <When condition={this.props.registro != undefined}>
-              <IEscenarioList registro={this.props.registro}/>
+              <IEscenarioList conciliacion={this.props.registro}/>
             </When>
             <When condition={this.props.conciliacion != undefined}>
-              <IEscenarioList registro={this.props.conciliacion}/>
+              <IEscenarioList conciliacion={this.props.conciliacion}/>
             </When>
             <Otherwise>
               <IEscenarioList conciliacion={0}/>
@@ -87,5 +86,5 @@ const mapStateToProps = (state) =>{
 }
 
 export default connect (mapStateToProps,{
-  updConciliacion, refreshListEscenario
+  updConciliacion, refreshListEscenario, cargarComboConciliaciones, calculaPaginadorEscenarios
 })(IEscenario)

@@ -4,7 +4,7 @@ import APIInvoker from '../utils/APIInvoker'
 import IEscenarioItem from './IEscenarioItem'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { connect } from 'react-redux'
-import { refreshListEscenario } from '../actions/Actions';
+import { updConciliacion, refreshListEscenario, cargarComboConciliaciones, calculaPaginadorEscenarios } from '../actions/Actions';
 
 
 class IEscenarioList extends React.Component{
@@ -12,22 +12,13 @@ class IEscenarioList extends React.Component{
     super(...arguments)
   }
 
-  //Seccion de listar Escenarios
-  componentWillMount(){
-    //console.log("IEscenarioList props ===>>>>")
-    //console.log(this.props)
-    if(this.props.registro!=undefined && this.props.registro != 0){
-      this.props.refreshListEscenario(this.props.registro)
-    }else if(this.props.conciliacion!=undefined && this.props.conciliacion!=0){
-      this.props.refreshListEscenario(this.props.conciliacion)
-    }else{
-      this.props.refreshListEscenario()
-    }
-  }
-  //Fin seccion Escenarios
-
   editarRegistro(e){
     this.props.editarRegistro(e.target.name)
+  }
+
+  componentDidMount(){
+    this.props.cargarComboConciliaciones()
+    this.props.calculaPaginadorEscenarios()
   }
 
   render(){
@@ -59,9 +50,12 @@ class IEscenarioList extends React.Component{
                       </th>
                   </tr>
                 </thead>
-                <If condition={Object.entries(this.props.state.escenarios).length > 0}>
-                  <IEscenarioItem/>
-                </If>
+                  <If condition={this.props.conciliacion!=0 && this.props.conciliacion!=undefined}>
+                    <IEscenarioItem conciliacion={this.props.conciliacion}/>
+                  </If>
+                  <If condition={this.props.conciliacion==0}>
+                    <IEscenarioItem/>
+                  </If>
               </table>
             </div>
           </div>
@@ -84,5 +78,5 @@ const mapStateToProps = (state) =>{
 }
 
 export default connect (mapStateToProps,{
-  refreshListEscenario
+  updConciliacion, refreshListEscenario, cargarComboConciliaciones, calculaPaginadorEscenarios
 })(IEscenarioList)

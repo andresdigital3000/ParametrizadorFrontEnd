@@ -4,7 +4,7 @@ import APIInvoker from '../utils/APIInvoker'
 import IConciliacionItem from './IConciliacionItem'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { connect } from 'react-redux'
-import { refreshListConciliacion } from '../actions/Actions';
+import { refreshListConciliacion,cargarComboPoliticas,calculaPaginadorConciliaciones } from '../actions/Actions';
 
 
 class IConciliacionList extends React.Component{
@@ -12,18 +12,21 @@ class IConciliacionList extends React.Component{
     super(...arguments)
   }
 
-  //Seccion de listar Conciliacions
+  editarRegistro(e){
+    this.props.editarRegistro(e.target.name)
+  }
+
+  componentDidMount(){
+    this.props.cargarComboPoliticas()
+    this.props.calculaPaginadorConciliaciones()
+  }
+
   componentWillMount(){
     if(this.props.registro == undefined){
       this.props.refreshListConciliacion()
     }else{
       this.props.refreshListConciliacion(this.props.registro)
     }
-  }
-  //Fin seccion Conciliacions
-
-  editarRegistro(e){
-    this.props.editarRegistro(e.target.name)
   }
 
   render(){
@@ -82,5 +85,5 @@ const mapStateToProps = (state) =>{
   }
 }
 export default connect (mapStateToProps,{
-  refreshListConciliacion
+  refreshListConciliacion,cargarComboPoliticas,calculaPaginadorConciliaciones
 })(IConciliacionList)

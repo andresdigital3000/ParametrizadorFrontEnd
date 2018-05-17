@@ -66,7 +66,7 @@ class APIInvoker {
         .then((response)=>{
         if(debug){
           console.log("Invoke Response => ");
-          console.log(response.status);
+          console.log(response);
         }
         return response.json()
       })
@@ -75,7 +75,7 @@ class APIInvoker {
         if(responseData){
           okCallback(responseData)
         }else{
-          failCallback("No se obtuvo respuesta")
+          console.log("Sin respuesta de Backend")
         }
       })
     }else{
@@ -92,7 +92,7 @@ class APIInvoker {
         if(responseData){
           okCallback(responseData)
         }else{
-          failCallback("No se obtuvo respuesta")
+          console.log("Sin respuesta de Backend")
         }
       })
     }

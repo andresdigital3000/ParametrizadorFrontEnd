@@ -4,16 +4,19 @@ import { Link } from 'react-router';
 import APIInvoker from '../utils/APIInvoker'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { connect } from 'react-redux'
-import { refreshListEscenario } from '../actions/Actions';
+import { updConciliacion,refreshListEscenario, cargarComboConciliaciones, calculaPaginadorEscenarios  } from '../actions/Actions';
 
 class IEscenarioItem extends React.Component{
   constructor(){
     super(...arguments)
   }
 
+  componentDidMount(){
+    this.props.cargarComboConciliaciones()
+    this.props.calculaPaginadorEscenarios()
+  }
+
   render(){
-    //console.log("props a mostrar EscenarioItem ===>>>")
-    //console.log(this.props)
     return(
           <tbody>
             {this.props.state.items.map(function(currentValue,index,array){
@@ -68,5 +71,5 @@ const mapStateToProps = (state) =>{
 }
 
 export default connect (mapStateToProps,{
-  refreshListEscenario
+  updConciliacion,refreshListEscenario, cargarComboConciliaciones, calculaPaginadorEscenarios
 })(IEscenarioItem)

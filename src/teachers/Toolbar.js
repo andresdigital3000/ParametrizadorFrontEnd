@@ -3,6 +3,7 @@ import { browserHistory,Link } from 'react-router'
 import { connect } from 'react-redux'
 import { logout } from '../actions/Actions'
 
+
 class Toolbar extends React.Component{
   constructor(props){
     super(props)
@@ -16,14 +17,6 @@ class Toolbar extends React.Component{
     window.location = '/login';
   }
 
-  /*
-  <li className="nav-item">
-    <Link to="/conciliaciones" className="nav-link">Conciliaciones</Link>
-  </li>
-  <li className="nav-item">
-    <Link to="/escenarios" className="nav-link">Escenarios</Link>
-  </li>
-  */
   render(){
     return(
       <nav className="navigation">
@@ -73,4 +66,6 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps, { logout })(Toolbar)
+export default connect(mapStateToProps, {
+  logout
+})(Toolbar)

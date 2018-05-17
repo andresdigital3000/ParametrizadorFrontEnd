@@ -41,7 +41,6 @@ class IConciliacionPaginador extends React.Component{
                     </li>
                 )
               },this)}
-              <li className="page-item active"><a className="page-link" href="#">1<span className="sr-only">(current)</span></a></li>
               <li className="page-item">
                 <a className="page-link" href="#" aria-label="Next">
                   <span aria-hidden="true">&raquo;</span>
