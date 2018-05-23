@@ -284,7 +284,7 @@ export const refreshListPolitica = (resp) =>(dispatch,getState) => {
 }
 
 const antesVerPoliticas = (resp) => (dispatch,getState) =>{
-  dispatch(calculaPaginadorPoliticas()),
+  dispatch(calculaPaginadorPoliticas())
   dispatch(verPoliticas(resp))
 }
 //Enviar la accion de ver politicas al Reducer STORE
@@ -317,33 +317,17 @@ export const savePolitica = () => (dispatch,getState)=>{
   }
   if(id_politica == 0 || id_politica == undefined){
     APIInvoker.invokePOST('/politicas',politica_salvar,response =>{
-      dispatch(
-        refreshListPolitica(),
-        limpiarFormPolitica()
-      )
+      dispatch(limpiarFormPolitica())
+      dispatch(refreshListPolitica())
     },error =>{
       console.log('No se ha podido crear la politica con id'+id_politica)
     })
   }else{
-    if(usarJsonServer==true){
-      APIInvoker.invokePUT('/politicas/'+id_politica,politica_salvar,response =>{
-        dispatch(
-          limpiarFormPolitica(),
-          browserHistory.push('/politicas')
-        )
-      },error =>{
-        console.log('No se ha podido actualizar la politica')
-      })
-    }else{
-      APIInvoker.invokePUT('/politicas',politica_salvar,response =>{
-        dispatch(
-          limpiarFormPolitica(),
-          browserHistory.push('/politicas')
-        )
-      },error =>{
-        console.log('No se ha podido actualizar la politica')
-      })
-    }
+    APIInvoker.invokePUT('/politicas',politica_salvar,response =>{
+      dispatch(limpiarFormPolitica(),browserHistory.push('/politicas'))
+    },error =>{
+      console.log('No se ha podido actualizar la politica')
+    })
   }
 }
 //Funcion para limpiar los campos del formulario de Politicas
@@ -418,8 +402,6 @@ export const cargarComboPoliticas = () =>(dispatch,getState) =>{
   APIInvoker.invokeGET('/politicas/findPoliticasSinConciliacion', response => {
     if(Array.isArray(response) == true){
       dispatch(cargarPoliticas(response))
-    }else{
-      dispatch(cargarPoliticas([response]))
     }
   })
 }
@@ -572,7 +554,7 @@ export const refreshListConciliacion = (resp) =>(dispatch,getState) => {
 }
 //Calcular el paginador antes de mostrar el listado
 const antesVerConciliaciones = (resp) => (dispatch,getState) =>{
-  calculaPaginadorConciliaciones()
+  dispatch(calculaPaginadorConciliaciones())
   dispatch(verConciliaciones(resp))
 }
 //Enviar la accion de ver conciliaciones al Reducer STORE
@@ -624,9 +606,9 @@ export const saveConciliacion = () => (dispatch,getState)=>{
     }
     APIInvoker.invokePOST('/conciliaciones',conciliacion_salvar,response =>{
       if(response.id!=undefined){
+        dispatch(antesLimpiarFormConciliacion())
         dispatch(refreshListConciliacion())
-        limpiarFormConciliacion(),
-        browserHistory.push('/conciliaciones')
+        //browserHistory.push('/conciliaciones')
       }else{
         console.log("Error :"+response.codigo+" "+response.mensaje+", "+mensaje.descripcion)
       }
@@ -655,10 +637,16 @@ export const saveConciliacion = () => (dispatch,getState)=>{
   }
 }
 
+//Funcion que vuelve a cargar el combo de politicas al limpiar el formulario de conciliaciones
+export const antesLimpiarFormConciliacion = () => (dispatch,getState) => {
+  dispatch(cargarComboPoliticas(),limpiarFormConciliacion())
+}
+
 //Funcion para limpiar los campos del formulario de Conciliaciones
 export const limpiarFormConciliacion = () =>({
-  type : LIMPIAR_FORM_CONCILIACION
+    type : LIMPIAR_FORM_CONCILIACION
 })
+
 //Funcion para cargar la conciliacion en el formulario
 export const cargarConciliacion =(idconciliacion) => (dispatch,getState) =>{
   APIInvoker.invokeGET('/conciliaciones/'+idconciliacion, response => {
@@ -823,7 +811,7 @@ export const refreshListEscenario = () =>(dispatch,getState) => {
 }
 
 const antesVerEscenarios = (resp) => (dispatch,getState) =>{
-  //calculaPaginadorEscenarios(),
+  dispatch(calculaPaginadorEscenarios()),
   dispatch(verEscenarios(resp))
 }
 //Enviar la accion de ver escenarios al Reducer STORE
@@ -875,6 +863,7 @@ export const saveEscenario = () => (dispatch,getState)=>{
     }
     APIInvoker.invokePOST('/escenarios',escenario_salvar,response =>{
       if(response.id!=undefined){
+        dispatch(limpiarFormEscenario())
         dispatch(updConciliacion(getState().escenarioReducer.conciliacion.id))
       }else{
         console.log("Error :"+response.codigo+" "+response.mensaje+", "+mensaje.descripcion)
@@ -894,7 +883,8 @@ export const saveEscenario = () => (dispatch,getState)=>{
     }
     APIInvoker.invokePUT('/escenarios',escenario_salvar,response =>{
       if(response.id!=undefined){
-        dispatch(browserHistory.push('/escenarios'))
+        //dispatch(browserHistory.push('/escenarios'))
+        dispatch(updConciliacion(getState().escenarioReducer.conciliacion.id))
       }else{
         console.log("Error :"+response.codigo+" "+response.mensaje+", "+mensaje.descripcion)
       }
@@ -956,8 +946,6 @@ export const cargarComboConciliaciones = () =>(dispatch,getState) =>{
   APIInvoker.invokeGET('/conciliaciones', response => {
     if(Array.isArray(response) == true){
       dispatch(cargarConciliaciones(response))
-    }else{
-      dispatch(cargarConciliaciones([response]))
     }
   })
 }

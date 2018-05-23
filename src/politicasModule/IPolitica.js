@@ -35,9 +35,7 @@ class IPolitica extends React.Component{
               </div>
               <hr/>
               <div className="row-fluid">
-                <div className="table-container">
-                  <IPoliticaList registro={this.props.registro}/>
-                </div>
+                <IPoliticaList registro={this.props.registro}/>
               </div>
               <hr/>
               <div className="row">

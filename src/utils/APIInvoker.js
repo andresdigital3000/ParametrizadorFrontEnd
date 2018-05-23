@@ -71,7 +71,10 @@ class APIInvoker {
         return response.json()
       })
       .then((responseData)=>{
-        //console.log(responseData)
+        if(debug){
+          console.log("Response Data =>")
+          console.log(responseData)
+        }
         if(responseData){
           okCallback(responseData)
         }else{
@@ -88,7 +91,10 @@ class APIInvoker {
         return response.json()
       })
       .then((responseData)=>{
-        //console.log(responseData)
+        if(debug){
+          console.log("Response Data =>")
+          console.log(responseData)
+        }
         if(responseData){
           okCallback(responseData)
         }else{

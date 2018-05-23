@@ -14,6 +14,8 @@ class IConciliacionForm extends React.Component{
   componentWillMount(){
     //Cargar el combo de politicas
     this.props.cargarComboPoliticas()
+    console.log("Props luego de cargar politicas =>")
+    console.log(this.props)
   }
   componentDidMount(){
     if(this.props.registro){

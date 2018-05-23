@@ -15,46 +15,47 @@ class IPoliticaList extends React.Component{
   //Seccion de listar politicas
   componentWillMount(){
     if(this.props.registro == undefined){
-      //console.log("Props en IPoliticaList registro undefined==>")
-      //console.log(this.props)
-      //Listado completo
       this.props.refreshListPolitica()
     }else{
-      //console.log("Props en IPoliticaList registro existente ==>")
-      //console.log(this.props)
-      //Mostrar una politica que viniendo desde la pantalla de conciliaciones
       this.props.refreshListPolitica(this.props.registro)
     }
   }
 
   render(){
     return(
-          <div className="table-continer">
-          <div className="table-responsive">
-            <table className="table table-hover">
-              <thead>
-                <tr>
-                    <th>
-                      NOMBRE
-                    </th>
-                    <th>
-                      DESCRIPCION
-                    </th>
-                    <th>
-                      OBJETIVO
-                    </th>
-                    <th>
-                      CONCILIACION
-                    </th>
-                    <th>
-                      ACCIONES
-                    </th>
-                </tr>
-              </thead>
-              <IPoliticaItem items={this.props.state.politicas}/>
-            </table>
+        <div className="row">
+          <If condition={Object.entries(this.props.state.politicas).length > 0}>
+            <div className="table-container">
+              <div className="table-responsive">
+                <table className="table table-hover">
+                  <thead>
+                    <tr>
+                        <th>
+                          NOMBRE
+                        </th>
+                        <th>
+                          DESCRIPCION
+                        </th>
+                        <th>
+                          OBJETIVO
+                        </th>
+                        <th>
+                          CONCILIACION
+                        </th>
+                        <th>
+                          ACCIONES
+                        </th>
+                    </tr>
+                  </thead>
+                  <IPoliticaItem/>
+                </table>
+              </div>
           </div>
-        </div>
+        </If>
+        <If condition={Object.entries(this.props.state.politicas).length == 0}>
+            <div className="alert alert-warning col-sm-12">No hay registros</div>
+        </If>
+      </div>
     )
   }
 }
