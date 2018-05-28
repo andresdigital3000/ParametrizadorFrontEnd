@@ -28,6 +28,13 @@ class IConciliacionFinder extends React.Component{
     this.props.updateTextFindConciliacion(e.target.name, e.target.value)
   }
 
+  //Funcion que ejecuta el buscador con enter
+  onKeyPress(e){
+    if(e.key === 'Enter'){
+      this.props.findTextConciliacion()
+    }
+  }
+
   render(){
     return(
       <div className="input-group row">
@@ -36,6 +43,7 @@ class IConciliacionFinder extends React.Component{
           name="textoBuscar"
           id="textoBuscar"
           onChange={this.handleInput.bind(this)}
+          onKeyPress={this.onKeyPress.bind(this)}
           className='form-control form-control-sm'/>
           <span className="input-group-addon">
             <button className="btn btn-info" onClick={this.findTextConciliacion.bind(this)}><i className="fa fa-search"/></button>

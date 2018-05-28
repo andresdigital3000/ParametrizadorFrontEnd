@@ -18,7 +18,14 @@ class IPoliticaFinder extends React.Component{
 
   //Detecta cambios de estado
   handleInput(e){
-    this.props.updateTextFindPolitica(e.target.name, e.target.value)
+      this.props.updateTextFindPolitica(e.target.name, e.target.value)
+  }
+
+  //Funcion que ejecuta el buscador con enter
+  onKeyPress(e){
+    if(e.key === 'Enter'){
+      this.props.findTextPolitica()
+    }
   }
 
   render(){
@@ -29,6 +36,7 @@ class IPoliticaFinder extends React.Component{
             name="textoBuscar"
             id="textoBuscar"
             onChange={this.handleInput.bind(this)}
+            onKeyPress={this.onKeyPress.bind(this)}
             className='form-control form-control-sm'/>
             <span className="input-group-addon">
               <button className="btn btn-info" onClick={this.findTextPolitica.bind(this)}><i className="fa fa-search"/></button>

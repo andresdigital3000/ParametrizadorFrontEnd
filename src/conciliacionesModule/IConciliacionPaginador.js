@@ -19,7 +19,7 @@ class IConciliacionPaginador extends React.Component{
           <If condition={Object.entries(this.props.state.paginador).length > 1}>
             <ul className="pagination">
               <li className="page-item">
-                <a className="page-link" href="#" aria-label="Previous">
+                <a className="page-link" onClick={() => this.props.moverPaginaConciliaciones(this.props.state.paginaActual-1)} aria-label="Previous">
                   <span aria-hidden="true">&laquo;</span>
                   <span className="sr-only">Previous</span>
                 </a>
@@ -42,7 +42,7 @@ class IConciliacionPaginador extends React.Component{
                 )
               },this)}
               <li className="page-item">
-                <a className="page-link" href="#" aria-label="Next">
+                <a className="page-link" onClick={() => this.props.moverPaginaConciliaciones(this.props.state.paginaActual+1)} aria-label="Next">
                   <span aria-hidden="true">&raquo;</span>
                   <span className="sr-only">Next</span>
                 </a>

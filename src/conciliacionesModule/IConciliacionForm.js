@@ -63,7 +63,7 @@ class IConciliacionForm extends React.Component{
             </header>
             <div className="form-group">
               <label htmlFor='nombre'>Nombre</label>
-              <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un nombre de conciiación' />
+              <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un nombre de conciiación' autoComplete='off'/>
               <small id="nombreHelp" className="form-text text-muted">Que sea descriptivo pero breve</small>
             </div>
             <div className="form-group">
@@ -112,7 +112,7 @@ class IConciliacionForm extends React.Component{
                     </div>
                     <div className="form-group">
                       <label htmlFor='nombre'>Nombre</label>
-                      <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un nombre de conciliación' />
+                      <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un nombre de conciliación' autoComplete='off'/>
                       <small id="nombreHelp" className="form-text text-muted">Que sea descriptivo</small>
                     </div>
                     <div className="form-group">

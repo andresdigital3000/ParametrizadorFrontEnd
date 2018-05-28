@@ -33,7 +33,7 @@ class IConciliacionDelete extends React.Component{
           <div className="form-wrapper">
             <header className="head-table">
               <div className="form-group">
-                <div className="col-sm-6">
+                <div className="col-sm-12">
                   <center>
                       <h2>Eliminando Conciliación</h2>
                   </center>
@@ -43,7 +43,7 @@ class IConciliacionDelete extends React.Component{
             <div className="row">
               <div className="col-sm-12">
                   <center>
-                    Está seguro de eliminar el registro {this.props.registro.idconciliaciondelete}?
+                    Está seguro de eliminar la conciliación?
                   </center>
               </div>
             </div>

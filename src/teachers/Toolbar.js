@@ -36,7 +36,7 @@ class Toolbar extends React.Component{
                 </a>
               </li>
               <li className="nav-item">
-                <Link to="/politicas" className="nav-link">Politicas</Link>
+                <Link to="/politicas" className="nav-link">Políticas</Link>
               </li>
               <li className="nav-item">
                 <Link to="/conciliaciones" className="nav-link">Conciliaciones</Link>
@@ -46,6 +46,12 @@ class Toolbar extends React.Component{
               </li>
               <li className="nav-item">
                 <Link to="/ejecucion" className="nav-link">Ejecución</Link>
+              </li>
+              <li className="nav-item">
+                <Link to="#" className="nav-link">Resultados</Link>
+              </li>
+              <li className="nav-item">
+                <Link to="#" className="nav-link">Indicadores</Link>
               </li>
               <li className="nav-item">
                 <a href="#" className="nav-link"  onClick={this.logout.bind(this)}>

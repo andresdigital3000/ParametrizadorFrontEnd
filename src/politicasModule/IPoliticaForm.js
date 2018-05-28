@@ -50,7 +50,7 @@ class IPoliticaForm extends React.Component{
             <input id='id' ref='id' type='hidden' value={this.props.state.id}/>
             <div className="form-group">
               <label htmlFor='nombre'>Nombre</label>
-              <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un nombre de política' />
+              <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un nombre de política' autoComplete='off' />
               <small id="nombreHelp" className="form-text text-muted">Que sea descriptivo pero breve</small>
             </div>
             <div className="form-group">
@@ -87,7 +87,7 @@ class IPoliticaForm extends React.Component{
                     <input id='id' ref='id' type='hidden' value={this.props.state.id}/>
                     <div className="form-group">
                       <label htmlFor='nombre'>Nombre</label>
-                      <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un nombre de política' />
+                      <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un nombre de política' placeholder='Digite un nombre de política' autoComplete='off'/>
                       <small id="nombreHelp" className="form-text text-muted">Que sea descriptivo</small>
                     </div>
                     <div className="form-group">
