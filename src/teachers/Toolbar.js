@@ -48,7 +48,7 @@ class Toolbar extends React.Component{
                 <Link to="/ejecucion" className="nav-link">Ejecución</Link>
               </li>
               <li className="nav-item">
-                <Link to="#" className="nav-link">Resultados</Link>
+                <Link to="/resultados" className="nav-link">Resultados</Link>
               </li>
               <li className="nav-item">
                 <Link to="#" className="nav-link">Indicadores</Link>

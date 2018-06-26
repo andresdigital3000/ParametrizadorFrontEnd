@@ -12,6 +12,7 @@ import IEscenarioForm from '../escenariosModule/IEscenarioForm'
 import IEscenarioDelete from '../escenariosModule/IEscenarioDelete'
 import IEjecucion from '../ejecucionModule/IEjecucion'
 import IProgramar from '../ejecucionModule/IProgramar'
+import IResultados from '../resultadosModule/IResultados'
 import Loading from '../politicasModule/Loading.js'
 import { browserHistory } from 'react-router'
 import { connect } from 'react-redux'
@@ -97,6 +98,9 @@ class AdminThemplete extends React.Component{
                 </If>
                 <If condition={this.props.location.pathname.substr(1,19) == 'ejecucion/programar'}>
                     <IProgramar/>
+                </If>
+                <If condition={this.props.location.pathname.substr(1,11) == 'resultados'}>
+                    <IResultados/>
                 </If>
             </When>
             <Otherwise>

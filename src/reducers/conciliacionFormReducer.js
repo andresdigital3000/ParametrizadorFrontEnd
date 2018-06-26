@@ -22,13 +22,14 @@ export const conciliacionFormReducer = (state = initialState,action) =>{
         })
     case CARGAR_CONCILIACION_FORM:
         return update(state,{
-          id : {$set: action.conciliacion[0].id},
-          nombre : {$set: action.conciliacion[0].nombre},
-          webservice : {$set: action.conciliacion[0].webservice},
-          descripcion : {$set: action.conciliacion[0].descripcion},
-          idPolitica : {$set: action.conciliacion[0].idPolitica},
-          nombrePolitica : {$set: action.conciliacion[0].nombrePolitica}
-        })
+            id : {$set: action.conciliacion[0].id},
+            nombre : {$set: action.conciliacion[0].nombre},
+            webservice : {$set: action.conciliacion[0].webservice},
+            descripcion : {$set: action.conciliacion[0].descripcion},
+            idPolitica : {$set: action.conciliacion[0].idPolitica},
+            nombrePolitica : {$set: action.conciliacion[0].nombrePolitica}
+          }
+        )
     case LIMPIAR_FORM_CONCILIACION:
         return update(state,{
           id : {$set: 0},

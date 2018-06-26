@@ -23,6 +23,8 @@ import IEscenarioForm from './escenariosModule/IEscenarioForm'
 import IEscenarioDelete from './escenariosModule/IEscenarioDelete'
 import IEjecucion from './ejecucionModule/IEjecucion'
 import IProgramar from './ejecucionModule/IProgramar'
+import IResultados from './resultadosModule/IResultados'
+
 
 //import APIInvoker from './utils/APIInvoker'
 
@@ -57,6 +59,7 @@ render((
             <Route path="/escenarios/delete/:idescenariodelete" component={IEscenarioDelete}></Route>
             <Route path="/ejecucion" component={IEjecucion}></Route>
             <Route path="/ejecucion/programar" component={IProgramar}></Route>
+            <Route path="/resultados" component={IResultados}></Route>
           </Route>
       </Router>
     </Provider>

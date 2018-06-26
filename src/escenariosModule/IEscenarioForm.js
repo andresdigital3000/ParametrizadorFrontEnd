@@ -41,14 +41,16 @@ class IEscenarioForm extends React.Component{
   }
 
   //Salvar el nuevo registro
-  saveEscenario(e){
+  grabarEscenario(e){
     this.props.saveEscenario()
     this.props.refreshListEscenario()
+    this.props.updConciliacion(0)
   }
 
   //Limpiar el formulario
-  limpiarFormEscenario(e){
+  limpiarEscenario(e){
     this.props.limpiarFormEscenario()
+    this.props.updConciliacion(0)
   }
 
   render(){
@@ -61,23 +63,37 @@ class IEscenarioForm extends React.Component{
               <div className="form-group">
                 <div className="col-sm-12">
                   <center>
-                      <h2>Editando Escenario</h2>
+                      <h2>Detalles del Escenario</h2>
                   </center>
                 </div>
               </div>
             </header>
             <input id='id' ref='id' type='hidden' value={this.props.registro.idescenario}/>
             <div className="form-group">
-              <label htmlFor='nombre'>Nombre</label>
+              <label htmlFor='nombre'>* Nombre</label>
               <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un nombre de conciiación' autoComplete='off'/>
               <small id="nombreHelp" className="form-text text-muted">Que sea descriptivo pero breve</small>
             </div>
             <div className="form-group">
               <label htmlFor='impacto'>Impacto</label>
-              <input id='impacto' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.impacto} onChange={this.handleInput.bind(this)} placeholder='Digite el impacto del escenario' />
+              <input id='impacto' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.impacto} onChange={this.handleInput.bind(this)} placeholder='Digite el impacto del escenario' autoComplete='off'/>
               <small id="impactoHelp" className="form-text text-muted">Defina impacto para el escenario</small>
             </div>
             <div className="form-group">
+              <label htmlFor='conciliacion'>* Conciliación</label>
+              <select id="conciliacion" name="conciliacion" className='form-control' value={this.props.state.conciliacion} onChange={this.cambioConciliaciones.bind(this)}>
+                <option value={JSON.stringify({"id":this.props.state.idConciliacion,"nombre":this.props.state.nombreConciliacion})}>{this.props.state.nombreConciliacion}</option>
+                {this.props.state.conciliaciones.map(function(currentValue,index,array){
+                  return(
+                    <option key={currentValue.id} value={JSON.stringify(currentValue)}>{currentValue.nombre}</option>
+                  );
+                })}
+              </select>
+              <small id="nombreHelp" className="form-text text-muted">Para crear escenario</small>
+            </div>
+            <div className="form-group">
+              <small>(*) Obligatorio</small>
+              <hr/>
               <Link to={"/escenarios"} onClick={this.props.limpiarFormEscenario.bind(this)} className="btn btn-warning">Regresar</Link>&nbsp;&nbsp;&nbsp;
               {
                 this.props.state.nombre!="" ?
@@ -98,9 +114,19 @@ class IEscenarioForm extends React.Component{
                     </button>
                   </div>
                   <div className="modal-body">
-                    <input id='id' ref='id' type='hidden' value={this.props.state.id}/>
+                    <input id='id' ref='id' type='hidden' value={this.props.state.id}/>                    
                     <div className="form-group">
-                      <label htmlFor='conciliacion'>Conciliación</label>
+                      <label htmlFor='nombre'>* Nombre</label>
+                      <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un nombre de escenario' autoComplete='off'/>
+                      <small id="nombreHelp" className="form-text text-muted">Que sea descriptivo</small>
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor='impacto'>Impacto</label>
+                      <input id='impacto' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.impacto} onChange={this.handleInput.bind(this)} placeholder='Digite impacto del escenario' autoComplete='off'/>
+                      <small id="impactoHelp" className="form-text text-muted">Defina impacto para el escenario</small>
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor='conciliacion'>* Conciliación</label>
                       <select id="conciliacion" name="conciliacion" className='form-control' value={this.props.state.conciliacion} onChange={this.cambioConciliaciones.bind(this)}>
                         <option value='{"id":0,"nombre":"Ninguna"}'>Seleccione una</option>
                         {this.props.state.conciliaciones.map(function(currentValue,index,array){
@@ -111,23 +137,15 @@ class IEscenarioForm extends React.Component{
                       </select>
                       <small id="nombreHelp" className="form-text text-muted">Para crear escenario</small>
                     </div>
-                    <div className="form-group">
-                      <label htmlFor='nombre'>Nombre</label>
-                      <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un nombre de escenario' autoComplete='off'/>
-                      <small id="nombreHelp" className="form-text text-muted">Que sea descriptivo</small>
-                    </div>
-                    <div className="form-group">
-                      <label htmlFor='impacto'>Impacto</label>
-                      <input id='impacto' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.impacto} onChange={this.handleInput.bind(this)} placeholder='Digite impacto del escenario' />
-                      <small id="impactoHelp" className="form-text text-muted">Defina impacto para el escenario</small>
-                    </div>
                   </div>
                   <div className="modal-footer">
-                    <button onClick={this.props.limpiarFormEscenario.bind(this)} type="button" className="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    (*) Obligatorio
+                    <hr/>
+                    <button onClick={this.limpiarEscenario.bind(this)} type="button" className="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                     {
-                      this.props.state.conciliacion.substr(1,7)!='"id":0,' && this.props.state.nombre!="" ?
-                      <button onClick={this.props.saveEscenario.bind(this)} className="btn btn-primary" data-dismiss="modal">Grabar</button> :
-                      <button onClick={this.props.saveEscenario.bind(this)} className="btn btn-primary" data-dismiss="modal" disabled>Formulario incompleto</button>
+                      this.props.state.conciliacion.substr(1,7)!='"id":0,' && this.props.state.nombre!="" && this.props.state.conciliacion!='{"id":0,"nombre":"Ninguna"}' ?
+                      <button onClick={this.grabarEscenario.bind(this)} className="btn btn-primary" data-dismiss="modal">Grabar</button> :
+                      <button className="btn btn-primary" data-dismiss="modal" disabled>Formulario incompleto</button>
                     }
                   </div>
               </div>

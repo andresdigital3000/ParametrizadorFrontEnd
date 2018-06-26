@@ -1,11 +1,7 @@
 module.exports ={
   debugMode: true,
   usarJsonServer : false,
-  //json-server
-  /*server:{
-    port:3000,
-    host:"http://localhost"
-  },*/
+  
   //Api backend
   server:{
     port:"",

@@ -10,6 +10,9 @@ module.exports = {
     filename: "bundle.js",
     publicPath: "/resources"
   },
+  node: {
+    fs: "empty"
+  },
   module:{
     loaders:[{
       test: /\.jsx?$/,

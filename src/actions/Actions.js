@@ -28,7 +28,9 @@ import {
   ACTUALIZA_PAGINADOR_ESCENARIOS,
   IR_PAGINA_ESCENARIOS,
   CARGA_CONCILIACIONES,
-  UPDATE_VALUE_COMBO_CONCILIACIONES
+  UPDATE_VALUE_COMBO_CONCILIACIONES,
+  CARGA_CONCILIACIONES_RESULTADO,
+  UPDATE_VALUE_COMBO_CONCILIACIONES_RESULTADO
 } from './const'
 
 import React from 'react'
@@ -170,13 +172,14 @@ export const findTextPolitica = () => (dispatch,getState) => {
             dispatch(verPoliticas(response))
         }else{
             console.log("Error "+response[0].codigo+" : "+response[0].mensaje)
+            alert("No se encontraron registros que satisfagan el criterio de búsqueda")
         }
       }else{
         if(response.id!=undefined){
             dispatch(verPoliticas(response))
         }else{
             console.log("Error "+response.codigo+" : "+response.mensaje)
-            alert("Error "+response.codigo+" : "+response.mensaje)
+            alert("No se encontraron registros que satisfagan el criterio de búsqueda")
             //dispatch(verPoliticas(objetoVacio))
         }
       }
@@ -251,6 +254,7 @@ export const refreshListPolitica = (resp) =>(dispatch,getState) => {
           }else{
             dispatch(antesVerPoliticas(objetoVacio))
             console.log("Error : "+response1[0].codigo+" Mensaje: "+response1[0].mensaje+": "+response1[0].descripcion)
+            //alert("No se encuentran políticas")
           }
         }else{
           //Cuando el response no es un array, es decir, un solo registro
@@ -259,6 +263,7 @@ export const refreshListPolitica = (resp) =>(dispatch,getState) => {
           }else{
             dispatch(antesVerPoliticas(objetoVacio))
             console.log("Error : "+response1.codigo+" Mensaje: "+response1.mensaje+": "+response1.descripcion)
+            //alert("No se encuentra la política")
           }
         }
       })
@@ -272,6 +277,7 @@ export const refreshListPolitica = (resp) =>(dispatch,getState) => {
           }else{
             dispatch(antesVerPoliticas(objetoVacio))
             console.log("Error : "+response[0].codigo+" Mensaje: "+response[0].mensaje+": "+response[0].descripcion)
+            alert("No se encuentran políticas")
           }
         }else{
           //si el response es un solo registro
@@ -280,6 +286,7 @@ export const refreshListPolitica = (resp) =>(dispatch,getState) => {
           }else{
             dispatch(antesVerPoliticas(objetoVacio))
             console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
+            alert("No se encuentra la política")
           }
         }
       })
@@ -320,23 +327,47 @@ export const savePolitica = () => (dispatch,getState)=>{
   }
   if(id_politica == 0 || id_politica == undefined){
     APIInvoker.invokePOST('/politicas',politica_salvar,response =>{
-      dispatch(limpiarFormPolitica())
-      dispatch(refreshListPolitica())
+      if(response.id!=undefined){
+        dispatch(limpiarFormPolitica())
+        dispatch(refreshListPolitica())
+      }else{
+        //Enviar error específico a la consola
+        console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
+        if(response.codigo==409){
+          alert("Ya existe una política con el mismo nombre")          //dispatch(limpiarFormPolitica())
+          dispatch(refreshListPolitica())
+        }else{
+          //Error sin tratamiento
+          alert("Error general, comuniquese con el Administrador del sistema, copie y pegue los siguientes detalles : "+"Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion+", al intentar grabar una nueva política")
+          dispatch(refreshListPolitica())
+        }
+      }
     },error =>{
-      console.log('No se ha podido crear la politica con id'+id_politica)
+      console.log("No se ha podido crear la politica con id"+id_politica)
     })
   }else{
     APIInvoker.invokePUT('/politicas',politica_salvar,response =>{
-      dispatch(limpiarFormPolitica(),browserHistory.push('/politicas'))
+      if(response.id!=undefined){
+        dispatch(limpiarFormPolitica(),browserHistory.push('/politicas'))
+      }else{
+        if(response.codigo==409){
+          alert("Ya existe una política con el mismo nombre")          //dispatch(limpiarFormPolitica())
+          dispatch(refreshListPolitica())
+        }else{
+          alert("Error general al intentar cambiar la política, comuniquese con el Administrador, copie y pegue los siguientes detealles : "+"Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion+", al intentar actualizar una política")
+        }  
+      }
     },error =>{
-      console.log('No se ha podido actualizar la politica')
+      console.log("No se ha podido actualizar la politica")
     })
   }
 }
+
 //Funcion para limpiar los campos del formulario de Politicas
 export const limpiarFormPolitica = () =>({
   type : LIMPIAR_FORM_POLITICA
 })
+
 //Funcion para cargar la politica en el formulario
 export const cargarPolitica =(idpolitica) => (dispatch,getState) =>{
   APIInvoker.invokeGET('/politicas/'+idpolitica, response => {
@@ -344,12 +375,14 @@ export const cargarPolitica =(idpolitica) => (dispatch,getState) =>{
       if(response[0].id!=undefined){
         dispatch(cargarPoliticaEnForm(response))
       }else{
+        alert("No se ha podido cargar la política en el formulario")
         console.log("Error "+response[0].codigo+" : "+response[0].mensaje+" "+response[0].descripcion)
       }
     }else{
       if(response.id!=undefined){
         dispatch(cargarPoliticaEnForm([response]))
       }else{
+        alert("No se ha podido cargar la política en el formulario")
         console.log("Error "+response.codigo+" : "+response.mensaje+" "+response.descripcion)
       }
     }
@@ -369,6 +402,7 @@ export const borrarPolitica = () => (dispatch,getState) =>{
   let idpolitica = getState().politicaFormReducer.id
   APIInvoker.invokeDELETE('/politicas/'+idpolitica, response => {
     if(response.status == 200){
+      alert("Se eliminó exitosamente la política")
       dispatch(
         limpiarFormPolitica(),
         browserHistory.push('/politicas')
@@ -407,7 +441,11 @@ const irAPaginaPoliticas = (pagina) =>({
 export const cargarComboPoliticas = () =>(dispatch,getState) =>{
   APIInvoker.invokeGET('/politicas/findPoliticasSinConciliacion', response => {
     if(Array.isArray(response) == true){
-      dispatch(cargarPoliticas(response))
+      if(response[0].id!=undefined){
+        dispatch(cargarPoliticas(response))
+      }else{
+        alert("No se encuentran políticas sin conciliaciones asociadas")
+      }
     }
   })
 }
@@ -437,13 +475,14 @@ export const findTextConciliacion = () => (dispatch,getState) => {
         dispatch(verConciliaciones(response))
       }else{
         console.log("Error : "+response[0].codigo+" Mensaje: "+response[0].mensaje+": "+response[0].descripcion)
+        alert("No se encuentran conciliaciones que satisfagan el criterio de búsqueda")
       }
     }else{
       if(response.id!=undefined){
         dispatch(verConciliaciones(response))
       }else{
         console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
-        alert("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
+        alert("No se encuentran conciliaciones que satisfagan el criterio de búsqueda")
       }
     }
   })
@@ -507,12 +546,14 @@ export const refreshListConciliacion = (resp) =>(dispatch,getState) => {
           dispatch(antesVerConciliaciones(response1))
         }else{
           console.log("Error : "+response1[0].codigo+" Mensaje: "+response1[0].mensaje+": "+response1[0].descripcion)
+          //alert("No se encuentran conciliaciones")
           dispatch(antesVerConciliaciones(objetoVacio))
         }
       }else{
+        console.log("Error : "+response1.codigo+" Mensaje: "+response1.mensaje+": "+response1.descripcion)
         if(response1.codigo==404){
           dispatch(antesVerConciliaciones(objetoVacio))
-          console.log("Error : "+response1.codigo+" Mensaje: "+response1.mensaje+": "+response1.descripcion)
+          //alert("No se encuentran conciliaciones")
         }else{
           dispatch(antesVerConciliaciones(objetoVacio))
           console.log(response1)
@@ -529,12 +570,14 @@ export const refreshListConciliacion = (resp) =>(dispatch,getState) => {
           }else{
             dispatch(antesVerConciliaciones(objetoVacio))
             console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
+            alert("No se encuentra la conciliación")
           }
         }else{
           if(response.id!=undefined){
             dispatch(antesVerConciliaciones([response]))
           }else{
             dispatch(antesVerConciliaciones(objetoVacio))
+            alert("No se encuentra la conciliación")
             console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
           }
         }
@@ -546,6 +589,7 @@ export const refreshListConciliacion = (resp) =>(dispatch,getState) => {
             dispatch(antesVerConciliaciones(resp))
           }else{
             dispatch(antesVerConciliaciones(objetoVacio))
+            alert("No se encuentra la conciliación")
             console.log("Error : "+resp.codigo+" Mensaje: "+resp.mensaje)
           }
       }else{
@@ -553,6 +597,7 @@ export const refreshListConciliacion = (resp) =>(dispatch,getState) => {
             dispatch(antesVerConciliaciones([resp]))
           }else{
             dispatch(antesVerConciliaciones(objetoVacio))
+            alert("No se encuentra la conciliación")
             console.log("Error : "+resp.codigo+" Mensaje: "+resp.mensaje)
           }
       }
@@ -609,7 +654,8 @@ export const saveConciliacion = () => (dispatch,getState)=>{
       nombre : getState().conciliacionFormReducer.nombre,
       webservice : getState().conciliacionFormReducer.webservice,
       descripcion : getState().conciliacionFormReducer.descripcion,
-      idpolitica : getState().conciliacionReducer.politica.id
+      idpolitica : getState().conciliacionReducer.politica.id,
+      usuario: getState().loginReducer.profile.userName
     }
     APIInvoker.invokePOST('/conciliaciones',conciliacion_salvar,response =>{
       if(response.id!=undefined){
@@ -617,7 +663,11 @@ export const saveConciliacion = () => (dispatch,getState)=>{
         dispatch(refreshListConciliacion())
       }else{
         console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
-        alert("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
+        if(response.codigo==409){
+          alert("Ya existe otra conciliación con el mismo nombre")
+        }else{
+          alert("Error general, comuniquese con el Administrador del sistema, copie y pegue los siguientes detalles : "+"Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
+        }
         dispatch(antesLimpiarFormConciliacion())
         dispatch(refreshListConciliacion())
       }
@@ -626,20 +676,29 @@ export const saveConciliacion = () => (dispatch,getState)=>{
     })
   }else{
     //Si es un registro existente
+    let idPoliticaGrabar = 0
+    let nombrePoliticaGrabar="Ninguna"
+    if(getState().conciliacionReducer.politica.id==0){
+      idPoliticaGrabar = getState().conciliacionFormReducer.idPolitica
+      nombrePoliticaGrabar = getState().conciliacionFormReducer.nombrePolitica
+    }else{
+      idPoliticaGrabar = getState().conciliacionReducer.politica.id
+      nombrePoliticaGrabar = getState().conciliacionReducer.politica.nombre
+    }
     let conciliacion_salvar = {
       id : getState().conciliacionFormReducer.id,
       nombre : getState().conciliacionFormReducer.nombre,
       webservice : getState().conciliacionFormReducer.webservice,
       descripcion : getState().conciliacionFormReducer.descripcion,
-      idPolitica : getState().conciliacionFormReducer.idPolitica,
-      nombrePolitica : getState().conciliacionFormReducer.nombrePolitica
+      idPolitica : idPoliticaGrabar,
+      nombrePolitica : nombrePoliticaGrabar
     }
     APIInvoker.invokePUT('/conciliaciones',conciliacion_salvar,response =>{
       if(response.id!=undefined){
         dispatch(limpiarFormConciliacion(),browserHistory.push('/conciliaciones'))
       }else{
         console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
-        alert("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
+        alert("No se admite modificación en la conciliación por estar ya asignada a una política")
         dispatch(limpiarFormConciliacion(),browserHistory.push('/conciliaciones'))
       }
     },error =>{
@@ -679,6 +738,7 @@ const cargarConciliacionEnForm = (conciliacion) => ({
 export const borrarConciliacion = () => (dispatch,getState) =>{
   let idconciliacion = getState().conciliacionFormReducer.id
   APIInvoker.invokeDELETE('/conciliaciones/'+idconciliacion, response => {
+      alert("Se eliminó con éxito la conciliación")
       dispatch(
         limpiarFormConciliacion(),
         browserHistory.push('/conciliaciones')
@@ -728,6 +788,7 @@ export const findTextEscenario = () => (dispatch,getState) => {
       if(response[0].id!=undefined){
         dispatch(verEscenarios(response))
       }else{
+        alert("No se encuentran escenarios que cumplan con el criterio de búsqueda")
         console.log("Error : "+response[0].codigo+" Mensaje: "+response[0].mensaje+": "+response[0].descripcion)
       }
     }else{
@@ -735,7 +796,7 @@ export const findTextEscenario = () => (dispatch,getState) => {
         dispatch(verEscenarios(response))
       }else{
         console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
-        alert("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
+        alert("No se encuentran escenrios que cumplan con el criterio de búsqueda")
       }
     }
   })
@@ -882,7 +943,7 @@ export const saveEscenario = () => (dispatch,getState)=>{
         dispatch(updConciliacion(getState().escenarioReducer.conciliacion.id))
       }else{
         console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
-        alert("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
+        alert("Ya existe un escenario con el mismo nombre")
         dispatch(limpiarFormEscenario())
         dispatch(updConciliacion(getState().escenarioReducer.conciliacion.id))
       }
@@ -891,18 +952,31 @@ export const saveEscenario = () => (dispatch,getState)=>{
     })
   }else{
     //Si es actualizar un existente
+    let idConciliacionGrabar = 0
+    let nombreConciliacionGrabar="Ninguna"
+    if(getState().escenarioReducer.conciliacion.id==0){
+      idConciliacionGrabar = getState().escenarioFormReducer.idConciliacion
+      nombreConciliacionGrabar = getState().escenarioFormReducer.nombreConciliacion
+    }else{
+      idConciliacionGrabar = getState().escenarioReducer.conciliacion.id
+      nombreConciliacionGrabar = getState().escenarioReducer.conciliacion.nombre
+    }
     let escenario_salvar = {
       id :  getState().escenarioFormReducer.id,
       nombre : getState().escenarioFormReducer.nombre,
       impacto : getState().escenarioFormReducer.impacto,
-      usuario : getState().loginReducer.profile.userName
+      usuario : getState().loginReducer.profile.userName,
+      idConciliacion : idConciliacionGrabar,
+      nombreConciliacion : nombreConciliacionGrabar
     }
+    console.log("escenario_salvar ===>>")
+    console.log(escenario_salvar)
     APIInvoker.invokePUT('/escenarios',escenario_salvar,response =>{
       if(response.id!=undefined){
         dispatch(limpiarFormEscenario(),browserHistory.push('/escenarios'))
       }else{
         console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
-        alert("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
+        alert("No se admite la edición del registro por estar asociado a una conciliación")
         dispatch(limpiarFormEscenario(),browserHistory.push('/escenarios'))
       }
     },error =>{
@@ -982,6 +1056,37 @@ export const updateEjecucion = (field,value) => (dispatch,getState) =>{
 //Enviar el texto del buscador al reducer store
 const updateComboConciliaciones = (field,value) => ({
   type : UPDATE_VALUE_COMBO_CONCILIACIONES,
+  field : field,
+  value: value
+})
+
+
+/*
+*  A C C I O N E S  D E  R E S U L T A D O S
+*  para realizar todas las acciones necesarias modulo de resultados
+*/
+
+//Funcion que carga el combo de conciliaciones
+export const cargarComboConciliacionesResultados = () =>(dispatch,getState) =>{
+  APIInvoker.invokeGET('/conciliaciones', response => {
+    if(Array.isArray(response) == true){
+      dispatch(cargarConciliacionesResultados(response))
+    }
+  })
+}
+//Envia resultado para llenar el combo a Reducer
+const cargarConciliacionesResultados = (arrayConciliaciones) => ({
+  type : CARGA_CONCILIACIONES_RESULTADO,
+  lista : arrayConciliaciones
+})
+
+export const updateResultados = (field,value) => (dispatch,getState) =>{
+  dispatch(updateComboConciliacionesResultados(field,value))
+}
+
+//Enviar el texto del buscador al reducer store
+const updateComboConciliacionesResultados = (field,value) => ({
+  type : UPDATE_VALUE_COMBO_CONCILIACIONES_RESULTADO,
   field : field,
   value: value
 })
