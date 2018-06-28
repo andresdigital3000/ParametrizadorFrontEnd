@@ -36,9 +36,9 @@ class IConciliacionForm extends React.Component{
   //Salvar el nuevo registro
   grabarConciliacion(e){
     this.props.saveConciliacion()
-    this.props.limpiarFormConciliacion()
-    this.props.updPolitica(0)
-    this.props.refreshListConciliacion()
+    //this.props.limpiarFormConciliacion()
+    //this.props.updPolitica(0)
+    //this.props.refreshListConciliacion()
   }
 
   //Limpiar el formulario
@@ -95,8 +95,8 @@ class IConciliacionForm extends React.Component{
               <Link to={"/conciliaciones"} onClick={this.props.limpiarFormConciliacion.bind(this)} className="btn btn-warning">Regresar</Link>&nbsp;&nbsp;&nbsp;
               {
                 this.props.state.nombre!="" && this.props.state.webservice!="" ?
-                <button onClick={this.props.saveConciliacion.bind(this)} className="btn btn-primary" data-dismiss="modal">Grabar</button> :
-                <button onClick={this.props.saveConciliacion.bind(this)} className="btn btn-primary" data-dismiss="modal" disabled>Formulario incompleto</button>
+                <button onClick={this.props.saveConciliacion.bind(this)} className="btn btn-primary">Grabar</button> :
+                <button className="btn btn-primary" disabled>Formulario incompleto</button>
               }
             </div>
           </div>
@@ -146,8 +146,8 @@ class IConciliacionForm extends React.Component{
                     <button onClick={this.limpiarConciliacion.bind(this)} type="button" className="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                     {
                       this.props.state.politica.substr(1,7)!='"id":0,' && this.props.state.nombre!="" && this.props.state.webservice!="" && this.props.state.politica!='{"id":0,"nombre":"Ninguna"}' ?
-                      <button onClick={this.grabarConciliacion.bind(this)} className="btn btn-primary" data-dismiss="modal">Grabar</button> :
-                      <button className="btn btn-primary" data-dismiss="modal" disabled>Formulario incompleto</button>
+                      <button onClick={this.grabarConciliacion.bind(this)} className="btn btn-primary">Grabar</button> :
+                      <button className="btn btn-primary" disabled>Formulario incompleto</button>
                     }
                   </div>
               </div>

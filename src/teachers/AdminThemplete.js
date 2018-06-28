@@ -17,6 +17,9 @@ import Loading from '../politicasModule/Loading.js'
 import { browserHistory } from 'react-router'
 import { connect } from 'react-redux'
 import { relogin } from '../actions/Actions'
+//import Notifications, {notify} from 'react-notify-toast';
+import { ToastContainer, toast } from 'react-toastify';
+import '!style-loader!css-loader!react-toastify/dist/ReactToastify.css';
 
 class AdminThemplete extends React.Component{
   constructor(props){
@@ -32,6 +35,7 @@ class AdminThemplete extends React.Component{
     //console.log(this.props)
     return(
       <div data-reactroot="" className="container-fluid">
+          <ToastContainer autoClose={4000}/>
           <Choose>
             <When condition={this.props.load}>
                 <Toolbar/>

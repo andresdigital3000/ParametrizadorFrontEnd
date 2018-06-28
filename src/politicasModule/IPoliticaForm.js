@@ -69,8 +69,8 @@ class IPoliticaForm extends React.Component{
               <Link to={"/politicas"} onClick={this.props.limpiarFormPolitica.bind(this)} className="btn btn-warning">Regresar</Link>&nbsp;&nbsp;&nbsp;
               {
                 this.props.state.nombre!="" && this.props.state.objetivo!="" && this.props.state.descripcion!="" ?
-                <button onClick={this.props.savePolitica.bind(this)} className="btn btn-primary" data-dismiss="modal">Grabar</button> :
-                <button onClick={this.props.savePolitica.bind(this)} className="btn btn-primary" data-dismiss="modal" disabled>Formulario incompleto</button>
+                <button onClick={this.props.savePolitica.bind(this)} className="btn btn-primary">Grabar</button> :
+                <button className="btn btn-primary" disabled>Formulario incompleto</button>
               }
             </div>
           </div>
@@ -109,8 +109,8 @@ class IPoliticaForm extends React.Component{
                     <button onClick={this.props.limpiarFormPolitica.bind(this)} type="button" className="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                     {
                       this.props.state.nombre!="" && this.props.state.objetivo!="" && this.props.state.descripcion!="" ?
-                      <button onClick={this.props.savePolitica.bind(this)} className="btn btn-primary" data-dismiss="modal">Grabar</button> :
-                      <button onClick={this.props.savePolitica.bind(this)} className="btn btn-primary" data-dismiss="modal" disabled>Formulario incompleto</button>
+                      <button onClick={this.props.savePolitica.bind(this)} className="btn btn-primary">Grabar</button> :
+                      <button className="btn btn-primary"  disabled>Formulario incompleto</button>
                     }
                   </div>
               </div>

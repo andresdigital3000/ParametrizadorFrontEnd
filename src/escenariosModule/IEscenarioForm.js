@@ -43,8 +43,8 @@ class IEscenarioForm extends React.Component{
   //Salvar el nuevo registro
   grabarEscenario(e){
     this.props.saveEscenario()
-    this.props.refreshListEscenario()
-    this.props.updConciliacion(0)
+    //this.props.refreshListEscenario()
+    //this.props.updConciliacion(0)
   }
 
   //Limpiar el formulario
@@ -68,7 +68,7 @@ class IEscenarioForm extends React.Component{
                 </div>
               </div>
             </header>
-            <input id='id' ref='id' type='hidden' value={this.props.registro.idescenario}/>
+
             <div className="form-group">
               <label htmlFor='nombre'>* Nombre</label>
               <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un nombre de conciiación' autoComplete='off'/>
@@ -97,8 +97,8 @@ class IEscenarioForm extends React.Component{
               <Link to={"/escenarios"} onClick={this.props.limpiarFormEscenario.bind(this)} className="btn btn-warning">Regresar</Link>&nbsp;&nbsp;&nbsp;
               {
                 this.props.state.nombre!="" ?
-                <button onClick={this.props.saveEscenario.bind(this)} className="btn btn-primary" data-dismiss="modal">Grabar</button> :
-                <button onClick={this.props.saveEscenario.bind(this)} className="btn btn-primary" data-dismiss="modal" disabled>Formulario incompleto</button>
+                <button onClick={this.props.saveEscenario.bind(this)} className="btn btn-primary">Grabar</button> :
+                <button className="btn btn-primary" disabled>Formulario incompleto</button>
               }
             </div>
           </div>
@@ -114,7 +114,6 @@ class IEscenarioForm extends React.Component{
                     </button>
                   </div>
                   <div className="modal-body">
-                    <input id='id' ref='id' type='hidden' value={this.props.state.id}/>                    
                     <div className="form-group">
                       <label htmlFor='nombre'>* Nombre</label>
                       <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un nombre de escenario' autoComplete='off'/>
@@ -144,8 +143,8 @@ class IEscenarioForm extends React.Component{
                     <button onClick={this.limpiarEscenario.bind(this)} type="button" className="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                     {
                       this.props.state.conciliacion.substr(1,7)!='"id":0,' && this.props.state.nombre!="" && this.props.state.conciliacion!='{"id":0,"nombre":"Ninguna"}' ?
-                      <button onClick={this.grabarEscenario.bind(this)} className="btn btn-primary" data-dismiss="modal">Grabar</button> :
-                      <button className="btn btn-primary" data-dismiss="modal" disabled>Formulario incompleto</button>
+                      <button onClick={this.grabarEscenario.bind(this)} className="btn btn-primary">Grabar</button> :
+                      <button className="btn btn-primary" disabled>Formulario incompleto</button>
                     }
                   </div>
               </div>
