@@ -30,7 +30,8 @@ import {
   CARGA_CONCILIACIONES,
   UPDATE_VALUE_COMBO_CONCILIACIONES,
   CARGA_CONCILIACIONES_RESULTADO,
-  UPDATE_VALUE_COMBO_CONCILIACIONES_RESULTADO
+  UPDATE_VALUE_COMBO_CONCILIACIONES_RESULTADO,
+  UPDATE_EJECUTAR_CONCILIACIONES_FORM_REQUEST
 } from './const'
 
 import React from 'react'
@@ -39,6 +40,7 @@ import { browserHistory } from 'react-router'
 import update from 'react-addons-update'
 import config from '../../config'
 import { ToastContainer, toast } from 'react-toastify';
+import IMsg from '../ejecucionModule/IMsg'
 
 
 var configuration = require('../../config')
@@ -727,7 +729,7 @@ export const saveConciliacion = () => (dispatch,getState)=>{
         toast.error("No se ha podido actualizar la conciliación", {
           position: toast.POSITION.BOTTOM_LEFT
         })
-        dispatch(limpiarFormConciliacion(),browserHistory.push('/conciliaciones'))
+        //dispatch(limpiarFormConciliacion(),browserHistory.push('/conciliaciones'))
       }
     },error =>{
       console.log('No se ha podido actualizar la conciliacion')
@@ -1129,3 +1131,237 @@ const updateComboConciliacionesResultados = (field,value) => ({
   field : field,
   value: value
 })
+
+//Solicita el estado de ejecución de una conciliacion
+export const getStatusEjecucionConciliacion = (operacion) => (dispatch,getState) => {
+  //Variables necesarias para llamar el webservice
+  var xmlhttp = new XMLHttpRequest();
+  let odiUser = "test"
+  let pwUser = "test"
+  let repository = "LOCAL"
+  let loadplaninstanceid = 1
+  let idConciliacionEjecucion = getState().ejecucionReducer.conciliacion.id
+  let nomConciliacionEjecucion = getState().ejecucionReducer.conciliacion.nombre
+  //Construir peticion SOAP que solicita el estado de la ejecución
+  var sr = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:odi="xmlns.oracle.com/odi/OdiInvoke/">'+
+             '<soapenv:Header/>'+
+             '<soapenv:Body>'+
+                '<odi:OdiGetLoadPlanStatusRequest>'+
+                   '<Credentials>'+
+                    '  <!--You may enter the following 3 items in any order-->'+
+                    '  <!--Optional:-->'+
+                    '  <OdiUser>'+odiUser+'</OdiUser>'+
+                    '  <!--Optional:-->'+
+                    '  <OdiPassword>'+pwUser+'</OdiPassword>'+
+                    '  <WorkRepository>'+repository+'</WorkRepository>'+
+                   '</Credentials>'+
+                   '<!--Zero or more repetitions:-->'+
+                   '<LoadPlanInstanceId>'+loadplaninstanceid+'</LoadPlanInstanceId>'+
+                      '<LoadPlans>'+
+                      '<LoadPlanRunNumber>'+idConciliacionEjecucion+'</LoadPlanRunNumber>'+
+                   '</LoadPlans>'+
+                '</odi:OdiGetLoadPlanStatusRequest>'+
+             '</soapenv:Body>'+
+          '</soapenv:Envelope>'
+  if(xmlhttp){
+    xmlhttp.onreadystatechange = function () {
+      if (xmlhttp.readyState == 4) {
+        if(xmlhttp.status == 200) {
+          var XMLParser = require('react-xml-parser');
+          var xml = new XMLParser().parseFromString(xmlhttp.response);
+          //console.log("Id de la conciliacion a ejecutar...")
+          //console.log(getState().ejecucionReducer.conciliacion.id);
+          //console.log("el ws contesta...")
+          //console.log(xml.getElementsByTagName('LoadPlanStatus')[0].value);
+          //console.log("Operacion....")
+          //console.log(operacion)
+          //Si no hay problema en ejecutarlo
+          if(nomConciliacionEjecucion!=undefined){
+            if(operacion=='ejecutar'){
+              if(xml.getElementsByTagName('LoadPlanStatus')[0].value==1){ //Para mi 1 es que ese está ejecutando
+                toast.error("La conciliación "+nomConciliacionEjecucion+" ya se encuentra en ejecución", {
+                  position: toast.POSITION.BOTTOM_CENTER,
+                })
+              }else{
+                //console.log("Se debe ejecutar la funcion que inicia la conciliacion")
+                dispatch(doEjecutarConciliacion())
+              }
+            }else if(operacion=='cancelar') {
+              if(xml.getElementsByTagName('LoadPlanStatus')[0].value==0){ //Para mi 0 es que ese no se está ejecutando
+                toast.error("La conciliación "+nomConciliacionEjecucion+" no se está ejecutando", {
+                  position: toast.POSITION.BOTTOM_CENTER,
+                })
+              }else{
+                dispatch(doCancelarConciliacion())
+              }
+            }
+          }else{
+            toast.error("Debe Seleccionar alguna de las conciliaciones", {
+              position: toast.POSITION.BOTTOM_CENTER,
+            })
+          }
+        }
+      }
+    }
+    xmlhttp.open('POST',configuration.urlWebService,true);
+    //xmlhttp.setRequestHeader('Content-Type','text/html');
+    xmlhttp.send(sr);
+  }else{
+    alert('no existe el objeto xmlhttp');
+  }
+}
+
+export const doEjecutarConciliacion = () => (dispatch,getState) => {
+  //Variables necesarias para llamar el webservice
+  var xmlhttp = new XMLHttpRequest();
+  let odiUser = "test"
+  let pwUser = "test"
+  let repository = "LOCAL"
+  let context = 1
+  let loglevel = 6
+  let idConciliacionEjecucion = getState().ejecucionReducer.conciliacion.id
+  let nomConciliacionEjecucion = getState().ejecucionReducer.conciliacion.nombre
+  //Construir peticion SOAP
+  var sr = '<?xml version="1.0" encoding="utf-8"?>'+
+            '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:odi="xmlns.oracle.com/odi/OdiInvoke/">'+
+             '<soapenv:Header/>'+
+             '<soapenv:Body>'+
+                '<odi:OdiStartLoadPlanRequest>'+
+                   '<!--You may enter the following 2 items in any order-->'+
+                   '<Credentials>'+
+                      '<!--You may enter the following 3 items in any order-->'+
+                      '<!--Optional:-->'+
+                      '<OdiUser>'+odiUser+'</OdiUser>'+
+                      '<!--Optional:-->'+
+                      '<OdiPassword>'+pwUser+'</OdiPassword>'+
+                      '<WorkRepository>'+repository+'</WorkRepository>'+
+                   '</Credentials>'+
+                   '<StartLoadPlanRequest>'+
+                      '<LoadPlanName>'+nomConciliacionEjecucion+'</LoadPlanName>'+
+                      '<Context>'+context+'</Context>'+
+                      '<!--Optional:-->'+
+                      '<Keywords></Keywords>'+
+                      '<!--Optional:-->'+
+                      '<LogLevel>'+loglevel+'</LogLevel>'+
+                      '<!--Zero or more repetitions:-->'+
+                      '<LoadPlanStartupParameters>'+
+                         '<!--You may enter the following 2 items in any order-->'+
+                         '<Name></Name>'+
+                         '<Value></Value>'+
+                      '</LoadPlanStartupParameters>'+
+                   '</StartLoadPlanRequest>'+
+                '</odi:OdiStartLoadPlanRequest>'+
+             '</soapenv:Body>'+
+          '</soapenv:Envelope>';
+  if(xmlhttp){
+    xmlhttp.onreadystatechange = function () {
+      if (xmlhttp.readyState == 4) {
+        if(xmlhttp.status == 200) {
+          var XMLParser = require('react-xml-parser');
+          var xml = new XMLParser().parseFromString(xmlhttp.response);
+          console.log(getState().ejecucionReducer.conciliacion.id);
+          console.log(xml.getElementsByTagName('RunCount')[0].value);
+          if(xml.getElementsByTagName('RunCount')[0].value==1){
+            toast.success("Se inició la ejecución correctamente", {
+              position: toast.POSITION.BOTTOM_CENTER,
+            })
+          }else{
+            toast.error("No se ha podido ejecutar", {
+              position: toast.POSITION.BOTTOM_CENTER,
+            })
+          }
+        }
+      }
+    }
+    xmlhttp.open('POST',configuration.urlWebService,true);
+    xmlhttp.send(sr);
+  }else{
+    alert('no existe el objeto xmlhttp');
+  }
+}
+
+export const doCancelarConciliacion = () => (dispatch,getState) => {
+  //Variables necesarias para llamar el webservice
+  var xmlhttp = new XMLHttpRequest();
+  let odiUser = "test"
+  let pwUser = "test"
+  let repository = "LOCAL"
+  let context = 1
+  let loglevel = 6
+  let runcount = 0
+  let stoplevel = 1
+  let idConciliacionEjecucion = getState().ejecucionReducer.conciliacion.id
+  let nomConciliacionEjecucion = getState().ejecucionReducer.conciliacion.nombre
+  //Construir peticion SOAP
+  var sr = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:odi="xmlns.oracle.com/odi/OdiInvoke/">'+
+             '<soapenv:Header/>'+
+             '<soapenv:Body>'+
+                '<odi:OdiStopLoadPlanRequest>'+
+                '   <!--You may enter the following 2 items in any order-->'+
+                '   <Credentials>'+
+                '      <!--You may enter the following 3 items in any order-->'+
+                '      <!--Optional:-->'+
+                '      <!--Optional:-->'+
+                '      <OdiUser>'+odiUser+'</OdiUser>'+
+                '      <OdiPassword>'+pwUser+'</OdiPassword>'+
+                '      <WorkRepository>'+repository+'</WorkRepository>'+
+                '   </Credentials>'+
+                '   <OdiStopLoadPlanRequest>'+
+                '      <LoadPlanInstanceId>'+idConciliacionEjecucion+'</LoadPlanInstanceId>'+
+                '      <LoadPlanInstanceRunCount>'+runcount+'</LoadPlanInstanceRunCount>'+
+                '      <StopLevel>'+stoplevel+'</StopLevel>'+
+                '   </OdiStopLoadPlanRequest>'+
+                '</odi:OdiStopLoadPlanRequest>'+
+             '</soapenv:Body>'+
+          '</soapenv:Envelope>';
+  if(xmlhttp){
+    xmlhttp.onreadystatechange = function () {
+      if (xmlhttp.readyState == 4) {
+        if(xmlhttp.status == 200) {
+          var XMLParser = require('react-xml-parser');
+          var xml = new XMLParser().parseFromString(xmlhttp.response);
+          console.log(getState().ejecucionReducer.conciliacion.id);
+          console.log(xml.getElementsByTagName('RunCount')[0].value);
+          if(xml.getElementsByTagName('RunCount')[0].value==1){
+            toast.success("Se detuvo la ejecución correctamente", {
+              position: toast.POSITION.BOTTOM_CENTER,
+            })
+          }else{
+            toast.error("No se ha podido ejecutar", {
+              position: toast.POSITION.BOTTOM_CENTER,
+            })
+          }
+        }
+      }
+    }
+    xmlhttp.open('POST',configuration.urlWebService,true);
+    xmlhttp.send(sr);
+  }else{
+    alert('no existe el objeto xmlhttp');
+  }
+}
+
+
+//Programar Conciliaciones
+//Actualizar tecla por tecla los campos del formulario de conciliaciones
+export const updateFormEjecutarConciliaciones = (field,value) => (dispatch,getState) =>{
+  dispatch(updateFormEjecutarConciliacionesRequest(field,value))
+}
+
+//Enviar al reducer la tecla pulsada
+const updateFormEjecutarConciliacionesRequest = (field,value) => ({
+  type : UPDATE_EJECUTAR_CONCILIACIONES_FORM_REQUEST,
+  field : field,
+  value: value
+})
+
+//Salvar la programación del Formulario
+export const salvarProgramacion = () => (dispatch,getState) => {
+  let hora = getState().ejecucionReducer.hora
+  let minuto = getState().ejecucionReducer.minuto
+  let fecha = getState().ejecucionReducer.fecha
+  let paraconciliacion = getState().ejecucionReducer.conciliacion.nombre
+  toast.warn("Grabar hora:minuto="+hora+":"+minuto+" de la fecha="+fecha+", No hay servicio de backend", {
+    position: toast.POSITION.BOTTOM_CENTER,
+  })
+}

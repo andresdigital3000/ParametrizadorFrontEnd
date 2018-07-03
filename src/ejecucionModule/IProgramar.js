@@ -4,18 +4,21 @@ import APIInvoker from '../utils/APIInvoker'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { Link } from 'react-router';
 import { connect } from 'react-redux'
-//import { cargarComboConciliaciones, updateEjecucion } from '../actions/Actions';
+import { updateFormEjecutarConciliaciones, salvarProgramacion } from '../actions/Actions';
 
 class IProgramar extends React.Component{
   constructor(){
     super(...arguments)
   }
 
-  //Detecta cambios de estado
+  //Detecta cambios de estado en los textbox
   handleInput(e){
-    this.props.updateEjecucion(e.target.id, e.target.value)
+    this.props.updateFormEjecutarConciliaciones(e.target.id, e.target.value)
   }
 
+  grabarProgramacion(){
+    this.props.salvarProgramacion()
+  }
   render(){
     return(
       <div className="container">
@@ -30,75 +33,124 @@ class IProgramar extends React.Component{
               </div>
             </header>
             <div className="form-group">
-              <label htmlFor='fechainicia'>Inicia el:</label><br/>
+              <label htmlFor='fechainicia'>Hora : Minuto</label><br/>
               <div className='row'>
-                <div className='col-sm-6'>
-                  <input className='form-control' type='date' id='fechainicia'/>
-                </div>
-                <div className='col-sm-3'></div>
-              </div>
-              <small id="fechainiciaHelp" className="form-text text-muted">Seleccione desde cuando inicia ejecución</small>
-            </div>
-            <div className="form-group">
-              <label htmlFor='frecuencia'>Repetir cada:</label>
-              <div className='row'>
-                <div className='col-sm-3'>
-                  <input type='number' className='form-control' id='frecuencia' step='1' value={this.props.state.frecuencia}/>&nbsp;&nbsp;&nbsp;
-                </div>
-                <div className='col-sm-9'>
-                  <select id='tipoFrecuencia' className='form-control' value={this.props.state.tipoFrecuencia} onChange={this.handleInput.bind(this)}>
-                    <option value=''>Seleccione uno</option>
-                    <option value='semana'>Semana</option>
-                    <option value='mes'>Mes</option>
-                    <option value='año'>Año</option>
+                <div className='col-sm-5'>
+                  <select className='form-control' id='hora' value={this.props.state.hora} onChange={this.handleInput.bind(this)}>
+                    <option value='00'>00</option>
+                    <option value='01'>01</option>
+                    <option value='02'>02</option>
+                    <option value='03'>03</option>
+                    <option value='04'>04</option>
+                    <option value='05'>05</option>
+                    <option value='06'>06</option>
+                    <option value='07'>07</option>
+                    <option value='08'>08</option>
+                    <option value='09'>09</option>
+                    <option value='10'>10</option>
+                    <option value='11'>11</option>
+                    <option value='12'>12</option>
+                    <option value='13'>13</option>
+                    <option value='14'>14</option>
+                    <option value='15'>15</option>
+                    <option value='16'>16</option>
+                    <option value='17'>17</option>
+                    <option value='18'>18</option>
+                    <option value='19'>19</option>
+                    <option value='20'>20</option>
+                    <option value='21'>21</option>
+                    <option value='22'>22</option>
+                    <option value='23'>23</option>
                   </select>
                 </div>
-              </div>
-              <small id="frecuenciaHelp" className="form-text text-muted">Seleccione frecuencia de ejecución</small>
-            </div>
-            <div className="form-group">
-              <label htmlFor='diasdesemana'>Repetir el:</label><br/>
-              <button id='diasdesemana' value='L' className='btn btn-primary' type='checkbox'>L</button>
-              <button id='diasdesemana' value='M' className='btn btn-primary' type='checkbox'>M</button>
-              <button id='diasdesemana' value='MC' className='btn btn-primary' type='checkbox'>MC</button>
-              <button id='diasdesemana' value='J' className='btn btn-primary'>J</button>
-              <button id='diasdesemana' value='V' className='btn btn-primary'>V</button>
-              <button id='diasdesemana' value='S' className='btn btn-primary'>S</button>
-              <button id='diasdesemana' value='D' className='btn btn-primary'>D</button>
-              <small id="frecuenciaHelp" className="form-text text-muted">Seleccione en qué dias de la semana</small>
-            </div>
-            <div className="form-group">
-              <label htmlFor='cuando'>Finaliza el:</label><br/>
-              <div className='row'>
-                <div className='col-sm-12'>
-                  <input type='radio' name='cuando' id='cuando' value='nunca'/>Nunca<br/>&nbsp;
+                <div className='col-sm-2'>
+                  &nbsp;:&nbsp;
                 </div>
-              </div>
-              <div className='row'>
-                <div className='col-sm-3'>
-                  <input type='radio' name='cuando' id='cuando' value='el'/>El&nbsp;&nbsp;
-                </div>
-                <div className='col-sm-6'>
-                  <input className='form-control' type='date' id='fechacuando'/>
+                <div className='col-sm-5'>
+                  <select className='form-control' id='minuto' value = {this.props.state.minuto} onChange={this.handleInput.bind(this)}>
+                    <option value='00'>00</option>
+                    <option value='01'>01</option>
+                    <option value='02'>02</option>
+                    <option value='03'>03</option>
+                    <option value='04'>04</option>
+                    <option value='05'>05</option>
+                    <option value='06'>06</option>
+                    <option value='07'>07</option>
+                    <option value='08'>08</option>
+                    <option value='09'>09</option>
+                    <option value='10'>10</option>
+                    <option value='11'>11</option>
+                    <option value='12'>12</option>
+                    <option value='13'>13</option>
+                    <option value='14'>14</option>
+                    <option value='15'>15</option>
+                    <option value='16'>16</option>
+                    <option value='17'>17</option>
+                    <option value='18'>18</option>
+                    <option value='19'>19</option>
+                    <option value='20'>20</option>
+                    <option value='21'>21</option>
+                    <option value='22'>22</option>
+                    <option value='23'>23</option>
+                    <option value='24'>24</option>
+                    <option value='25'>25</option>
+                    <option value='26'>26</option>
+                    <option value='27'>27</option>
+                    <option value='28'>28</option>
+                    <option value='29'>29</option>
+                    <option value='30'>30</option>
+                    <option value='31'>31</option>
+                    <option value='32'>32</option>
+                    <option value='33'>33</option>
+                    <option value='34'>34</option>
+                    <option value='35'>35</option>
+                    <option value='36'>36</option>
+                    <option value='37'>37</option>
+                    <option value='38'>38</option>
+                    <option value='39'>39</option>
+                    <option value='40'>40</option>
+                    <option value='41'>41</option>
+                    <option value='42'>42</option>
+                    <option value='43'>43</option>
+                    <option value='44'>44</option>
+                    <option value='45'>45</option>
+                    <option value='46'>46</option>
+                    <option value='47'>47</option>
+                    <option value='48'>48</option>
+                    <option value='49'>49</option>
+                    <option value='50'>50</option>
+                    <option value='51'>51</option>
+                    <option value='52'>52</option>
+                    <option value='53'>53</option>
+                    <option value='54'>54</option>
+                    <option value='55'>55</option>
+                    <option value='56'>56</option>
+                    <option value='57'>57</option>
+                    <option value='58'>58</option>
+                    <option value='59'>59</option>
+                  </select>
                 </div>
                 <div className='col-sm-3'></div>
               </div>
+              <small id="fechainiciaHelp" className="form-text text-muted">Seleccione hora y minuto de ejecución</small>
+            </div>
+            <div className="form-group">
+              <label htmlFor='fechainicia'>Fecha:</label><br/>
               <div className='row'>
-                <div className='col-sm-3'>
-                  <input type='radio' name='cuando' id='cuando' value='despuesde'/>Después de&nbsp;&nbsp;
+                <div className='col-sm-12'>
+                  <input className='form-control' type='date' id='fecha' value={this.props.state.fecha} onChange={this.handleInput.bind(this)} />
                 </div>
-                <div className='col-sm-2'>
-                <input type='number' className='form-control' value={this.props.state.despuesde} step='1'/>
-                </div>
-                <div className='col-sm-7'>
-                  <label>Ocurrencias</label>
-                </div>
+                <div className='col-sm-3'></div>
               </div>
-              <small id="cuandoHelp" className="form-text text-muted">Seleccione el tipo de ocurrencia</small>
+              <small id="fechainiciaHelp" className="form-text text-muted">Fecha de ejecución</small>
             </div>
             <div className="form-group">
               <Link to="/ejecucion" className='btn btn-warning'>Regresar</Link>&nbsp;&nbsp;&nbsp;
-              <Link to="#" className="btn btn-primary">Salvar</Link>
+              {
+                this.props.state.fecha!='' ?
+                <button className="btn btn-primary" onClick={this.grabarProgramacion.bind(this)}>Salvar</button> :
+                <button className="btn btn-primary" disabled>Salvar</button>
+              }
             </div>
           </div>
         </div>
@@ -109,12 +161,13 @@ class IProgramar extends React.Component{
 const mapStateToProps = (state) =>{
   return{
     state: {
-      conciliaciones : state.ejecucionReducer.conciliaciones,
-      conciliacion : state.ejecucionReducer.conciliacion
+      hora : state.ejecucionReducer.hora,
+      minuto : state.ejecucionReducer.minuto,
+      fecha : state.ejecucionReducer.fecha
     }
   }
 }
 
 export default connect (mapStateToProps,{
-  //cargarComboConciliaciones, updateEjecucion
+  updateFormEjecutarConciliaciones, salvarProgramacion
 })(IProgramar)

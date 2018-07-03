@@ -4,8 +4,11 @@ import APIInvoker from '../utils/APIInvoker'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { Link } from 'react-router';
 import { connect } from 'react-redux'
-import { cargarComboConciliaciones, updateEjecucion } from '../actions/Actions';
+import { cargarComboConciliaciones, updateEjecucion, getStatusEjecucionConciliacion } from '../actions/Actions';
 import tinysoap from 'tinysoap'
+import IMsg from './IMsg'
+import { ToastContainer, toast } from 'react-toastify';
+import '!style-loader!css-loader!react-toastify/dist/ReactToastify.css';
 
 class IEjecucion extends React.Component{
   constructor(){
@@ -18,62 +21,6 @@ class IEjecucion extends React.Component{
   //Detecta cambios de estado
   handleInput(e){
     this.props.updateEjecucion(e.target.id, e.target.value)
-  }
-
-  //Ejecuta llamado a web service SOAP
-  onClick(e){
-    console.log("Se oprime el botón de ejecutar...")
-  }
-
-  callWebservice(){
-    var xmlhttp = new XMLHttpRequest();
-    //Construir peticion SOAP
-    var sr = '<?xml version="1.0" encoding="utf-8"?>'+
-              '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:odi="xmlns.oracle.com/odi/OdiInvoke/">'+
-               '<soapenv:Header/>'+
-               '<soapenv:Body>'+
-                  '<odi:OdiStartLoadPlanRequest>'+
-                     '<!--You may enter the following 2 items in any order-->'+
-                     '<Credentials>'+
-                        '<!--You may enter the following 3 items in any order-->'+
-                        '<!--Optional:-->'+
-                        '<OdiUser>TEST</OdiUser>'+
-                        '<!--Optional:-->'+
-                        '<OdiPassword>TEST</OdiPassword>'+
-                        '<WorkRepository></WorkRepository>'+
-                     '</Credentials>'+
-                     '<StartLoadPlanRequest>'+
-                        '<LoadPlanName>1</LoadPlanName>'+
-                        '<Context>1</Context>'+
-                        '<!--Optional:-->'+
-                        '<Keywords></Keywords>'+
-                        '<!--Optional:-->'+
-                        '<LogLevel>6</LogLevel>'+
-                        '<!--Zero or more repetitions:-->'+
-                        '<LoadPlanStartupParameters>'+
-                           '<!--You may enter the following 2 items in any order-->'+
-                           '<Name></Name>'+
-                           '<Value></Value>'+
-                        '</LoadPlanStartupParameters>'+
-                     '</StartLoadPlanRequest>'+
-                  '</odi:OdiStartLoadPlanRequest>'+
-               '</soapenv:Body>'+
-            '</soapenv:Envelope>';
-    if(xmlhttp){
-      xmlhttp.onreadystatechange = function () {
-        if (xmlhttp.readyState == 4) {
-          if(xmlhttp.status == 200) {
-            alert('Response : '+xmlhttp.response);
-            result : xmlhttp.response.text;
-          }
-        }
-      }
-      xmlhttp.open('POST','http://localhost:83/odiMockup',true);
-      //xmlhttp.setRequestHeader('Content-Type','text/html');
-      xmlhttp.send(sr);
-    }else{
-      alert('no existe el objeto xmlhttp');
-    }
   }
 
   render(){
@@ -92,7 +39,7 @@ class IEjecucion extends React.Component{
             <div className="form-group">
               <label htmlFor='conciliacion'>Conciliación</label>
               <select id='conciliacion' className='form-control form-control-lg' value={JSON.stringify(this.props.state.conciliacion)} onChange={this.handleInput.bind(this)}>
-                <option value=''>Seleccione una</option>
+                <option value='{"id":0,"nombre":"Ninguna"}'>Seleccione una</option>
                 {this.props.state.conciliaciones.map(function(currentValue,index,array){
                   return(
                     <option key={currentValue.id} value={JSON.stringify(currentValue)}>{currentValue.nombre}</option>
@@ -102,11 +49,24 @@ class IEjecucion extends React.Component{
               <small id="conciliacionHelp" className="form-text text-muted">conciliación para realizar el proceso</small>
             </div>
             <div className="form-group">
-              <button id='ejecutar' className='btn btn-primary' onClick={this.callWebservice.bind(this)}>Ejecutar</button>&nbsp;&nbsp;&nbsp;&nbsp;
-              <Link to="/ejecucion/programar" className='btn btn-primary'>Programar Ejecución</Link>
+              {
+                this.props.state.conciliacion.id!=0 && this.props.state.conciliacion!='' ?
+                <button id='ejecutar' className='btn btn-primary' onClick={() => toast.info(<IMsg {...this.props} mensaje='Está seguro de ejecutar la conciliación?' accion='ejecutar'/>, { autoClose: false, position: toast.POSITION.BOTTOM_CENTER })}>Ejecutar</button> :
+                <button id='ejecutar' className='btn btn-primary' disabled>Ejecutar</button>
+              }
+              &nbsp;&nbsp;&nbsp;&nbsp;
+              {
+                this.props.state.conciliacion.id!=0 && this.props.state.conciliacion!='' ?
+                <Link to="/ejecucion/programar" className='btn btn-primary'>Programar Ejecución </Link> :
+                <button className='btn btn-primary' disabled>Programar Ejecución</button>
+              }
             </div>
             <div className="form-group">
-              <button id='cancelar' className='btn btn-primary'>Cancelar Proceso</button>
+              {
+                this.props.state.conciliacion.id!=0 && this.props.state.conciliacion!='' ?
+                <button id='cancelar' className='btn btn-warning' onClick={() => toast.info(<IMsg {...this.props} mensaje='Está seguro de detener la ejecución de la conciliación?' accion='cancelar'/>, { autoClose: false, position: toast.POSITION.BOTTOM_CENTER })}>Cancelar</button> :
+                <button id='cancelar' className='btn btn-warning' disabled>Cancelar</button>
+              }
             </div>
           </div>
         </div>
@@ -124,5 +84,5 @@ const mapStateToProps = (state) =>{
 }
 
 export default connect (mapStateToProps,{
-  cargarComboConciliaciones, updateEjecucion
+  cargarComboConciliaciones, updateEjecucion, getStatusEjecucionConciliacion
 })(IEjecucion)

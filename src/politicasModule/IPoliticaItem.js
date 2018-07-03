@@ -1,8 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Link } from 'react-router';
 import APIInvoker from '../utils/APIInvoker'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
+import { Link } from 'react-router';
 import { connect } from 'react-redux'
 import { refreshListPolitica } from '../actions/Actions';
 
@@ -15,6 +15,7 @@ class IPoliticaItem extends React.Component{
     console.log("PROPS IPoliticaItem...")
     console.log(this.props)
   }
+  
   render(){
     return(
           <tbody>
