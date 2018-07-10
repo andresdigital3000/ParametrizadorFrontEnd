@@ -720,7 +720,7 @@ export const saveConciliacion = () => (dispatch,getState)=>{
     }
     APIInvoker.invokePUT('/conciliaciones',conciliacion_salvar,response =>{
       if(response.id!=undefined){
-        dispatch(limpiarFormConciliacion(),browserHistory.push('/conciliaciones'))
+        //dispatch(limpiarFormConciliacion(),browserHistory.push('/conciliaciones'))
         toast.success("Se actualizó la conciliación", {
           position: toast.POSITION.BOTTOM_LEFT
         })
@@ -1008,7 +1008,7 @@ export const saveEscenario = () => (dispatch,getState)=>{
     }
     APIInvoker.invokePUT('/escenarios',escenario_salvar,response =>{
       if(response.id!=undefined){
-        toast.error("Se actualizó el escenario", {
+        toast.success("Se actualizó el escenario", {
           position: toast.POSITION.BOTTOM_LEFT
         })
         //dispatch(limpiarFormEscenario(),browserHistory.push('/escenarios'))

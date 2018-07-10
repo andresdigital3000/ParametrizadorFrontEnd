@@ -15,16 +15,16 @@ class IPoliticaItem extends React.Component{
     console.log("PROPS IPoliticaItem...")
     console.log(this.props)
   }
-  
+
   render(){
     return(
           <tbody>
               {this.props.state.items.map(function(currentValue,index,array){
                 let id_conciliacion=0
                 let nom_conciliacion="Ninguna"
-                if(currentValue.conciliaciones[0]!=undefined){
-                    id_conciliacion=currentValue.conciliaciones[0].id
-                    nom_conciliacion=currentValue.conciliaciones[0].nombre
+                if(currentValue.conciliaciones!=undefined){
+                    id_conciliacion=currentValue.conciliaciones.id
+                    nom_conciliacion=currentValue.conciliaciones.nombre
                 }
                 return (
                   <tr key={currentValue.id}>
