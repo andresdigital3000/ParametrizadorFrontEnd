@@ -4,7 +4,7 @@ import APIInvoker from '../utils/APIInvoker'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { Link } from 'react-router';
 import { connect } from 'react-redux'
-import { cargarComboConciliaciones, updateEjecucion, getStatusEjecucionConciliacion } from '../actions/Actions';
+import { cargarComboConciliaciones, updateEjecucion, getStatusEjecucionConciliacion, doEjecutarConciliacion, doCancelarConciliacion } from '../actions/Actions';
 import tinysoap from 'tinysoap'
 import IMsg from './IMsg'
 import { ToastContainer, toast } from 'react-toastify';
@@ -84,5 +84,5 @@ const mapStateToProps = (state) =>{
 }
 
 export default connect (mapStateToProps,{
-  cargarComboConciliaciones, updateEjecucion, getStatusEjecucionConciliacion
+  cargarComboConciliaciones, updateEjecucion, getStatusEjecucionConciliacion, doEjecutarConciliacion, doCancelarConciliacion
 })(IEjecucion)

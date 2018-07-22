@@ -9,7 +9,8 @@ import escenarioReducer from './EscenarioReducer'
 import escenarioFormReducer from './EscenarioFormReducer'
 import ejecucionReducer from './EjecucionReducer'
 import resultadoReducer from './ResultadoReducer'
-
+import indicadorReducer from './indicadorReducer'
+import indicadorFormReducer from './indicadorFormReducer'
 
 
 export default combineReducers({
@@ -22,5 +23,7 @@ export default combineReducers({
   escenarioReducer,
   escenarioFormReducer,
   ejecucionReducer,
-  resultadoReducer
+  resultadoReducer,
+  indicadorReducer,
+  indicadorFormReducer
 })

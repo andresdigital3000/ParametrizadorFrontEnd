@@ -4,20 +4,19 @@ import APIInvoker from '../utils/APIInvoker'
 import { Router, Route, browserHistory, IndexRoute } from "react-router"
 import { Link } from 'react-router'
 import { connect } from 'react-redux'
-import { getStatusEjecucionConciliacion } from '../actions/Actions'
+import { doEjecutarConciliacion, doCancelarConciliacion } from '../actions/Actions';
 
 class IMsg extends React.Component{
-  constructor(props){
-    super(props)
-  }
-
-  componentWillMount(){
-    console.log("IMsg props....")
-    console.log(this.props)
+  constructor(){
+    super(...arguments)
   }
 
   doConciliacion(){
-    this.props.getStatusEjecucionConciliacion(this.props.accion)
+    this.props.doEjecutarConciliacion()
+  }
+
+  doCancelar(){
+    this.props.doCancelarConciliacion()
   }
 
   render(){
@@ -26,7 +25,12 @@ class IMsg extends React.Component{
         <b>{this.props.mensaje}</b>
         <div>
           <div className="button-wrap">
-            <button className="btn btn-danger" onClick={this.doConciliacion.bind(this)}>Si</button>&nbsp;&nbsp;&nbsp;
+            <If condition={this.props.mensaje=='Está seguro de ejecutar la conciliación?'}>
+              <button className="btn btn-danger" onClick={this.doConciliacion.bind(this)}>Si</button>&nbsp;&nbsp;&nbsp;
+            </If>
+            <If condition={this.props.mensaje=='Está seguro de detener la ejecución de la conciliación?'}>
+              <button className="btn btn-danger" onClick={this.doCancelar.bind(this)}>Si</button>&nbsp;&nbsp;&nbsp;
+            </If>
             <button className="btn btn-default">No</button>
           </div>
         </div>
@@ -38,11 +42,11 @@ class IMsg extends React.Component{
 const mapStateToProps = (state) =>{
   return{
     state: {
-      
+      prueba: 0
     }
   }
 }
 
 export default connect (mapStateToProps,{
-  getStatusEjecucionConciliacion
+  doEjecutarConciliacion, doCancelarConciliacion
 })(IMsg)

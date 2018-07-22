@@ -13,11 +13,13 @@ import IEscenarioDelete from '../escenariosModule/IEscenarioDelete'
 import IEjecucion from '../ejecucionModule/IEjecucion'
 import IProgramar from '../ejecucionModule/IProgramar'
 import IResultados from '../resultadosModule/IResultados'
+import IIndicador from '../indicadoresModule/IIndicador'
+import IIndicadorForm from '../indicadoresModule/IIndicadorForm'
+import IIndicadorDelete from '../indicadoresModule/IIndicadorDelete'
 import Loading from '../politicasModule/Loading.js'
 import { browserHistory } from 'react-router'
 import { connect } from 'react-redux'
 import { relogin } from '../actions/Actions'
-//import Notifications, {notify} from 'react-notify-toast';
 import { ToastContainer, toast } from 'react-toastify';
 import '!style-loader!css-loader!react-toastify/dist/ReactToastify.css';
 
@@ -97,14 +99,34 @@ class AdminThemplete extends React.Component{
                     </Otherwise>
                   </Choose>
                 </If>
-                <If condition={this.props.location.pathname.substr(1,10) == 'ejecucion'}>
+                <If condition={this.props.location.pathname.substr(1,9) == 'ejecucion'}>
                     <IEjecucion/>
                 </If>
                 <If condition={this.props.location.pathname.substr(1,19) == 'ejecucion/programar'}>
                     <IProgramar/>
                 </If>
-                <If condition={this.props.location.pathname.substr(1,11) == 'resultados'}>
+                <If condition={this.props.location.pathname.substr(1,10) == 'resultados'}>
                     <IResultados/>
+                </If>
+                <If condition={this.props.location.pathname.substr(1,11) == 'indicadores'}>
+                  <Choose>
+                    <When condition={this.props.params.idindicador && this.props.location.pathname.substr(1,16) == 'indicadores/edit'}>
+                      <IIndicadorForm registro={this.props.params}/>
+                    </When>
+                    <When condition={this.props.params.idindicador && this.props.location.pathname.substr(1,16) != 'indicadores/edit'}>
+                      <IIndicador registro={this.props.params.idindicador}/>
+                    </When>
+                    <When condition={this.props.params.idindicadordelete}>
+                      <IIndicadorDelete registro={this.props.params}/>
+                    </When>
+                    <When condition={this.props.params.idindicadorfiltro}>
+                      <IIndicador registro={this.props.params}/>
+                    </When>
+                    <Otherwise>
+                      <IIndicadorForm/>
+                      <IIndicador/>
+                    </Otherwise>
+                  </Choose>
                 </If>
             </When>
             <Otherwise>

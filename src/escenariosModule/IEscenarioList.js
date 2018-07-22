@@ -40,7 +40,7 @@ class IEscenarioList extends React.Component{
                         CONCILIACIÓN
                       </th>
                       <th>
-                        QUERY DINAMICO
+                        QUERY
                       </th>
                       <th>
                         PARAMETROS

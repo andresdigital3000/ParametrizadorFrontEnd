@@ -16,7 +16,6 @@ class IConciliacionPaginador extends React.Component{
     let limit = this.props.state.registrosPorPagina
     return(
         <nav aria-label="Paginar">
-          <If condition={Object.entries(this.props.state.paginador).length > 1}>
             <ul className="pagination">
               <li className="page-item">
                 <a className="page-link" onClick={() => this.props.moverPaginaConciliaciones(this.props.state.paginaActual-1)} aria-label="Previous">
@@ -48,7 +47,6 @@ class IConciliacionPaginador extends React.Component{
                 </a>
               </li>
             </ul>
-          </If>
         </nav>
     )
   }

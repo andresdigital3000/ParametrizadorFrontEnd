@@ -31,7 +31,18 @@ import {
   UPDATE_VALUE_COMBO_CONCILIACIONES,
   CARGA_CONCILIACIONES_RESULTADO,
   UPDATE_VALUE_COMBO_CONCILIACIONES_RESULTADO,
-  UPDATE_EJECUTAR_CONCILIACIONES_FORM_REQUEST
+  UPDATE_EJECUTAR_CONCILIACIONES_FORM_REQUEST,
+  ACTUALIZA_PAGINADOR_INDICADORES,
+  CARGAR_INDICADORES,
+  UPDATE_INDICADORES_FORM_REQUEST,
+  LIMPIAR_FORM_INDICADOR,
+  CARGAR_INDICADOR_FORM,
+  IR_PAGINA_INDICADORES,
+  UPDATE_ESCENARIO_EN_INDICADORES,
+  CARGA_ESCENARIOS_EN_INDICADORES,
+  UPDATE_RESULTADO_EN_INDICADORES,
+  CARGA_RESULTADOS_EN_INDICADORES,
+  UPDATE_FORMULA
 } from './const'
 
 import React from 'react'
@@ -670,18 +681,40 @@ export const saveConciliacion = () => (dispatch,getState)=>{
     let conciliacion_salvar = {
       id : getState().conciliacionFormReducer.id,
       nombre : getState().conciliacionFormReducer.nombre,
-      webservice : getState().conciliacionFormReducer.webservice,
       descripcion : getState().conciliacionFormReducer.descripcion,
       idpolitica : getState().conciliacionReducer.politica.id,
       usuario: getState().loginReducer.profile.userName
     }
+    let id_grabado=0
     APIInvoker.invokePOST('/conciliaciones',conciliacion_salvar,response =>{
       if(response.id!=undefined){
-        dispatch(antesLimpiarFormConciliacion())
-        dispatch(refreshListConciliacion())
+        id_grabado = response.id
         toast.success("Se grabó una nueva conciliación", {
           position: toast.POSITION.BOTTOM_LEFT
         })
+        if(id_grabado!=0){
+          let paquete_salvar ={
+            nombreWs : getState().conciliacionFormReducer.webservice,
+            paqueteWs : getState().conciliacionFormReducer.webservice,
+            usuario: getState().loginReducer.profile.userName,
+            idConciliacion : id_grabado
+          }
+          APIInvoker.invokePOST('/wstransformacion',paquete_salvar,response2 =>{
+            if(response2.id!=undefined){
+              toast.success("...y se insertó el paquete", {
+                position: toast.POSITION.BOTTOM_LEFT
+              })
+            }else{
+              toast.error("No se pudo asociar el paquete", {
+                position: toast.POSITION.BOTTOM_LEFT
+              })
+            }
+          },error =>{
+            console.log('No se ha podido asignar el paquete')
+          })
+        }
+        dispatch(antesLimpiarFormConciliacion())
+        dispatch(refreshListConciliacion())
       }else{
         console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
         if(response.codigo==409){
@@ -693,8 +726,6 @@ export const saveConciliacion = () => (dispatch,getState)=>{
             position: toast.POSITION.BOTTOM_LEFT
           })
         }
-        //dispatch(antesLimpiarFormConciliacion())
-        //dispatch(refreshListConciliacion())
       }
     },error =>{
       console.log('No se ha podido crear la conciliacion')
@@ -713,28 +744,73 @@ export const saveConciliacion = () => (dispatch,getState)=>{
     let conciliacion_salvar = {
       id : getState().conciliacionFormReducer.id,
       nombre : getState().conciliacionFormReducer.nombre,
-      webservice : getState().conciliacionFormReducer.webservice,
       descripcion : getState().conciliacionFormReducer.descripcion,
       idPolitica : idPoliticaGrabar,
       nombrePolitica : nombrePoliticaGrabar
     }
     APIInvoker.invokePUT('/conciliaciones',conciliacion_salvar,response =>{
       if(response.id!=undefined){
-        //dispatch(limpiarFormConciliacion(),browserHistory.push('/conciliaciones'))
         toast.success("Se actualizó la conciliación", {
           position: toast.POSITION.BOTTOM_LEFT
         })
-      }else{
-        console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
-        toast.error("No se ha podido actualizar la conciliación", {
-          position: toast.POSITION.BOTTOM_LEFT
-        })
-        //dispatch(limpiarFormConciliacion(),browserHistory.push('/conciliaciones'))
+        let id_grabado = getState().conciliacionFormReducer.id
+        if(id_grabado!=0){
+          //Al tener una conciliación seleccionada
+          if(response.transformaciones.length>0){
+            //Si al editar la conciliacion tiene una transformación asociada
+            let paquete_salvar ={
+              nombreWs : getState().conciliacionFormReducer.webservice,
+              paqueteWs : getState().conciliacionFormReducer.webservice,
+              usuario: getState().loginReducer.profile.userName,
+              idConciliacion : id_grabado,
+              id : response.transformaciones[0].id
+            }
+            APIInvoker.invokePUT('/wstransformacion',paquete_salvar,response2 =>{
+              if(response.id!=undefined){
+                toast.success("actualizando el paquete", {
+                  position: toast.POSITION.BOTTOM_LEFT
+                })
+              }else{
+                toast.error("No se pudo actualizar el paquete", {
+                  position: toast.POSITION.BOTTOM_LEFT
+                })
+              }
+            },error =>{
+              console.log('No se ha podido editar el nombre del paquete')
+            })
+          }else{
+            //Si al editar la conciliación hay que crear una transformación
+            let paquete_salvar ={
+              nombreWs : getState().conciliacionFormReducer.webservice,
+              paqueteWs : getState().conciliacionFormReducer.webservice,
+              usuario: getState().loginReducer.profile.userName,
+              idConciliacion : id_grabado
+            }
+            APIInvoker.invokePOST('/wstransformacion',paquete_salvar,response2 =>{
+              if(response2.id!=undefined){
+                toast.success("...y se agregó el paquete", {
+                  position: toast.POSITION.BOTTOM_LEFT
+                })
+              }else{
+                toast.error("No se pudo agregar el paquete", {
+                  position: toast.POSITION.BOTTOM_LEFT
+                })
+              }
+            },error =>{
+              console.log('No se ha podido editar el nombre del paquete')
+            })
+          }
+        }else{
+          console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
+          toast.error("No se ha podido actualizar la conciliación", {
+            position: toast.POSITION.BOTTOM_LEFT
+          })
+        }
       }
     },error =>{
       console.log('No se ha podido actualizar la conciliacion')
     })
-  }
+}
 }
 
 //Funcion que vuelve a cargar el combo de politicas al limpiar el formulario de conciliaciones
@@ -767,16 +843,23 @@ const cargarConciliacionEnForm = (conciliacion) => ({
 //Funcion que elimina una conciliacion
 export const borrarConciliacion = () => (dispatch,getState) =>{
   let idconciliacion = getState().conciliacionFormReducer.id
-  APIInvoker.invokeDELETE('/conciliaciones/'+idconciliacion, response => {
+  let idtransformacion = getState().conciliacionFormReducer.idPaquete
+  APIInvoker.invokeDELETE('/wstransformacion/'+idtransformacion, response => {
   },error =>{
-      console.log(error)
-      toast.success("Se eliminó la conciliación", {
-        position: toast.POSITION.BOTTOM_LEFT
-      })
-      dispatch(
-        limpiarFormConciliacion(),
-        browserHistory.push('/conciliaciones')
-      )
+    toast.success("Se eliminó el paquete asociado", {
+      position: toast.POSITION.BOTTOM_LEFT
+    })
+    APIInvoker.invokeDELETE('/conciliaciones/'+idconciliacion, response => {
+    },error =>{
+        console.log(error)
+        toast.success("Se eliminó la conciliación", {
+          position: toast.POSITION.BOTTOM_LEFT
+        })
+        dispatch(
+          limpiarFormConciliacion(),
+          browserHistory.push('/conciliaciones')
+        )
+    })
   })
 }
 
@@ -947,6 +1030,7 @@ const updConciliacionReducerEscenario = (objConciliacion)=>({
   type : UPDATE_CONCILIACION_EN_ESCENARIOS,
   value : objConciliacion
 })
+
 //Actualizar tecla por tecla los campos del formulario de escenarios
 export const updateFormEscenarios = (field,value) => (dispatch,getState) =>{
   dispatch(updateFormEscenariosRequest(field,value))
@@ -1101,6 +1185,282 @@ const updateComboConciliaciones = (field,value) => ({
   value: value
 })
 
+//Solicita el estado de ejecución de una conciliacion
+export const getStatusEjecucionConciliacion = (operacion) => (dispatch,getState) => {
+  //Variables necesarias para llamar el webservice
+  var xmlhttp = new XMLHttpRequest();
+  let odiUser = configuration.webService.user
+  let pwUser = configuration.webService.pw
+  let repository = configuration.webService.repository
+  let loadplaninstanceid = 1
+  let idConciliacionEjecucion = getState().ejecucionReducer.conciliacion.id
+  let nomConciliacionEjecucion = getState().ejecucionReducer.conciliacion.nombre
+  //Construir peticion SOAP que solicita el estado de la ejecución
+  var sr = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:odi="xmlns.oracle.com/odi/OdiInvoke/">'+
+             '<soapenv:Header/>'+
+             '<soapenv:Body>'+
+                '<odi:OdiGetLoadPlanStatusRequest>'+
+                   '<Credentials>'+
+                    '  <!--You may enter the following 3 items in any order-->'+
+                    '  <!--Optional:-->'+
+                    '  <OdiUser>'+odiUser+'</OdiUser>'+
+                    '  <!--Optional:-->'+
+                    '  <OdiPassword>'+pwUser+'</OdiPassword>'+
+                    '  <WorkRepository>'+repository+'</WorkRepository>'+
+                   '</Credentials>'+
+                   '<!--Zero or more repetitions:-->'+
+                   '<LoadPlanInstanceId>'+loadplaninstanceid+'</LoadPlanInstanceId>'+
+                      '<LoadPlans>'+
+                      '<LoadPlanRunNumber>'+idConciliacionEjecucion+'</LoadPlanRunNumber>'+
+                   '</LoadPlans>'+
+                '</odi:OdiGetLoadPlanStatusRequest>'+
+             '</soapenv:Body>'+
+          '</soapenv:Envelope>'
+  if(xmlhttp){
+    xmlhttp.onreadystatechange = function () {
+      if (xmlhttp.readyState == 4) {
+        if(xmlhttp.status == 200) {
+          idInstance = 0
+          var XMLParser = require('react-xml-parser');
+          var xml = new XMLParser().parseFromString(xmlhttp.response);
+          if(xml.getElementsByTagName('LoadPlanStatus')[0].value=='D'){
+            idInstance = xml.getElementsByTagName('LoadPlaninstanceId')[0].value
+          }else if(xml.getElementsByTagName('LoadPlanStatus')[0].value=='E'){
+            toast.error("Error al ejecutar el proceso, por favorcomuniquese con el asesor", {
+              position: toast.POSITION.BOTTOM_CENTER,
+            })
+          }else if(xml.getElementsByTagName('LoadPlanStatus')[0].value=='M'){
+            idInstance = xml.getElementsByTagName('LoadPlaninstanceId')[0].value
+            toast.success("Se inició la ejecución con éxito pero con algunos warnings", {
+              position: toast.POSITION.BOTTOM_CENTER,
+            })
+          }else if(xml.getElementsByTagName('LoadPlanStatus')[0].value=='Q'){
+            idInstance = xml.getElementsByTagName('LoadPlaninstanceId')[0].value
+            toast.success("La ejecución queda en cola", {
+              position: toast.POSITION.BOTTOM_CENTER,
+            })
+          }else if(xml.getElementsByTagName('LoadPlanStatus')[0].value=='W'){
+            idInstance = xml.getElementsByTagName('LoadPlaninstanceId')[0].value
+            toast.success("La ejecución está en espera", {
+              position: toast.POSITION.BOTTOM_CENTER,
+            })
+          }else if(xml.getElementsByTagName('LoadPlanStatus')[0].value=='R'){
+            toast.warning("La ejecución ya se encuentra corriendo", {
+              position: toast.POSITION.BOTTOM_CENTER,
+            })
+          }
+        }
+      }
+    }
+    xmlhttp.open('POST',configuration.webService.url,true);
+    //xmlhttp.setRequestHeader('Content-Type','text/html');
+    xmlhttp.send(sr);
+  }else{
+    alert('no existe el objeto xmlhttp');
+  }
+}
+
+export const doEjecutarConciliacion = () => (dispatch,getState) => {
+  //decidir si llamar el web service o no segun lo recibido
+  let idConciliacionEjecucion = getState().ejecucionReducer.conciliacion.id
+  let nomConciliacionEjecucion = getState().ejecucionReducer.conciliacion.nombre
+  let idPlanInstancia = 0
+  let numEjecuciones = getState().ejecucionReducer.conciliacion.ejecucionesProceso.length - 1
+  if(getState().ejecucionReducer.conciliacion.ejecucionesProceso.length > 0){
+    idPlanInstancia = getState().ejecucionReducer.conciliacion.ejecucionesProceso[numEjecuciones].idPlanInstance
+  }
+  //tener en cuenta periodicidad
+
+  if(idPlanInstancia==0){
+    //Variables necesarias para llamar el webservice
+    var xmlhttp = new XMLHttpRequest();
+    let odiUser = configuration.webService.user
+    let pwUser = configuration.webService.pw
+    let repository = configuration.webService.repository
+    let context = 1
+    let loglevel = 6
+    //Construir peticion SOAP
+    var sr = '<?xml version="1.0" encoding="utf-8"?>'+
+              '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:odi="xmlns.oracle.com/odi/OdiInvoke/">'+
+               '<soapenv:Header/>'+
+               '<soapenv:Body>'+
+                  '<odi:OdiStartLoadPlanRequest>'+
+                     '<!--You may enter the following 2 items in any order-->'+
+                     '<Credentials>'+
+                        '<!--You may enter the following 3 items in any order-->'+
+                        '<!--Optional:-->'+
+                        '<OdiUser>'+odiUser+'</OdiUser>'+
+                        '<!--Optional:-->'+
+                        '<OdiPassword>'+pwUser+'</OdiPassword>'+
+                        '<WorkRepository>'+repository+'</WorkRepository>'+
+                     '</Credentials>'+
+                     '<StartLoadPlanRequest>'+
+                        '<LoadPlanName>'+nomConciliacionEjecucion+'</LoadPlanName>'+
+                        '<Context>'+context+'</Context>'+
+                        '<!--Optional:-->'+
+                        '<Keywords></Keywords>'+
+                        '<!--Optional:-->'+
+                        '<LogLevel>'+loglevel+'</LogLevel>'+
+                        '<!--Zero or more repetitions:-->'+
+                        '<LoadPlanStartupParameters>'+
+                           '<!--You may enter the following 2 items in any order-->'+
+                           '<Name></Name>'+
+                           '<Value></Value>'+
+                        '</LoadPlanStartupParameters>'+
+                     '</StartLoadPlanRequest>'+
+                  '</odi:OdiStartLoadPlanRequest>'+
+               '</soapenv:Body>'+
+            '</soapenv:Envelope>';
+    if(xmlhttp){
+      xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4) {
+          if(xmlhttp.status == 200) {
+            var XMLParser = require('react-xml-parser');
+            var xml = new XMLParser().parseFromString(xmlhttp.response);
+            let idInstance = 0
+            if(xml.getElementsByTagName('OdiLoadPlanInstanceId')[0].value!=''){
+              idInstance = xml.getElementsByTagName('OdiLoadPlanInstanceId')[0].value
+              toast.success("Se inició la ejecución correctamente", {
+                position: toast.POSITION.BOTTOM_CENTER,
+              })
+            }
+            if(idInstance!=0){
+              let ejecucion_salvar ={
+                nombre : nomConciliacionEjecucion,
+                idPlanInstance : idInstance,
+                idConciliacion : idConciliacionEjecucion,
+              }
+              APIInvoker.invokePOST('/ejecucionproceso',ejecucion_salvar,response2 =>{
+                if(response.id!=undefined){
+                  toast.success("...y se almacenó la información de la ejecución", {
+                    position: toast.POSITION.BOTTOM_LEFT
+                  })
+                }else{
+                  toast.error("No se pudo almacenar la información de la ejecución", {
+                    position: toast.POSITION.BOTTOM_LEFT
+                  })
+                }
+              },error =>{
+                console.log('No almacenó la información de la ejecución')
+              })
+            }else{
+              toast.error("No se pudo obtener un id de ejecución desde ODI", {
+                position: toast.POSITION.BOTTOM_LEFT
+              })
+            }
+          }
+        }
+      }
+      xmlhttp.open('POST',configuration.webService.url,true);
+      xmlhttp.send(sr);
+    }else{
+      alert('no existe el objeto xmlhttp');
+    }
+  }else{
+    toast.error("Ya se encuentra en ejecución id "+idPlanInstancia, {
+      position: toast.POSITION.BOTTOM_CENTER,
+    })
+  }
+  dispatch(cargarComboConciliaciones())
+}
+
+export const doCancelarConciliacion = () => (dispatch,getState) => {
+  //Variables necesarias para llamar el webservice
+  var xmlhttp = new XMLHttpRequest();
+  let idConciliacionEjecucion = getState().ejecucionReducer.conciliacion.id
+  let nomConciliacionEjecucion = getState().ejecucionReducer.conciliacion.nombre
+  let idPlanInstancia = 0
+  let numEjecuciones = getState().ejecucionReducer.conciliacion.ejecucionesProceso.length - 1
+  if(getState().ejecucionReducer.conciliacion.ejecucionesProceso.length > 0){
+    idPlanInstancia = getState().ejecucionReducer.conciliacion.ejecucionesProceso[numEjecuciones].idPlanInstance
+  }
+  if(idPlanInstancia!=0){
+    let odiUser = configuration.webService.user
+    let pwUser = configuration.webService.pw
+    let repository = configuration.webService.repository
+    let context = 1
+    let loglevel = 6
+    let runcount = 0
+    let stoplevel = 1
+    //Construir peticion SOAP
+    var sr = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:odi="xmlns.oracle.com/odi/OdiInvoke/">'+
+               '<soapenv:Header/>'+
+               '<soapenv:Body>'+
+                  '<odi:OdiStopLoadPlanRequest>'+
+                  '   <!--You may enter the following 2 items in any order-->'+
+                  '   <Credentials>'+
+                  '      <!--You may enter the following 3 items in any order-->'+
+                  '      <!--Optional:-->'+
+                  '      <!--Optional:-->'+
+                  '      <OdiUser>'+odiUser+'</OdiUser>'+
+                  '      <OdiPassword>'+pwUser+'</OdiPassword>'+
+                  '      <WorkRepository>'+repository+'</WorkRepository>'+
+                  '   </Credentials>'+
+                  '   <OdiStopLoadPlanRequest>'+
+                  '      <LoadPlanInstanceId>'+idPlanInstancia+'</LoadPlanInstanceId>'+
+                  '      <LoadPlanInstanceRunCount>'+runcount+'</LoadPlanInstanceRunCount>'+
+                  '      <StopLevel>'+stoplevel+'</StopLevel>'+
+                  '   </OdiStopLoadPlanRequest>'+
+                  '</odi:OdiStopLoadPlanRequest>'+
+               '</soapenv:Body>'+
+            '</soapenv:Envelope>';
+    if(xmlhttp){
+      xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4) {
+          if(xmlhttp.status == 200) {
+            var XMLParser = require('react-xml-parser');
+            var xml = new XMLParser().parseFromString(xmlhttp.response);
+            console.log(getState().ejecucionReducer.conciliacion.id);
+            console.log(xml.getElementsByTagName('OdiLoadPlanInstanceId'));
+            if(xml.getElementsByTagName('OdiLoadPlanInstanceId')[0].value==idPlanInstancia){
+              toast.success("Se detuvo la ejecución correctamente", {
+                position: toast.POSITION.BOTTOM_CENTER,
+              })
+            }else{
+              toast.error("No se ha podido detener", {
+                position: toast.POSITION.BOTTOM_CENTER,
+              })
+            }
+          }
+        }
+      }
+      xmlhttp.open('POST',configuration.webService.url,true);
+      xmlhttp.send(sr);
+    }else{
+      alert('no existe el objeto xmlhttp');
+    }
+  }else{
+    toast.error("No se ha ejecutado", {
+      position: toast.POSITION.BOTTOM_CENTER,
+    })
+  }
+}
+
+
+//Programar Conciliaciones
+//Actualizar tecla por tecla los campos del formulario de conciliaciones
+export const updateFormEjecutarConciliaciones = (field,value) => (dispatch,getState) =>{
+  dispatch(updateFormEjecutarConciliacionesRequest(field,value))
+}
+
+//Enviar al reducer la tecla pulsada
+const updateFormEjecutarConciliacionesRequest = (field,value) => ({
+  type : UPDATE_EJECUTAR_CONCILIACIONES_FORM_REQUEST,
+  field : field,
+  value: value
+})
+
+//Salvar la programación del Formulario
+export const salvarProgramacion = () => (dispatch,getState) => {
+  let hora = getState().ejecucionReducer.hora
+  let minuto = getState().ejecucionReducer.minuto
+  let fecha = getState().ejecucionReducer.fecha
+  let paraconciliacion = getState().ejecucionReducer.conciliacion.nombre
+  toast.warn("Grabar hora:minuto="+hora+":"+minuto+" de la fecha="+fecha+", No hay servicio de backend", {
+    position: toast.POSITION.BOTTOM_CENTER,
+  })
+}
+
 
 /*
 *  A C C I O N E S  D E  R E S U L T A D O S
@@ -1132,236 +1492,362 @@ const updateComboConciliacionesResultados = (field,value) => ({
   value: value
 })
 
-//Solicita el estado de ejecución de una conciliacion
-export const getStatusEjecucionConciliacion = (operacion) => (dispatch,getState) => {
-  //Variables necesarias para llamar el webservice
-  var xmlhttp = new XMLHttpRequest();
-  let odiUser = "test"
-  let pwUser = "test"
-  let repository = "LOCAL"
-  let loadplaninstanceid = 1
-  let idConciliacionEjecucion = getState().ejecucionReducer.conciliacion.id
-  let nomConciliacionEjecucion = getState().ejecucionReducer.conciliacion.nombre
-  //Construir peticion SOAP que solicita el estado de la ejecución
-  var sr = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:odi="xmlns.oracle.com/odi/OdiInvoke/">'+
-             '<soapenv:Header/>'+
-             '<soapenv:Body>'+
-                '<odi:OdiGetLoadPlanStatusRequest>'+
-                   '<Credentials>'+
-                    '  <!--You may enter the following 3 items in any order-->'+
-                    '  <!--Optional:-->'+
-                    '  <OdiUser>'+odiUser+'</OdiUser>'+
-                    '  <!--Optional:-->'+
-                    '  <OdiPassword>'+pwUser+'</OdiPassword>'+
-                    '  <WorkRepository>'+repository+'</WorkRepository>'+
-                   '</Credentials>'+
-                   '<!--Zero or more repetitions:-->'+
-                   '<LoadPlanInstanceId>'+loadplaninstanceid+'</LoadPlanInstanceId>'+
-                      '<LoadPlans>'+
-                      '<LoadPlanRunNumber>'+idConciliacionEjecucion+'</LoadPlanRunNumber>'+
-                   '</LoadPlans>'+
-                '</odi:OdiGetLoadPlanStatusRequest>'+
-             '</soapenv:Body>'+
-          '</soapenv:Envelope>'
-  if(xmlhttp){
-    xmlhttp.onreadystatechange = function () {
-      if (xmlhttp.readyState == 4) {
-        if(xmlhttp.status == 200) {
-          var XMLParser = require('react-xml-parser');
-          var xml = new XMLParser().parseFromString(xmlhttp.response);
-          //console.log("Id de la conciliacion a ejecutar...")
-          //console.log(getState().ejecucionReducer.conciliacion.id);
-          //console.log("el ws contesta...")
-          //console.log(xml.getElementsByTagName('LoadPlanStatus')[0].value);
-          //console.log("Operacion....")
-          //console.log(operacion)
-          //Si no hay problema en ejecutarlo
-          if(nomConciliacionEjecucion!=undefined){
-            if(operacion=='ejecutar'){
-              if(xml.getElementsByTagName('LoadPlanStatus')[0].value==1){ //Para mi 1 es que ese está ejecutando
-                toast.error("La conciliación "+nomConciliacionEjecucion+" ya se encuentra en ejecución", {
-                  position: toast.POSITION.BOTTOM_CENTER,
-                })
-              }else{
-                //console.log("Se debe ejecutar la funcion que inicia la conciliacion")
-                dispatch(doEjecutarConciliacion())
-              }
-            }else if(operacion=='cancelar') {
-              if(xml.getElementsByTagName('LoadPlanStatus')[0].value==0){ //Para mi 0 es que ese no se está ejecutando
-                toast.error("La conciliación "+nomConciliacionEjecucion+" no se está ejecutando", {
-                  position: toast.POSITION.BOTTOM_CENTER,
-                })
-              }else{
-                dispatch(doCancelarConciliacion())
-              }
-            }
-          }else{
-            toast.error("Debe Seleccionar alguna de las conciliaciones", {
-              position: toast.POSITION.BOTTOM_CENTER,
-            })
-          }
-        }
-      }
-    }
-    xmlhttp.open('POST',configuration.urlWebService,true);
-    //xmlhttp.setRequestHeader('Content-Type','text/html');
-    xmlhttp.send(sr);
-  }else{
-    alert('no existe el objeto xmlhttp');
-  }
+
+/*
+  *  A C C I O N E S  D E  I N D I C A D O R E S
+*  para realizar todas las acciones necesarias del crud de indicadores
+*/
+
+//Actualizar tecla por tecla el campo de texto del buscador
+export const updateTextFindIndicador = (field,value) => (dispatch,getState) =>{
+  dispatch(updateTextIndicadorFindRequest(field,value))
 }
-
-export const doEjecutarConciliacion = () => (dispatch,getState) => {
-  //Variables necesarias para llamar el webservice
-  var xmlhttp = new XMLHttpRequest();
-  let odiUser = "test"
-  let pwUser = "test"
-  let repository = "LOCAL"
-  let context = 1
-  let loglevel = 6
-  let idConciliacionEjecucion = getState().ejecucionReducer.conciliacion.id
-  let nomConciliacionEjecucion = getState().ejecucionReducer.conciliacion.nombre
-  //Construir peticion SOAP
-  var sr = '<?xml version="1.0" encoding="utf-8"?>'+
-            '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:odi="xmlns.oracle.com/odi/OdiInvoke/">'+
-             '<soapenv:Header/>'+
-             '<soapenv:Body>'+
-                '<odi:OdiStartLoadPlanRequest>'+
-                   '<!--You may enter the following 2 items in any order-->'+
-                   '<Credentials>'+
-                      '<!--You may enter the following 3 items in any order-->'+
-                      '<!--Optional:-->'+
-                      '<OdiUser>'+odiUser+'</OdiUser>'+
-                      '<!--Optional:-->'+
-                      '<OdiPassword>'+pwUser+'</OdiPassword>'+
-                      '<WorkRepository>'+repository+'</WorkRepository>'+
-                   '</Credentials>'+
-                   '<StartLoadPlanRequest>'+
-                      '<LoadPlanName>'+nomConciliacionEjecucion+'</LoadPlanName>'+
-                      '<Context>'+context+'</Context>'+
-                      '<!--Optional:-->'+
-                      '<Keywords></Keywords>'+
-                      '<!--Optional:-->'+
-                      '<LogLevel>'+loglevel+'</LogLevel>'+
-                      '<!--Zero or more repetitions:-->'+
-                      '<LoadPlanStartupParameters>'+
-                         '<!--You may enter the following 2 items in any order-->'+
-                         '<Name></Name>'+
-                         '<Value></Value>'+
-                      '</LoadPlanStartupParameters>'+
-                   '</StartLoadPlanRequest>'+
-                '</odi:OdiStartLoadPlanRequest>'+
-             '</soapenv:Body>'+
-          '</soapenv:Envelope>';
-  if(xmlhttp){
-    xmlhttp.onreadystatechange = function () {
-      if (xmlhttp.readyState == 4) {
-        if(xmlhttp.status == 200) {
-          var XMLParser = require('react-xml-parser');
-          var xml = new XMLParser().parseFromString(xmlhttp.response);
-          console.log(getState().ejecucionReducer.conciliacion.id);
-          console.log(xml.getElementsByTagName('RunCount')[0].value);
-          if(xml.getElementsByTagName('RunCount')[0].value==1){
-            toast.success("Se inició la ejecución correctamente", {
-              position: toast.POSITION.BOTTOM_CENTER,
-            })
-          }else{
-            toast.error("No se ha podido ejecutar", {
-              position: toast.POSITION.BOTTOM_CENTER,
-            })
-          }
-        }
-      }
-    }
-    xmlhttp.open('POST',configuration.urlWebService,true);
-    xmlhttp.send(sr);
-  }else{
-    alert('no existe el objeto xmlhttp');
-  }
-}
-
-export const doCancelarConciliacion = () => (dispatch,getState) => {
-  //Variables necesarias para llamar el webservice
-  var xmlhttp = new XMLHttpRequest();
-  let odiUser = "test"
-  let pwUser = "test"
-  let repository = "LOCAL"
-  let context = 1
-  let loglevel = 6
-  let runcount = 0
-  let stoplevel = 1
-  let idConciliacionEjecucion = getState().ejecucionReducer.conciliacion.id
-  let nomConciliacionEjecucion = getState().ejecucionReducer.conciliacion.nombre
-  //Construir peticion SOAP
-  var sr = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:odi="xmlns.oracle.com/odi/OdiInvoke/">'+
-             '<soapenv:Header/>'+
-             '<soapenv:Body>'+
-                '<odi:OdiStopLoadPlanRequest>'+
-                '   <!--You may enter the following 2 items in any order-->'+
-                '   <Credentials>'+
-                '      <!--You may enter the following 3 items in any order-->'+
-                '      <!--Optional:-->'+
-                '      <!--Optional:-->'+
-                '      <OdiUser>'+odiUser+'</OdiUser>'+
-                '      <OdiPassword>'+pwUser+'</OdiPassword>'+
-                '      <WorkRepository>'+repository+'</WorkRepository>'+
-                '   </Credentials>'+
-                '   <OdiStopLoadPlanRequest>'+
-                '      <LoadPlanInstanceId>'+idConciliacionEjecucion+'</LoadPlanInstanceId>'+
-                '      <LoadPlanInstanceRunCount>'+runcount+'</LoadPlanInstanceRunCount>'+
-                '      <StopLevel>'+stoplevel+'</StopLevel>'+
-                '   </OdiStopLoadPlanRequest>'+
-                '</odi:OdiStopLoadPlanRequest>'+
-             '</soapenv:Body>'+
-          '</soapenv:Envelope>';
-  if(xmlhttp){
-    xmlhttp.onreadystatechange = function () {
-      if (xmlhttp.readyState == 4) {
-        if(xmlhttp.status == 200) {
-          var XMLParser = require('react-xml-parser');
-          var xml = new XMLParser().parseFromString(xmlhttp.response);
-          console.log(getState().ejecucionReducer.conciliacion.id);
-          console.log(xml.getElementsByTagName('RunCount')[0].value);
-          if(xml.getElementsByTagName('RunCount')[0].value==1){
-            toast.success("Se detuvo la ejecución correctamente", {
-              position: toast.POSITION.BOTTOM_CENTER,
-            })
-          }else{
-            toast.error("No se ha podido ejecutar", {
-              position: toast.POSITION.BOTTOM_CENTER,
-            })
-          }
-        }
-      }
-    }
-    xmlhttp.open('POST',configuration.urlWebService,true);
-    xmlhttp.send(sr);
-  }else{
-    alert('no existe el objeto xmlhttp');
-  }
-}
-
-
-//Programar Conciliaciones
-//Actualizar tecla por tecla los campos del formulario de conciliaciones
-export const updateFormEjecutarConciliaciones = (field,value) => (dispatch,getState) =>{
-  dispatch(updateFormEjecutarConciliacionesRequest(field,value))
-}
-
-//Enviar al reducer la tecla pulsada
-const updateFormEjecutarConciliacionesRequest = (field,value) => ({
-  type : UPDATE_EJECUTAR_CONCILIACIONES_FORM_REQUEST,
+//Enviar el texto del buscador al reducer store
+const updateTextIndicadorFindRequest = (field,value) => ({
+  type : UPDATE_FINDER,
   field : field,
   value: value
 })
+//Realizar la búsqueda
+export const findTextIndicador = () => (dispatch,getState) => {
+  if(configuration.usarJsonServer==false){
+    //con API REST}
+    let objetoVacio = new Object()
+    let txtBuscar = getState().indicadorReducer.textoBuscar
+    APIInvoker.invokeGET('/indicadores/findByAny?texto='+txtBuscar, response => {
+      if(Array.isArray(response) == true){
+        if(response[0].id!=undefined){
+            dispatch(verIndicadores(response))
+        }else{
+            console.log("Error "+response[0].codigo+" : "+response[0].mensaje)
+            toast.warn("No se encontraron registros que satisfagan el criterio de búsqueda", {
+                position: toast.POSITION.BOTTOM_LEFT
+            })
+        }
+      }else{
+        if(response.id!=undefined){
+            dispatch(verIndicadores(response))
+        }else{
+            console.log("Error "+response.codigo+" : "+response.mensaje)
+            toast.warn("No se encontraron registros que satisfagan el criterio de búsqueda", {
+              position: toast.POSITION.BOTTOM_LEFT
+            })
+            //dispatch(verIndicadores(objetoVacio))
+        }
+      }
+    })
+  }else{
+    //con json-server
+    let txtBuscar = getState().indicadorReducer.textoBuscar
+    APIInvoker.invokeGET('/indicadores/'+txtBuscar, response => {
+      dispatch(refreshListIndicador(response))
+    })
+  }
+}
 
-//Salvar la programación del Formulario
-export const salvarProgramacion = () => (dispatch,getState) => {
-  let hora = getState().ejecucionReducer.hora
-  let minuto = getState().ejecucionReducer.minuto
-  let fecha = getState().ejecucionReducer.fecha
-  let paraconciliacion = getState().ejecucionReducer.conciliacion.nombre
-  toast.warn("Grabar hora:minuto="+hora+":"+minuto+" de la fecha="+fecha+", No hay servicio de backend", {
-    position: toast.POSITION.BOTTOM_CENTER,
+//Recalcular el paginador de indicador
+export const calculaPaginadorIndicadores = () => (dispatch,getState) => {
+  let numregs=0
+  //Obtener el numero total de registros antes de filtrar
+  APIInvoker.invokeGET('/indicadores/count',response =>{
+    if(!isNaN(response)){
+      numregs=response
+      //Recalcula el paginador
+      let totRegistros = numregs
+      let regPagina = getState().indicadorReducer.registrosPorPagina
+      let totPaginas = Math.ceil(totRegistros / regPagina)
+      let array_paginador = new Array()
+      let offset = 0
+      let regfin = 0
+      //console.log("TotRegistros ==")
+      //console.log(totRegistros)
+      for(let i=1;i<=totPaginas;i++){
+        regfin=offset+regPagina-1
+        array_paginador.push({"id":i,"offset":offset})
+        offset=regfin+1
+      }
+      //console.log("Variable de paginador ==>")
+      //console.log(array_paginador)
+      //preparar variable para Enviar
+      let update_paginador={
+        totalRegistros :  numregs,
+        registrosPorPagina : regPagina,
+        paginador: array_paginador
+      }
+      dispatch(actualizarPaginadorIndicadores(update_paginador))
+    }else{
+      console.log("Conteo de Registros de indicador no válido")
+    }
   })
 }
+//Envia las variables al store
+const actualizarPaginadorIndicadores = (array_paginador) =>({
+  type : ACTUALIZA_PAGINADOR_INDICADORES,
+  lista : array_paginador
+})
+
+//Actualizar el listado de indicadores
+export const refreshListIndicador = (resp) =>(dispatch,getState) => {
+    //Igual para jsonserver o API
+    let objetoVacio = new Object()
+    if(resp == null){
+      let regInicial = 0
+      //Todos los registros de indicadores
+      let pagActual = getState().indicadorReducer.paginaActual
+      if(getState().indicadorReducer.paginador.length>0){
+        regInicial = getState().indicadorReducer.paginador[pagActual-1].offset
+      }
+      let regPagina = getState().indicadorReducer.registrosPorPagina
+      APIInvoker.invokeGET('/indicadores?offset='+regInicial+'&limit='+regPagina, response1 => {
+        if(Array.isArray(response1) == true){
+          //Array con todos los registros
+          if(response1[0].id!=undefined){
+            dispatch(antesVerIndicadores(response1))
+          }else{
+            dispatch(antesVerIndicadores(objetoVacio))
+            console.log("Error : "+response1[0].codigo+" Mensaje: "+response1[0].mensaje+": "+response1[0].descripcion)
+            //alert("No se encuentran indicadores")
+          }
+        }else{
+          //Cuando el response no es un array, es decir, un solo registro
+          if(response1.id!=undefined){
+            dispatch(antesVerIndicadores([response1]))
+          }else{
+            dispatch(antesVerIndicadores(objetoVacio))
+            console.log("Error : "+response1.codigo+" Mensaje: "+response1.mensaje+": "+response1.descripcion)
+            //alert("No se encuentra la indicador")
+          }
+        }
+      })
+    }else{
+      //Buscando un registro en especifico por id o por un response
+      APIInvoker.invokeGET('/indicadores/'+resp, response => {
+        if(Array.isArray(response) == true){
+          //si el response contiene varios registros
+          if(response[0].id!=undefined){
+            dispatch(antesVerIndicadores(response))
+          }else{
+            dispatch(antesVerIndicadores(objetoVacio))
+            console.log("Error : "+response[0].codigo+" Mensaje: "+response[0].mensaje+": "+response[0].descripcion)
+          }
+        }else{
+          //si el response es un solo registro
+          if(response.id!=undefined){
+            dispatch(antesVerIndicadores([response]))
+          }else{
+            dispatch(antesVerIndicadores(objetoVacio))
+            console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
+          }
+        }
+      })
+    }
+}
+
+const antesVerIndicadores = (resp) => (dispatch,getState) =>{
+  dispatch(calculaPaginadorIndicadores())
+  dispatch(verIndicadores(resp))
+}
+//Enviar la accion de ver indicadores al Reducer STORE
+const verIndicadores = (res) =>({
+  type : CARGAR_INDICADORES,
+  lista : res
+})
+//Actualizar tecla por tecla los campos del formulario de indicadores
+export const updateFormIndicadores = (field,value) => (dispatch,getState) =>{
+  dispatch(updateFormIndicadoresRequest(field,value))
+}
+//Enviar al reducer la tecla pulsada
+const updateFormIndicadoresRequest = (field,value) => ({
+  type : UPDATE_INDICADORES_FORM_REQUEST,
+  field : field,
+  value: value
+})
+//Funcion para guardar o actualizar el indicador
+export const saveIndicador = () => (dispatch,getState)=>{
+  let id_indicador = getState().indicadorFormReducer.id
+  //Si es un registro nuevo
+  let indicador_salvar = {
+    id : getState().indicadorFormReducer.id,
+    nombreFormula : getState().indicadorFormReducer.nombre,
+    descripcion : getState().indicadorFormReducer.descripcion,
+    textoFormula : getState().indicadorFormReducer.formula,
+    idEscenario: getState().indicadorReducer.escenario.id
+  }
+  if(id_indicador == 0 || id_indicador == undefined){
+    APIInvoker.invokePOST('/indicadores',indicador_salvar,response =>{
+      if(response.id!=undefined){
+        dispatch(limpiarFormIndicador())
+        dispatch(refreshListIndicador())
+        toast.success("Se grabó la indicador", {
+          position: toast.POSITION.BOTTOM_LEFT
+        })
+      }else{
+        //Enviar error específico a la consola
+        console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
+        if(response.codigo==409){
+          toast.error("Ya existe un indicador con el mismo nombre", {
+            position: toast.POSITION.BOTTOM_LEFT
+          })
+          dispatch(refreshListIndicador())
+        }else{
+          //Error sin tratamiento
+          toast.error("Error general al adicionar indicador", {
+            position: toast.POSITION.BOTTOM_LEFT
+          })
+          dispatch(refreshListIndicador())
+        }
+      }
+    },error =>{
+      console.log("No se ha podido crear el indicador con id"+id_indicador)
+    })
+  }else{
+    APIInvoker.invokePUT('/indicadores',indicador_salvar,response =>{
+      if(response.id!=undefined){
+        toast.success("Se actualizó el indicador", {
+          position: toast.POSITION.BOTTOM_LEFT
+        })
+        //dispatch(limpiarFormIndicador(),browserHistory.push('/indicadores'))
+      }else{
+        if(response.codigo==409){
+          toast.error("Ya existe un indicador con el mismo nombre", {
+            position: toast.POSITION.BOTTOM_LEFT
+          })
+          //dispatch(refreshListIndicador())
+        }else{
+          toast.error("Error general al intentar actualizar indicador", {
+            position: toast.POSITION.BOTTOM_LEFT
+          })
+        }
+      }
+    },error =>{
+      console.log("No se ha podido actualizar el indicador")
+    })
+  }
+}
+
+//Funcion para limpiar los campos del formulario de Indicadores
+export const limpiarFormIndicador = () =>({
+  type : LIMPIAR_FORM_INDICADOR
+})
+
+//Funcion para cargar el indicador en el formulario
+export const cargarIndicador =(idindicador) => (dispatch,getState) =>{
+  APIInvoker.invokeGET('/indicadores/'+idindicador, response => {
+    if(Array.isArray(response) == true){
+      if(response[0].id!=undefined){
+        dispatch(cargarIndicadorEnForm(response))
+      }else{
+        toast.error("No se pudo cargar el indicador en el formulario", {
+          position: toast.POSITION.BOTTOM_LEFT
+        })
+        console.log("Error "+response[0].codigo+" : "+response[0].mensaje+" "+response[0].descripcion)
+      }
+    }else{
+      if(response.id!=undefined){
+        dispatch(cargarIndicadorEnForm([response]))
+      }else{
+        toast.error("No se pudo cargar el indicador en el formulario", {
+          position: toast.POSITION.BOTTOM_LEFT
+        })
+        console.log("Error "+response.codigo+" : "+response.mensaje+" "+response.descripcion)
+      }
+    }
+  },error =>{
+    console.log('No se pudo actualizar los campos')
+  })
+}
+
+//Enviar la acción de cargar el indicador al reducer
+const cargarIndicadorEnForm = (indicador) => ({
+  type : CARGAR_INDICADOR_FORM,
+  indicador : indicador
+})
+
+//Funcion que elimina un indicador
+export const borrarIndicador = () => (dispatch,getState) =>{
+  let idindicador = getState().indicadorFormReducer.id
+  APIInvoker.invokeDELETE('/indicadores/'+idindicador, response => {
+  },error =>{
+    toast.error("Se eliminó el indicador", {
+      position: toast.POSITION.BOTTOM_LEFT
+    })
+    dispatch(
+      limpiarFormIndicador(),
+      browserHistory.push('/indicadores')
+    )
+  })
+}
+
+//Funcion de cambio de pagina
+export const moverPaginaIndicadores = (pagina) =>(dispatch,getState) =>{
+  let NumPagsTotales = getState().indicadorReducer.paginador.length
+  if(pagina > 0 && pagina <= NumPagsTotales){
+    dispatch(irAPaginaIndicadores(pagina))
+    dispatch(refreshListIndicador())
+  }
+}
+
+const irAPaginaIndicadores = (pagina) =>({
+  type : IR_PAGINA_INDICADORES,
+  pagina : pagina
+})
+
+//Cargar el id escenario en el reducer de indicadores
+export const updEscenario = (idescenario) => (dispatch,getState) =>{
+  APIInvoker.invokeGET('/escenarios/'+idescenario, response => {
+    if(response.id!=undefined){
+      dispatch(updEscenarioReducerIndicadores(JSON.stringify(response)))
+    }else{
+      console.log('No se encuentra el escenario')
+      dispatch(updEscenarioReducerIndicadores(JSON.stringify({"id":0,"nombre":"Ninguna conciliacion","escenarios":[]})))
+    }
+    dispatch(refreshListIndicador())
+  },error =>{
+    console.log('No se pudo cargar las Propiedades del escenario '+idconciliacion+' en indicadores listar')
+  })
+}
+//Actualiza el escenario en modulo de indicadores
+const updEscenarioReducerIndicadores = (objEscenario)=>({
+  type : UPDATE_ESCENARIO_EN_INDICADORES,
+  value : objEscenario
+})
+
+//Funcion que carga el combo de escenarios
+export const cargarComboEscenarios = () =>(dispatch,getState) =>{
+  APIInvoker.invokeGET('/escenarios', response => {
+    if(Array.isArray(response) == true){
+      dispatch(cargarEscenarios(response))
+    }
+  })
+}
+//Envia resultado para llenar el combo a Reducer
+const cargarEscenarios = (arrayEscenarios) => ({
+  type : CARGA_ESCENARIOS_EN_INDICADORES,
+  lista : arrayEscenarios
+})
+
+//Funcion que carga el combo de resultados
+export const cargarComboResultados = (idEscenario) =>(dispatch,getState) =>{
+  APIInvoker.invokeGET('/ejecucionproceso/findByEscenario?codEscenario='+idEscenario, response => {
+    if(Array.isArray(response) == true){
+      dispatch(cargarResultados(response))
+    }
+  })
+}
+//Envia resultado para llenar el combo a Reducer
+const cargarResultados = (arrayResultados) => ({
+  type : CARGA_RESULTADOS_EN_INDICADORES,
+  lista : arrayResultados
+})
+
+//Envia el resultado seleccionado actualmente en indicadores
+export const updResultadoReducerIndicadores = (objResultado) =>({
+  type : UPDATE_RESULTADO_EN_INDICADORES,
+  value : objResultado
+})
+
+//Añade a la formula la variable
+export const updFormula = (variable) =>({
+  type : UPDATE_FORMULA,
+  value : variable
+})

@@ -8,6 +8,7 @@ import update from 'react-addons-update'
 const initialState = {
   id : 0,
   nombre : '',
+  idPaquete :'',
   webservice : '',
   descripcion : '',
   idPolitica : '',
@@ -21,19 +22,32 @@ export const conciliacionFormReducer = (state = initialState,action) =>{
           [action.field] : {$set: action.value}
         })
     case CARGAR_CONCILIACION_FORM:
-        return update(state,{
-            id : {$set: action.conciliacion[0].id},
-            nombre : {$set: action.conciliacion[0].nombre},
-            webservice : {$set: action.conciliacion[0].webservice},
-            descripcion : {$set: action.conciliacion[0].descripcion},
-            idPolitica : {$set: action.conciliacion[0].idPolitica},
-            nombrePolitica : {$set: action.conciliacion[0].nombrePolitica}
-          }
-        )
+        console.log("conciliacion en reducer ==>")
+        console.log(action.conciliacion[0])
+        if(action.conciliacion[0].transformaciones.length!=0){
+          return update(state,{
+              id : {$set: action.conciliacion[0].id},
+              nombre : {$set: action.conciliacion[0].nombre},
+              idPaquete : {$set: action.conciliacion[0].transformaciones[0].id},
+              webservice : {$set: action.conciliacion[0].transformaciones[0].paqueteWs},
+              descripcion : {$set: action.conciliacion[0].descripcion},
+              idPolitica : {$set: action.conciliacion[0].idPolitica},
+              nombrePolitica : {$set: action.conciliacion[0].nombrePolitica}
+            })
+        }else{
+          return update(state,{
+              id : {$set: action.conciliacion[0].id},
+              nombre : {$set: action.conciliacion[0].nombre},
+              descripcion : {$set: action.conciliacion[0].descripcion},
+              idPolitica : {$set: action.conciliacion[0].idPolitica},
+              nombrePolitica : {$set: action.conciliacion[0].nombrePolitica}
+            })
+        }
     case LIMPIAR_FORM_CONCILIACION:
         return update(state,{
           id : {$set: 0},
           nombre : {$set: ''},
+          idPaquete : {$set: ''},
           webservice : {$set: ''},
           descripcion : {$set: ''},
           idPolitica : {$set: ''},
