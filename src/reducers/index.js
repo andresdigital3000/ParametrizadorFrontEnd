@@ -11,6 +11,8 @@ import ejecucionReducer from './EjecucionReducer'
 import resultadoReducer from './ResultadoReducer'
 import indicadorReducer from './indicadorReducer'
 import indicadorFormReducer from './indicadorFormReducer'
+import parametroReducer from './parametroReducer'
+import parametroFormReducer from './parametroFormReducer'
 
 
 export default combineReducers({
@@ -25,5 +27,7 @@ export default combineReducers({
   ejecucionReducer,
   resultadoReducer,
   indicadorReducer,
-  indicadorFormReducer
+  indicadorFormReducer,
+  parametroReducer,
+  parametroFormReducer
 })

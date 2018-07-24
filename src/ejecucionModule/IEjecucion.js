@@ -51,7 +51,7 @@ class IEjecucion extends React.Component{
             <div className="form-group">
               {
                 this.props.state.conciliacion.id!=0 && this.props.state.conciliacion!='' ?
-                <button id='ejecutar' className='btn btn-primary' onClick={() => toast.info(<IMsg {...this.props} mensaje='Está seguro de ejecutar la conciliación?' accion='ejecutar'/>, { autoClose: false, position: toast.POSITION.BOTTOM_CENTER })}>Ejecutar</button> :
+                <button id='ejecutar' className='btn btn-primary' onClick={() => toast.info(<IMsg {...this.props} mensaje='Está seguro de ejecutar la conciliación?' accion='ejecutar'/>, { autoClose: false, position: toast.POSITION.BOTTOM_CENTER })}>Ejecutar proceso</button> :
                 <button id='ejecutar' className='btn btn-primary' disabled>Ejecutar</button>
               }
               &nbsp;&nbsp;&nbsp;&nbsp;
@@ -64,7 +64,7 @@ class IEjecucion extends React.Component{
             <div className="form-group">
               {
                 this.props.state.conciliacion.id!=0 && this.props.state.conciliacion!='' ?
-                <button id='cancelar' className='btn btn-warning' onClick={() => toast.info(<IMsg {...this.props} mensaje='Está seguro de detener la ejecución de la conciliación?' accion='cancelar'/>, { autoClose: false, position: toast.POSITION.BOTTOM_CENTER })}>Cancelar</button> :
+                <button id='cancelar' className='btn btn-warning' onClick={() => toast.info(<IMsg {...this.props} mensaje='Está seguro de detener la ejecución de la conciliación?' accion='cancelar'/>, { autoClose: false, position: toast.POSITION.BOTTOM_CENTER })}>Abortar proceso</button> :
                 <button id='cancelar' className='btn btn-warning' disabled>Cancelar</button>
               }
             </div>

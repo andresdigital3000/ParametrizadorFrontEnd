@@ -1,5 +1,5 @@
 import React from 'react'
-import Menu from './Menu'
+//import Menu from './Menu'
 import Toolbar from './Toolbar'
 import IPolitica from '../politicasModule/IPolitica'
 import IPoliticaForm from '../politicasModule/IPoliticaForm'
@@ -16,6 +16,10 @@ import IResultados from '../resultadosModule/IResultados'
 import IIndicador from '../indicadoresModule/IIndicador'
 import IIndicadorForm from '../indicadoresModule/IIndicadorForm'
 import IIndicadorDelete from '../indicadoresModule/IIndicadorDelete'
+import IParametro from '../parametrosModule/IParametro'
+import IParametroForm from '../parametrosModule/IParametroForm'
+import IParametroDelete from '../parametrosModule/IParametroDelete'
+
 import Loading from '../politicasModule/Loading.js'
 import { browserHistory } from 'react-router'
 import { connect } from 'react-redux'
@@ -125,6 +129,26 @@ class AdminThemplete extends React.Component{
                     <Otherwise>
                       <IIndicadorForm/>
                       <IIndicador/>
+                    </Otherwise>
+                  </Choose>
+                </If>
+                <If condition={this.props.location.pathname.substr(1,10) == 'parametros'}>
+                  <Choose>
+                    <When condition={this.props.params.idparametro && this.props.location.pathname.substr(1,15) == 'parametros/edit'}>
+                      <IParametroForm registro={this.props.params}/>
+                    </When>
+                    <When condition={this.props.params.idparametro && this.props.location.pathname.substr(1,15) != 'parametros/edit'}>
+                      <IParametro registro={this.props.params.idparametro}/>
+                    </When>
+                    <When condition={this.props.params.idparametrodelete}>
+                      <IParametroDelete registro={this.props.params}/>
+                    </When>
+                    <When condition={this.props.params.idparametrofiltro}>
+                      <IParametro registro={this.props.params}/>
+                    </When>
+                    <Otherwise>
+                      <IParametroForm/>
+                      <IParametro/>
                     </Otherwise>
                   </Choose>
                 </If>

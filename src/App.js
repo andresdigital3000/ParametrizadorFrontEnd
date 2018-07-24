@@ -7,7 +7,7 @@ import thunk from 'redux-thunk'
 import { createLogger } from 'redux-logger'
 import reducers from './reducers'
 import AdminThemplete from './teachers/AdminThemplete'
-import Dashboard from './teachers/Dashboard'
+//import Dashboard from './teachers/Dashboard'
 import ILogin from './ILogin'
 import IPolitica from './politicasModule/IPolitica'
 import IPoliticaList from './politicasModule/IPoliticaList'
@@ -28,6 +28,10 @@ import IIndicador from './indicadoresModule/IIndicador'
 import IIndicadorList from './indicadoresModule/IIndicadorList'
 import IIndicadorForm from './indicadoresModule/IIndicadorForm'
 import IIndicadorDelete from './indicadoresModule/IIndicadorDelete'
+import IParametro from './parametrosModule/IParametro'
+import IParametroList from './parametrosModule/IParametroList'
+import IParametroForm from './parametrosModule/IParametroForm'
+import IParametroDelete from './parametrosModule/IParametroDelete'
 
 
 //import APIInvoker from './utils/APIInvoker'
@@ -68,6 +72,10 @@ render((
             <Route path="/indicadores/:idindicador" component={IIndicador}></Route>
             <Route path="/indicadores/edit/:idindicador" component={IIndicadorForm}></Route>
             <Route path="/indicadores/delete/:idindicadordelete" component={IIndicadorDelete}></Route>
+            <Route path="/parametros" component={IParametro}></Route>
+            <Route path="/parametros/:idparametro" component={IParametro}></Route>
+            <Route path="/parametros/edit/:idparametro" component={IParametroForm}></Route>
+            <Route path="/parametros/delete/:idparametrodelete" component={IParametroDelete}></Route>
           </Route>
       </Router>
     </Provider>

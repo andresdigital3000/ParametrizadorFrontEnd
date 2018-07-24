@@ -42,7 +42,15 @@ import {
   CARGA_ESCENARIOS_EN_INDICADORES,
   UPDATE_RESULTADO_EN_INDICADORES,
   CARGA_RESULTADOS_EN_INDICADORES,
-  UPDATE_FORMULA
+  UPDATE_FORMULA,
+  ACTUALIZA_PAGINADOR_PARAMETROS,
+  CARGAR_PARAMETROS,
+  UPDATE_PARAMETROS_FORM_REQUEST,
+  LIMPIAR_FORM_PARAMETRO,
+  CARGAR_PARAMETRO_FORM,
+  IR_PAGINA_PARAMETROS,
+  UPDATE_ESCENARIO_EN_PARAMETROS,
+  CARGA_ESCENARIOS_EN_PARAMETROS
 } from './const'
 
 import React from 'react'
@@ -188,7 +196,7 @@ export const findTextPolitica = () => (dispatch,getState) => {
         }else{
             console.log("Error "+response[0].codigo+" : "+response[0].mensaje)
             toast.warn("No se encontraron registros que satisfagan el criterio de búsqueda", {
-                position: toast.POSITION.BOTTOM_LEFT
+                position: toast.POSITION.BOTTOM_CENTER
             })
         }
       }else{
@@ -197,7 +205,7 @@ export const findTextPolitica = () => (dispatch,getState) => {
         }else{
             console.log("Error "+response.codigo+" : "+response.mensaje)
             toast.warn("No se encontraron registros que satisfagan el criterio de búsqueda", {
-              position: toast.POSITION.BOTTOM_LEFT
+              position: toast.POSITION.BOTTOM_CENTER
             })
             //dispatch(verPoliticas(objetoVacio))
         }
@@ -348,20 +356,20 @@ export const savePolitica = () => (dispatch,getState)=>{
         dispatch(limpiarFormPolitica())
         dispatch(refreshListPolitica())
         toast.success("Se grabó la política", {
-          position: toast.POSITION.BOTTOM_LEFT
+          position: toast.POSITION.BOTTOM_CENTER
         })
       }else{
         //Enviar error específico a la consola
         console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
         if(response.codigo==409){
           toast.error("Ya existe una política con el mismo nombre", {
-            position: toast.POSITION.BOTTOM_LEFT
+            position: toast.POSITION.BOTTOM_CENTER
           })
           dispatch(refreshListPolitica())
         }else{
           //Error sin tratamiento
           toast.error("Error general al adicionar política", {
-            position: toast.POSITION.BOTTOM_LEFT
+            position: toast.POSITION.BOTTOM_CENTER
           })
           dispatch(refreshListPolitica())
         }
@@ -373,18 +381,18 @@ export const savePolitica = () => (dispatch,getState)=>{
     APIInvoker.invokePUT('/politicas',politica_salvar,response =>{
       if(response.id!=undefined){
         toast.success("Se actualizó la política", {
-          position: toast.POSITION.BOTTOM_LEFT
+          position: toast.POSITION.BOTTOM_CENTER
         })
         //dispatch(limpiarFormPolitica(),browserHistory.push('/politicas'))
       }else{
         if(response.codigo==409){
           toast.error("Ya existe una política con el mismo nombre", {
-            position: toast.POSITION.BOTTOM_LEFT
+            position: toast.POSITION.BOTTOM_CENTER
           })
           //dispatch(refreshListPolitica())
         }else{
           toast.error("Error general al intentar actualizar politica", {
-            position: toast.POSITION.BOTTOM_LEFT
+            position: toast.POSITION.BOTTOM_CENTER
           })
         }
       }
@@ -407,7 +415,7 @@ export const cargarPolitica =(idpolitica) => (dispatch,getState) =>{
         dispatch(cargarPoliticaEnForm(response))
       }else{
         toast.error("No se pudo cargar la politica en el formulario", {
-          position: toast.POSITION.BOTTOM_LEFT
+          position: toast.POSITION.BOTTOM_CENTER
         })
         console.log("Error "+response[0].codigo+" : "+response[0].mensaje+" "+response[0].descripcion)
       }
@@ -416,7 +424,7 @@ export const cargarPolitica =(idpolitica) => (dispatch,getState) =>{
         dispatch(cargarPoliticaEnForm([response]))
       }else{
         toast.error("No se pudo cargar la politica en el formulario", {
-          position: toast.POSITION.BOTTOM_LEFT
+          position: toast.POSITION.BOTTOM_CENTER
         })
         console.log("Error "+response.codigo+" : "+response.mensaje+" "+response.descripcion)
       }
@@ -438,7 +446,7 @@ export const borrarPolitica = () => (dispatch,getState) =>{
   APIInvoker.invokeDELETE('/politicas/'+idpolitica, response => {
   },error =>{
     toast.error("Se eliminó la politica", {
-      position: toast.POSITION.BOTTOM_LEFT
+      position: toast.POSITION.BOTTOM_CENTER
     })
     dispatch(
       limpiarFormPolitica(),
@@ -474,7 +482,7 @@ export const cargarComboPoliticas = () =>(dispatch,getState) =>{
         dispatch(cargarPoliticas(response))
       }else{
         toast.info("No se encuentran politicas sin conciliaciones asociadas", {
-          position: toast.POSITION.BOTTOM_LEFT
+          position: toast.POSITION.BOTTOM_CENTER
         })
       }
     }
@@ -507,7 +515,7 @@ export const findTextConciliacion = () => (dispatch,getState) => {
       }else{
         console.log("Error : "+response[0].codigo+" Mensaje: "+response[0].mensaje+": "+response[0].descripcion)
         toast.warn("No se encuentran conciliaciones que satisfagan el criterio de búsqueda", {
-          position: toast.POSITION.BOTTOM_LEFT
+          position: toast.POSITION.BOTTOM_CENTER
         })
       }
     }else{
@@ -516,7 +524,7 @@ export const findTextConciliacion = () => (dispatch,getState) => {
       }else{
         console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
         toast.warn("No se encuentran conciliaciones que satisfagan el criterio de búsqueda", {
-          position: toast.POSITION.BOTTOM_LEFT
+          position: toast.POSITION.BOTTOM_CENTER
         })
       }
     }
@@ -690,7 +698,7 @@ export const saveConciliacion = () => (dispatch,getState)=>{
       if(response.id!=undefined){
         id_grabado = response.id
         toast.success("Se grabó una nueva conciliación", {
-          position: toast.POSITION.BOTTOM_LEFT
+          position: toast.POSITION.BOTTOM_CENTER
         })
         if(id_grabado!=0){
           let paquete_salvar ={
@@ -702,11 +710,11 @@ export const saveConciliacion = () => (dispatch,getState)=>{
           APIInvoker.invokePOST('/wstransformacion',paquete_salvar,response2 =>{
             if(response2.id!=undefined){
               toast.success("...y se insertó el paquete", {
-                position: toast.POSITION.BOTTOM_LEFT
+                position: toast.POSITION.BOTTOM_CENTER
               })
             }else{
               toast.error("No se pudo asociar el paquete", {
-                position: toast.POSITION.BOTTOM_LEFT
+                position: toast.POSITION.BOTTOM_CENTER
               })
             }
           },error =>{
@@ -719,11 +727,11 @@ export const saveConciliacion = () => (dispatch,getState)=>{
         console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
         if(response.codigo==409){
           toast.error("Ya existe otra conciliación con el mismo nombre ó está intentando asignar una política ya asignada", {
-            position: toast.POSITION.BOTTOM_LEFT
+            position: toast.POSITION.BOTTOM_CENTER
           })
         }else{
           toast.error("Error general al adicionar conciliación", {
-            position: toast.POSITION.BOTTOM_LEFT
+            position: toast.POSITION.BOTTOM_CENTER
           })
         }
       }
@@ -751,7 +759,7 @@ export const saveConciliacion = () => (dispatch,getState)=>{
     APIInvoker.invokePUT('/conciliaciones',conciliacion_salvar,response =>{
       if(response.id!=undefined){
         toast.success("Se actualizó la conciliación", {
-          position: toast.POSITION.BOTTOM_LEFT
+          position: toast.POSITION.BOTTOM_CENTER
         })
         let id_grabado = getState().conciliacionFormReducer.id
         if(id_grabado!=0){
@@ -768,11 +776,11 @@ export const saveConciliacion = () => (dispatch,getState)=>{
             APIInvoker.invokePUT('/wstransformacion',paquete_salvar,response2 =>{
               if(response.id!=undefined){
                 toast.success("actualizando el paquete", {
-                  position: toast.POSITION.BOTTOM_LEFT
+                  position: toast.POSITION.BOTTOM_CENTER
                 })
               }else{
                 toast.error("No se pudo actualizar el paquete", {
-                  position: toast.POSITION.BOTTOM_LEFT
+                  position: toast.POSITION.BOTTOM_CENTER
                 })
               }
             },error =>{
@@ -789,11 +797,11 @@ export const saveConciliacion = () => (dispatch,getState)=>{
             APIInvoker.invokePOST('/wstransformacion',paquete_salvar,response2 =>{
               if(response2.id!=undefined){
                 toast.success("...y se agregó el paquete", {
-                  position: toast.POSITION.BOTTOM_LEFT
+                  position: toast.POSITION.BOTTOM_CENTER
                 })
               }else{
                 toast.error("No se pudo agregar el paquete", {
-                  position: toast.POSITION.BOTTOM_LEFT
+                  position: toast.POSITION.BOTTOM_CENTER
                 })
               }
             },error =>{
@@ -803,7 +811,7 @@ export const saveConciliacion = () => (dispatch,getState)=>{
         }else{
           console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
           toast.error("No se ha podido actualizar la conciliación", {
-            position: toast.POSITION.BOTTOM_LEFT
+            position: toast.POSITION.BOTTOM_CENTER
           })
         }
       }
@@ -847,13 +855,13 @@ export const borrarConciliacion = () => (dispatch,getState) =>{
   APIInvoker.invokeDELETE('/wstransformacion/'+idtransformacion, response => {
   },error =>{
     toast.success("Se eliminó el paquete asociado", {
-      position: toast.POSITION.BOTTOM_LEFT
+      position: toast.POSITION.BOTTOM_CENTER
     })
     APIInvoker.invokeDELETE('/conciliaciones/'+idconciliacion, response => {
     },error =>{
         console.log(error)
         toast.success("Se eliminó la conciliación", {
-          position: toast.POSITION.BOTTOM_LEFT
+          position: toast.POSITION.BOTTOM_CENTER
         })
         dispatch(
           limpiarFormConciliacion(),
@@ -900,7 +908,7 @@ export const findTextEscenario = () => (dispatch,getState) => {
         dispatch(verEscenarios(response))
       }else{
         toast.warn("No se encuentran escenarios que cumplan con el criterio de búsqueda", {
-          position: toast.POSITION.BOTTOM_LEFT
+          position: toast.POSITION.BOTTOM_CENTER
         })
         console.log("Error : "+response[0].codigo+" Mensaje: "+response[0].mensaje+": "+response[0].descripcion)
       }
@@ -910,7 +918,7 @@ export const findTextEscenario = () => (dispatch,getState) => {
       }else{
         console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
         toast.warn("No se encuentran escenarios que cumplan con el criterio de búsqueda", {
-          position: toast.POSITION.BOTTOM_LEFT
+          position: toast.POSITION.BOTTOM_CENTER
         })
       }
     }
@@ -1056,14 +1064,14 @@ export const saveEscenario = () => (dispatch,getState)=>{
     APIInvoker.invokePOST('/escenarios',escenario_salvar,response =>{
       if(response.id!=undefined){
         toast.success("Se grabó un nuevo escenario", {
-          position: toast.POSITION.BOTTOM_LEFT
+          position: toast.POSITION.BOTTOM_CENTER
         })
         //dispatch(limpiarFormEscenario())
         //dispatch(updConciliacion(getState().escenarioReducer.conciliacion.id))
       }else{
         console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
         toast.error("Ya existe un escenario con el mismo nombre", {
-          position: toast.POSITION.BOTTOM_LEFT
+          position: toast.POSITION.BOTTOM_CENTER
         })
         //dispatch(limpiarFormEscenario())
         //dispatch(updConciliacion(getState().escenarioReducer.conciliacion.id))
@@ -1093,13 +1101,13 @@ export const saveEscenario = () => (dispatch,getState)=>{
     APIInvoker.invokePUT('/escenarios',escenario_salvar,response =>{
       if(response.id!=undefined){
         toast.success("Se actualizó el escenario", {
-          position: toast.POSITION.BOTTOM_LEFT
+          position: toast.POSITION.BOTTOM_CENTER
         })
         //dispatch(limpiarFormEscenario(),browserHistory.push('/escenarios'))
       }else{
         console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
         toast.error("No se ha actualizado el escenario", {
-          position: toast.POSITION.BOTTOM_LEFT
+          position: toast.POSITION.BOTTOM_CENTER
         })
         //dispatch(limpiarFormEscenario(),browserHistory.push('/escenarios'))
       }
@@ -1135,7 +1143,7 @@ export const borrarEscenario = () => (dispatch,getState) =>{
   APIInvoker.invokeDELETE('/escenarios/'+idescenario, response => {
   },error =>{
     toast.success("Se eliminó el escenario", {
-      position: toast.POSITION.BOTTOM_LEFT
+      position: toast.POSITION.BOTTOM_CENTER
     })
     dispatch(limpiarFormEscenario(),browserHistory.push('/escenarios'))
   })
@@ -1270,7 +1278,12 @@ export const doEjecutarConciliacion = () => (dispatch,getState) => {
     idPlanInstancia = getState().ejecucionReducer.conciliacion.ejecucionesProceso[numEjecuciones].idPlanInstance
   }
   //tener en cuenta periodicidad
-
+  //APIInvoker.invokeGET('/parametros?findByAny=Periodicidad ws conciliacion', response => {
+  //  if(Array.isArray(response) == true){
+  //    dispatch(cargarConciliaciones(response))
+  //  }
+  //})
+  //Si hay instancia recuperada de la ejecución
   if(idPlanInstancia==0){
     //Variables necesarias para llamar el webservice
     var xmlhttp = new XMLHttpRequest();
@@ -1320,7 +1333,7 @@ export const doEjecutarConciliacion = () => (dispatch,getState) => {
             let idInstance = 0
             if(xml.getElementsByTagName('OdiLoadPlanInstanceId')[0].value!=''){
               idInstance = xml.getElementsByTagName('OdiLoadPlanInstanceId')[0].value
-              toast.success("Se inició la ejecución correctamente", {
+              toast.success("Inicio de ejecución de proceso exitoso", {
                 position: toast.POSITION.BOTTOM_CENTER,
               })
             }
@@ -1333,11 +1346,11 @@ export const doEjecutarConciliacion = () => (dispatch,getState) => {
               APIInvoker.invokePOST('/ejecucionproceso',ejecucion_salvar,response2 =>{
                 if(response.id!=undefined){
                   toast.success("...y se almacenó la información de la ejecución", {
-                    position: toast.POSITION.BOTTOM_LEFT
+                    position: toast.POSITION.BOTTOM_CENTER
                   })
                 }else{
                   toast.error("No se pudo almacenar la información de la ejecución", {
-                    position: toast.POSITION.BOTTOM_LEFT
+                    position: toast.POSITION.BOTTOM_CENTER
                   })
                 }
               },error =>{
@@ -1345,7 +1358,7 @@ export const doEjecutarConciliacion = () => (dispatch,getState) => {
               })
             }else{
               toast.error("No se pudo obtener un id de ejecución desde ODI", {
-                position: toast.POSITION.BOTTOM_LEFT
+                position: toast.POSITION.BOTTOM_CENTER
               })
             }
           }
@@ -1521,7 +1534,7 @@ export const findTextIndicador = () => (dispatch,getState) => {
         }else{
             console.log("Error "+response[0].codigo+" : "+response[0].mensaje)
             toast.warn("No se encontraron registros que satisfagan el criterio de búsqueda", {
-                position: toast.POSITION.BOTTOM_LEFT
+                position: toast.POSITION.BOTTOM_CENTER
             })
         }
       }else{
@@ -1530,7 +1543,7 @@ export const findTextIndicador = () => (dispatch,getState) => {
         }else{
             console.log("Error "+response.codigo+" : "+response.mensaje)
             toast.warn("No se encontraron registros que satisfagan el criterio de búsqueda", {
-              position: toast.POSITION.BOTTOM_LEFT
+              position: toast.POSITION.BOTTOM_CENTER
             })
             //dispatch(verIndicadores(objetoVacio))
         }
@@ -1679,20 +1692,20 @@ export const saveIndicador = () => (dispatch,getState)=>{
         dispatch(limpiarFormIndicador())
         dispatch(refreshListIndicador())
         toast.success("Se grabó la indicador", {
-          position: toast.POSITION.BOTTOM_LEFT
+          position: toast.POSITION.BOTTOM_CENTER
         })
       }else{
         //Enviar error específico a la consola
         console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
         if(response.codigo==409){
           toast.error("Ya existe un indicador con el mismo nombre", {
-            position: toast.POSITION.BOTTOM_LEFT
+            position: toast.POSITION.BOTTOM_CENTER
           })
           dispatch(refreshListIndicador())
         }else{
           //Error sin tratamiento
           toast.error("Error general al adicionar indicador", {
-            position: toast.POSITION.BOTTOM_LEFT
+            position: toast.POSITION.BOTTOM_CENTER
           })
           dispatch(refreshListIndicador())
         }
@@ -1704,18 +1717,18 @@ export const saveIndicador = () => (dispatch,getState)=>{
     APIInvoker.invokePUT('/indicadores',indicador_salvar,response =>{
       if(response.id!=undefined){
         toast.success("Se actualizó el indicador", {
-          position: toast.POSITION.BOTTOM_LEFT
+          position: toast.POSITION.BOTTOM_CENTER
         })
         //dispatch(limpiarFormIndicador(),browserHistory.push('/indicadores'))
       }else{
         if(response.codigo==409){
           toast.error("Ya existe un indicador con el mismo nombre", {
-            position: toast.POSITION.BOTTOM_LEFT
+            position: toast.POSITION.BOTTOM_CENTER
           })
           //dispatch(refreshListIndicador())
         }else{
           toast.error("Error general al intentar actualizar indicador", {
-            position: toast.POSITION.BOTTOM_LEFT
+            position: toast.POSITION.BOTTOM_CENTER
           })
         }
       }
@@ -1738,7 +1751,7 @@ export const cargarIndicador =(idindicador) => (dispatch,getState) =>{
         dispatch(cargarIndicadorEnForm(response))
       }else{
         toast.error("No se pudo cargar el indicador en el formulario", {
-          position: toast.POSITION.BOTTOM_LEFT
+          position: toast.POSITION.BOTTOM_CENTER
         })
         console.log("Error "+response[0].codigo+" : "+response[0].mensaje+" "+response[0].descripcion)
       }
@@ -1747,7 +1760,7 @@ export const cargarIndicador =(idindicador) => (dispatch,getState) =>{
         dispatch(cargarIndicadorEnForm([response]))
       }else{
         toast.error("No se pudo cargar el indicador en el formulario", {
-          position: toast.POSITION.BOTTOM_LEFT
+          position: toast.POSITION.BOTTOM_CENTER
         })
         console.log("Error "+response.codigo+" : "+response.mensaje+" "+response.descripcion)
       }
@@ -1769,7 +1782,7 @@ export const borrarIndicador = () => (dispatch,getState) =>{
   APIInvoker.invokeDELETE('/indicadores/'+idindicador, response => {
   },error =>{
     toast.error("Se eliminó el indicador", {
-      position: toast.POSITION.BOTTOM_LEFT
+      position: toast.POSITION.BOTTOM_CENTER
     })
     dispatch(
       limpiarFormIndicador(),
@@ -1851,3 +1864,335 @@ export const updFormula = (variable) =>({
   type : UPDATE_FORMULA,
   value : variable
 })
+
+
+/*
+*  A C C I O N E S  D E  P A R A M E T R O S
+*  para realizar todas las acciones necesarias del crud de parametros
+*/
+
+//Actualizar tecla por tecla el campo de texto del buscador
+export const updateTextFindParametro = (field,value) => (dispatch,getState) =>{
+  dispatch(updateTextParametroFindRequest(field,value))
+}
+//Enviar el texto del buscador al reducer store
+const updateTextParametroFindRequest = (field,value) => ({
+  type : UPDATE_FINDER,
+  field : field,
+  value: value
+})
+//Realizar la búsqueda
+export const findTextParametro = () => (dispatch,getState) => {
+  if(configuration.usarJsonServer==false){
+    //con API REST}
+    let objetoVacio = new Object()
+    let txtBuscar = getState().parametroReducer.textoBuscar
+    APIInvoker.invokeGET('/parametros/findByAny?texto='+txtBuscar, response => {
+      if(Array.isArray(response) == true){
+        if(response[0].id!=undefined){
+            dispatch(verParametros(response))
+        }else{
+            console.log("Error "+response[0].codigo+" : "+response[0].mensaje)
+            toast.warn("No se encontraron registros que satisfagan el criterio de búsqueda", {
+                position: toast.POSITION.BOTTOM_CENTER
+            })
+        }
+      }else{
+        if(response.id!=undefined){
+            dispatch(verParametros(response))
+        }else{
+            console.log("Error "+response.codigo+" : "+response.mensaje)
+            toast.warn("No se encontraron registros que satisfagan el criterio de búsqueda", {
+              position: toast.POSITION.BOTTOM_CENTER
+            })
+            //dispatch(verParametros(objetoVacio))
+        }
+      }
+    })
+  }else{
+    //con json-server
+    let txtBuscar = getState().parametroReducer.textoBuscar
+    APIInvoker.invokeGET('/parametros/'+txtBuscar, response => {
+      dispatch(refreshListParametro(response))
+    })
+  }
+}
+
+//Recalcular el paginador de parametro
+export const calculaPaginadorParametros = () => (dispatch,getState) => {
+  let numregs=0
+  //Obtener el numero total de registros antes de filtrar
+  APIInvoker.invokeGET('/parametros/count',response =>{
+    if(!isNaN(response)){
+      numregs=response
+      //Recalcula el paginador
+      let totRegistros = numregs
+      let regPagina = getState().parametroReducer.registrosPorPagina
+      let totPaginas = Math.ceil(totRegistros / regPagina)
+      let array_paginador = new Array()
+      let offset = 0
+      let regfin = 0
+      //console.log("TotRegistros ==")
+      //console.log(totRegistros)
+      for(let i=1;i<=totPaginas;i++){
+        regfin=offset+regPagina-1
+        array_paginador.push({"id":i,"offset":offset})
+        offset=regfin+1
+      }
+      //console.log("Variable de paginador ==>")
+      //console.log(array_paginador)
+      //preparar variable para Enviar
+      let update_paginador={
+        totalRegistros :  numregs,
+        registrosPorPagina : regPagina,
+        paginador: array_paginador
+      }
+      dispatch(actualizarPaginadorParametros(update_paginador))
+    }else{
+      console.log("Conteo de Registros de parametro no válido")
+    }
+  })
+}
+//Envia las variables al store
+const actualizarPaginadorParametros = (array_paginador) =>({
+  type : ACTUALIZA_PAGINADOR_PARAMETROS,
+  lista : array_paginador
+})
+
+//Actualizar el listado de parametros
+export const refreshListParametro = (resp) =>(dispatch,getState) => {
+    //Igual para jsonserver o API
+    let objetoVacio = new Object()
+    if(resp == null){
+      let regInicial = 0
+      //Todos los registros de parametros
+      let pagActual = getState().parametroReducer.paginaActual
+      if(getState().parametroReducer.paginador.length>0){
+        regInicial = getState().parametroReducer.paginador[pagActual-1].offset
+      }
+      let regPagina = getState().parametroReducer.registrosPorPagina
+      APIInvoker.invokeGET('/parametros?offset='+regInicial+'&limit='+regPagina, response1 => {
+        if(Array.isArray(response1) == true){
+          //Array con todos los registros
+          if(response1[0].id!=undefined){
+            dispatch(antesVerParametros(response1))
+          }else{
+            dispatch(antesVerParametros(objetoVacio))
+            console.log("Error : "+response1[0].codigo+" Mensaje: "+response1[0].mensaje+": "+response1[0].descripcion)
+            //alert("No se encuentran parametros")
+          }
+        }else{
+          //Cuando el response no es un array, es decir, un solo registro
+          if(response1.id!=undefined){
+            dispatch(antesVerParametros([response1]))
+          }else{
+            dispatch(antesVerParametros(objetoVacio))
+            console.log("Error : "+response1.codigo+" Mensaje: "+response1.mensaje+": "+response1.descripcion)
+            //alert("No se encuentra el parámetro")
+          }
+        }
+      })
+    }else{
+      //Buscando un registro en especifico por id o por un response
+      APIInvoker.invokeGET('/parametros/'+resp, response => {
+        if(Array.isArray(response) == true){
+          //si el response contiene varios registros
+          if(response[0].id!=undefined){
+            dispatch(antesVerParametros(response))
+          }else{
+            dispatch(antesVerParametros(objetoVacio))
+            console.log("Error : "+response[0].codigo+" Mensaje: "+response[0].mensaje+": "+response[0].descripcion)
+          }
+        }else{
+          //si el response es un solo registro
+          if(response.id!=undefined){
+            dispatch(antesVerParametros([response]))
+          }else{
+            dispatch(antesVerParametros(objetoVacio))
+            console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
+          }
+        }
+      })
+    }
+}
+
+const antesVerParametros = (resp) => (dispatch,getState) =>{
+  dispatch(calculaPaginadorParametros())
+  dispatch(verParametros(resp))
+}
+//Enviar la accion de ver parametros al Reducer STORE
+const verParametros = (res) =>({
+  type : CARGAR_PARAMETROS,
+  lista : res
+})
+//Actualizar tecla por tecla los campos del formulario de parametros
+export const updateFormParametros = (field,value) => (dispatch,getState) =>{
+  dispatch(updateFormParametrosRequest(field,value))
+}
+//Enviar al reducer la tecla pulsada
+const updateFormParametrosRequest = (field,value) => ({
+  type : UPDATE_PARAMETROS_FORM_REQUEST,
+  field : field,
+  value: value
+})
+//Funcion para guardar o actualizar el parametro
+export const saveParametro = () => (dispatch,getState)=>{
+  let id_parametro = getState().parametroFormReducer.id
+  //Si es un registro nuevo
+  let parametro_salvar = {
+    id : getState().parametroFormReducer.id,
+    parametro : getState().parametroFormReducer.parametro,
+    valor : getState().parametroFormReducer.valor
+  }
+  if(id_parametro == 0 || id_parametro == undefined){
+    APIInvoker.invokePOST('/parametros',parametro_salvar,response =>{
+      if(response.id!=undefined){
+        dispatch(limpiarFormParametro())
+        dispatch(refreshListParametro())
+        toast.success("Se grabó el parámetro", {
+          position: toast.POSITION.BOTTOM_CENTER
+        })
+      }else{
+        //Enviar error específico a la consola
+        console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
+        if(response.codigo==409){
+          toast.error("Ya existe un parámetro con el mismo nombre", {
+            position: toast.POSITION.BOTTOM_CENTER
+          })
+          dispatch(refreshListParametro())
+        }else{
+          //Error sin tratamiento
+          toast.error("Error general al adicionar parámetro", {
+            position: toast.POSITION.BOTTOM_CENTER
+          })
+          dispatch(refreshListParametro())
+        }
+      }
+    },error =>{
+      console.log("No se ha podido crear el parámetro con id"+id_parametro)
+    })
+  }else{
+    APIInvoker.invokePUT('/parametros',parametro_salvar,response =>{
+      if(response.id!=undefined){
+        toast.success("Se actualizó el parámetro", {
+          position: toast.POSITION.BOTTOM_CENTER
+        })
+        //dispatch(limpiarFormParametro(),browserHistory.push('/parametros'))
+      }else{
+        if(response.codigo==409){
+          toast.error("Ya existe un parámetro con el mismo nombre", {
+            position: toast.POSITION.BOTTOM_CENTER
+          })
+          //dispatch(refreshListParametro())
+        }else{
+          toast.error("Error general al intentar actualizar parámetro", {
+            position: toast.POSITION.BOTTOM_CENTER
+          })
+        }
+      }
+    },error =>{
+      console.log("No se ha podido actualizar el parámetro")
+    })
+  }
+}
+
+//Funcion para limpiar los campos del formulario de Parametros
+export const limpiarFormParametro = () =>({
+  type : LIMPIAR_FORM_PARAMETRO
+})
+
+//Funcion para cargar el parametro en el formulario
+export const cargarParametro =(idparametro) => (dispatch,getState) =>{
+  APIInvoker.invokeGET('/parametros/'+idparametro, response => {
+    if(Array.isArray(response) == true){
+      if(response[0].id!=undefined){
+        dispatch(cargarParametroEnForm(response))
+      }else{
+        toast.error("No se pudo cargar el parámetro en el formulario", {
+          position: toast.POSITION.BOTTOM_CENTER
+        })
+        console.log("Error "+response[0].codigo+" : "+response[0].mensaje+" "+response[0].descripcion)
+      }
+    }else{
+      if(response.id!=undefined){
+        dispatch(cargarParametroEnForm([response]))
+      }else{
+        toast.error("No se pudo cargar el parámetro en el formulario", {
+          position: toast.POSITION.BOTTOM_CENTER
+        })
+        console.log("Error "+response.codigo+" : "+response.mensaje+" "+response.descripcion)
+      }
+    }
+  },error =>{
+    console.log('No se pudo actualizar los campos')
+  })
+}
+
+//Enviar la acción de cargar el parametro al reducer
+const cargarParametroEnForm = (parametro) => ({
+  type : CARGAR_PARAMETRO_FORM,
+  parametro : parametro
+})
+
+//Funcion que elimina un parametro
+export const borrarParametro = () => (dispatch,getState) =>{
+  let idparametro = getState().parametroFormReducer.id
+  APIInvoker.invokeDELETE('/parametros/'+idparametro, response => {
+  },error =>{
+    toast.error("Se eliminó el parámetro", {
+      position: toast.POSITION.BOTTOM_CENTER
+    })
+    dispatch(
+      limpiarFormParametro(),
+      browserHistory.push('/parametros')
+    )
+  })
+}
+
+//Funcion de cambio de pagina
+export const moverPaginaParametros = (pagina) =>(dispatch,getState) =>{
+  let NumPagsTotales = getState().parametroReducer.paginador.length
+  if(pagina > 0 && pagina <= NumPagsTotales){
+    dispatch(irAPaginaParametros(pagina))
+    dispatch(refreshListParametro())
+  }
+}
+
+const irAPaginaParametros = (pagina) =>({
+  type : IR_PAGINA_PARAMETROS,
+  pagina : pagina
+})
+
+/*//Cargar el id escenario en el reducer de parametros
+export const updEscenario = (idescenario) => (dispatch,getState) =>{
+  APIInvoker.invokeGET('/escenarios/'+idescenario, response => {
+    if(response.id!=undefined){
+      dispatch(updEscenarioReducerParametros(JSON.stringify(response)))
+    }else{
+      console.log('No se encuentra el escenario')
+      dispatch(updEscenarioReducerParametros(JSON.stringify({"id":0,"nombre":"Ninguna conciliacion","escenarios":[]})))
+    }
+    dispatch(refreshListParametro())
+  },error =>{
+    console.log('No se pudo cargar las Propiedades del escenario '+idconciliacion+' en parametros listar')
+  })
+}
+//Actualiza el escenario en modulo de parametros
+const updEscenarioReducerParametros = (objEscenario)=>({
+  type : UPDATE_ESCENARIO_EN_PARAMETROS,
+  value : objEscenario
+})
+
+//Funcion que carga el combo de escenarios
+export const cargarComboEscenarios = () =>(dispatch,getState) =>{
+  APIInvoker.invokeGET('/escenarios', response => {
+    if(Array.isArray(response) == true){
+      dispatch(cargarEscenarios(response))
+    }
+  })
+}
+//Envia resultado para llenar el combo a Reducer
+const cargarEscenarios = (arrayEscenarios) => ({
+  type : CARGA_ESCENARIOS_EN_PARAMETROS,
+  lista : arrayEscenarios
+})*/
