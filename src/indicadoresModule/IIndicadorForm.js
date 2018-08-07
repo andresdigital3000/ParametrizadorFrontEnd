@@ -4,7 +4,7 @@ import APIInvoker from '../utils/APIInvoker'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { Link } from 'react-router';
 import { connect } from 'react-redux'
-import { updateFormIndicadores, saveIndicador, cargarIndicador, limpiarFormIndicador, cargarComboEscenarios, updEscenario, refreshListIndicador, cargarComboResultados, updResultadoReducerIndicadores, updFormula } from '../actions/Actions';
+import { updateFormIndicadores, saveIndicador, cargarIndicador, limpiarFormIndicador, cargarComboEscenarios, updEscenario, refreshListIndicador, cargarComboParametros, updResultadoReducerIndicadores, updFormula } from '../actions/Actions';
 
 class IIndicadorForm extends React.Component{
   constructor(){
@@ -35,7 +35,7 @@ class IIndicadorForm extends React.Component{
   cambioEscenarios(e){
     let idesc=JSON.parse(e.target.value)
     this.props.updEscenario(idesc.id)
-    this.props.cargarComboResultados(idesc.id)
+    this.props.cargarComboParametros(idesc.id)
     this.props.refreshListIndicador()
   }
 
@@ -103,27 +103,15 @@ class IIndicadorForm extends React.Component{
               <small id="nombreHelp" className="form-text text-muted">Escenario al que se le creará el indicador</small>
             </div>
             <div className="form-group">
-              <label htmlFor='resultado'>Parámetros</label>
-              <select id="resultado" name="resultado" className='form-control' value={this.props.state.resultado} onChange={this.cambioResultados.bind(this)} >
-                <option value='{"id":0,"nombre":"Ninguna","resultados":[{"variables":""}]}'>Seleccione uno</option>
-                {this.props.state.resultados.map(function(currentValue,index,array){
+              <label htmlFor='parametro'>Parámetros</label>
+              <select id="parametro" name="parametro" className='form-control' multiple value={this.props.state.parametro} onChange={this.anadirVariable.bind(this)}>
+                {this.props.state.parametros.map(function(currentValue,index,array){
                   return(
-                    <option key={currentValue.id} value={JSON.stringify(currentValue)}>{currentValue.nombre}</option>
+                    <option key={currentValue.parametro} value={currentValue.parametro}>{currentValue.parametro} : {currentValue.valor}</option>
                   );
                 })}
               </select>
-              <small id="nombreHelp" className="form-text text-muted">de las ejecuciones del Escenario seleccionado</small>
-            </div>
-            <div className="form-group">
-              <label htmlFor='variables'>Variables</label>
-              <select id="variables" name="variables" className='form-control' multiple value={this.props.state.variables} onChange={this.anadirVariable.bind(this)}>
-                  {JSON.parse(this.props.state.resultado).resultados[0].variables.split(";").map(function(currentValue,index,array){
-                    return(
-                      <option key={currentValue} value={currentValue}>{currentValue}</option>
-                    );
-                  })}
-              </select>
-              <small id="variablesHelp" className="form-text text-muted">Haga click en una variable para añadirla a la fórmula</small>
+              <small id="nombreHelp" className="form-text text-muted">Parametros o variables, haga click para añadir al final de la fórmula</small>
             </div>
             <div className="form-group">
               <label htmlFor='formula'>* Fórmula</label>
@@ -144,7 +132,7 @@ class IIndicadorForm extends React.Component{
         </When>
         <Otherwise>
           <div className="modal fade" id="modalAdd" role="dialog" aria-labelledby="modalAddIndicadorTitle" aria-hidden="true">
-            <div className="modal-dialog" role="document">
+            <div className="modal-dialog modal-lg" role="document">
               <div className="modal-content">
                   <div className="modal-header">
                     <h5 className="modal-title" id="modalAddIndicadorTitle">Adicionar Indicador</h5>
@@ -177,27 +165,15 @@ class IIndicadorForm extends React.Component{
                       <small id="nombreHelp" className="form-text text-muted">Escenario al que se le creará el indicador</small>
                     </div>
                     <div className="form-group">
-                      <label htmlFor='resultado'>Parámetros</label>
-                      <select id="resultado" name="resultado" className='form-control' value={this.props.state.resultado} onChange={this.cambioResultados.bind(this)} >
-                        <option value='{"id":0,"nombre":"Ninguna","resultados":[{"variables":""}]}'>Seleccione uno</option>
-                        {this.props.state.resultados.map(function(currentValue,index,array){
+                      <label htmlFor='parametro'>Parámetros</label>
+                      <select id="parametro" name="parametro" className='form-control' multiple value={this.props.state.parametro} onChange={this.anadirVariable.bind(this)}>
+                        {this.props.state.parametros.map(function(currentValue,index,array){
                           return(
-                            <option key={currentValue.id} value={JSON.stringify(currentValue)}>{currentValue.nombre}</option>
+                            <option key={currentValue.parametro} value={currentValue.parametro}>{currentValue.parametro} : {currentValue.valor}</option>
                           );
                         })}
                       </select>
-                      <small id="nombreHelp" className="form-text text-muted">de las ejecuciones del Escenario seleccionado</small>
-                    </div>
-                    <div className="form-group">
-                      <label htmlFor='variables'>Variables</label>
-                      <select id="variables" name="variables" className='form-control' multiple value={this.props.state.variables} onChange={this.anadirVariable.bind(this)}>
-                          {JSON.parse(this.props.state.resultado).resultados[0].variables.split(";").map(function(currentValue,index,array){
-                            return(
-                              <option key={currentValue} value={currentValue}>{currentValue}</option>
-                            );
-                          })}
-                      </select>
-                      <small id="variablesHelp" className="form-text text-muted">Haga click en una variable para añadirla a la fórmula</small>
+                      <small id="nombreHelp" className="form-text text-muted">Parametros o variables, haga click para añadir al final de la fórmula</small>
                     </div>
                     <div className="form-group">
                       <label htmlFor='formula'>* Fórmula</label>
@@ -234,14 +210,13 @@ const mapStateToProps = (state) =>{
       formula : state.indicadorFormReducer.formula,
       idEscenario : state.indicadorFormReducer.idEscenario,
       nombreEscenario : state.indicadorFormReducer.nombreEscenario,
-      escenario : JSON.stringify(state.indicadorReducer.escenario),
+      escenario : JSON.stringify(state.indicadorFormReducer.escenario),
       escenarios : state.indicadorReducer.escenarios,
-      resultado : JSON.stringify(state.indicadorReducer.resultado),
-      resultados : state.indicadorReducer.resultados,
-      variables : state.indicadorReducer.variables
+      parametro : state.indicadorFormReducer.parametro,
+      parametros : state.indicadorFormReducer.parametros
     }
   }
 }
 export default connect (mapStateToProps,{
-  updateFormIndicadores, saveIndicador, cargarIndicador, limpiarFormIndicador, updEscenario, cargarComboEscenarios, refreshListIndicador, cargarComboResultados, updResultadoReducerIndicadores, updFormula
+  updateFormIndicadores, saveIndicador, cargarIndicador, limpiarFormIndicador, updEscenario, cargarComboEscenarios, refreshListIndicador, cargarComboParametros, updResultadoReducerIndicadores, updFormula
 })(IIndicadorForm)

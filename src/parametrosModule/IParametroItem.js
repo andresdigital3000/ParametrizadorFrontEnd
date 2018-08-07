@@ -24,6 +24,12 @@ class IParametroItem extends React.Component{
                       {currentValue.valor}
                     </td>
                     <td>
+                      {currentValue.descripcion}
+                    </td>
+                    <td>
+                      {currentValue.tipo}
+                    </td>
+                    <td>
                       <div className="button-wrap">
                         <Link to={"/parametros/edit/"+currentValue.id} className="btn btn-info"><i className="fa fa-list"/></Link>
                       </div>

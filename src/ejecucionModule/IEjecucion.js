@@ -37,7 +37,7 @@ class IEjecucion extends React.Component{
               </div>
             </header>
             <div className="form-group">
-              <label htmlFor='conciliacion'>Conciliación</label>
+              <label htmlFor='conciliacion'><h4>Conciliación</h4></label>
               <select id='conciliacion' className='form-control form-control-lg' value={JSON.stringify(this.props.state.conciliacion)} onChange={this.handleInput.bind(this)}>
                 <option value='{"id":0,"nombre":"Ninguna"}'>Seleccione una</option>
                 {this.props.state.conciliaciones.map(function(currentValue,index,array){
@@ -50,22 +50,22 @@ class IEjecucion extends React.Component{
             </div>
             <div className="form-group">
               {
-                this.props.state.conciliacion.id!=0 && this.props.state.conciliacion!='' ?
+                this.props.state.conciliacion.id!=0 && this.props.state.conciliacion!='' && this.props.state.conciliacion!={"id":0,"nombre":"Ninguna"} ?
                 <button id='ejecutar' className='btn btn-primary' onClick={() => toast.info(<IMsg {...this.props} mensaje='Está seguro de ejecutar la conciliación?' accion='ejecutar'/>, { autoClose: false, position: toast.POSITION.BOTTOM_CENTER })}>Ejecutar proceso</button> :
-                <button id='ejecutar' className='btn btn-primary' disabled>Ejecutar</button>
+                <button id='ejecutar' className='btn btn-primary' disabled>Ejecutar proceso</button>
               }
               &nbsp;&nbsp;&nbsp;&nbsp;
               {
-                this.props.state.conciliacion.id!=0 && this.props.state.conciliacion!='' ?
-                <Link to="/ejecucion/programar" className='btn btn-primary'>Programar Ejecución </Link> :
+                this.props.state.conciliacion.id!=0 && this.props.state.conciliacion!='' && this.props.state.conciliacion!={"id":0,"nombre":"Ninguna"} ?
+                <Link to="/ejecucion/programar" className='btn btn-primary'>Programar Ejecución</Link> :
                 <button className='btn btn-primary' disabled>Programar Ejecución</button>
               }
             </div>
             <div className="form-group">
               {
-                this.props.state.conciliacion.id!=0 && this.props.state.conciliacion!='' ?
+                this.props.state.conciliacion.id!=0 && this.props.state.conciliacion!='' && this.props.state.conciliacion!={"id":0,"nombre":"Ninguna"} ?
                 <button id='cancelar' className='btn btn-warning' onClick={() => toast.info(<IMsg {...this.props} mensaje='Está seguro de detener la ejecución de la conciliación?' accion='cancelar'/>, { autoClose: false, position: toast.POSITION.BOTTOM_CENTER })}>Abortar proceso</button> :
-                <button id='cancelar' className='btn btn-warning' disabled>Cancelar</button>
+                <button id='cancelar' className='btn btn-warning' disabled>Abortar proceso</button>
               }
             </div>
           </div>

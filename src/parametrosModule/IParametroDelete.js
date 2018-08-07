@@ -52,20 +52,20 @@ class IParametroDelete extends React.Component{
                   <When condition={this.props.registro}>
                       <input id='id' ref='id' type='hidden' value={this.props.state.id}/>
                       <div className="form-group">
-                        <label htmlFor='nombre'>Nombre</label>
-                        <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} disabled />
+                        <label htmlFor='nombre'>Parametro</label>
+                        <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.parametro} disabled />
+                      </div>
+                      <div className="form-group">
+                        <label htmlFor='descripcion'>Valor</label>
+                        <input id='descripcion' type='text' className='form-control form-control-lg' value={this.props.state.valor} disabled />
                       </div>
                       <div className="form-group">
                         <label htmlFor='descripcion'>Descripción</label>
                         <input id='descripcion' type='text' className='form-control form-control-lg' value={this.props.state.descripcion} disabled />
                       </div>
                       <div className="form-group">
-                        <label htmlFor='descripcion'>Escenario</label>
-                        <input id='descripcion' type='text' className='form-control form-control-lg' value={this.props.state.escenario} disabled />
-                      </div>
-                      <div className="form-group">
-                        <label htmlFor='objetivo'>Formula</label>
-                        <input id='objetivo' type='text' className='form-control form-control-lg' value={this.props.state.formula} disabled/>
+                        <label htmlFor='objetivo'>Tipo</label>
+                        <input id='objetivo' type='text' className='form-control form-control-lg' value={this.props.state.tipo} disabled/>
                       </div>
                   </When>
                   <Otherwise>
@@ -98,10 +98,10 @@ const mapStateToProps = (state) =>{
   return{
     state: {
       id : state.parametroFormReducer.id,
-      nombre : state.parametroFormReducer.nombre,
+      parametro : state.parametroFormReducer.parametro,
+      valor : state.parametroFormReducer.valor,
       descripcion : state.parametroFormReducer.descripcion,
-      escenario : state.parametroFormReducer.nombreEscenario,
-      formula : state.parametroFormReducer.formula
+      tipo : state.parametroFormReducer.tipo
     }
   }
 }

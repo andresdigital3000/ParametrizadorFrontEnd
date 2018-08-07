@@ -7,10 +7,7 @@ import {
   CARGAR_INDICADORES,
   ACTUALIZA_PAGINADOR_INDICADORES,
   IR_PAGINA_INDICADORES,
-  UPDATE_ESCENARIO_EN_INDICADORES,
-  CARGA_ESCENARIOS_EN_INDICADORES,
-  UPDATE_RESULTADO_EN_INDICADORES,
-  CARGA_RESULTADOS_EN_INDICADORES
+  CARGA_ESCENARIOS_EN_INDICADORES
 } from '../actions/const'
 import update from 'react-addons-update'
 
@@ -21,11 +18,7 @@ const initialState = {
   textoBuscar:"",
   indicadores:[],
   paginador: [],
-  escenario:{"id":0,"nombre":"Ningun Escenario"},
-  escenarios:[],
-  resultado:{"id":0,"nombre":"Ninguno","resultados":[{"variables":""}]},
-  resultados:[],
-  variables:[]
+  escenarios:[]
 }
 
 export const indicadorReducer = (state = initialState,action) =>{
@@ -45,25 +38,14 @@ export const indicadorReducer = (state = initialState,action) =>{
           paginaActual : {$set: action.pagina}
         })
     case CARGAR_INDICADORES:
-      //console.log("Lista de indicadores: "+ JSON.stringify(action.lista))
+      console.log("Lista de indicadores: "+ JSON.stringify(action.lista))
       return update(state,{
         indicadores : {$set: action.lista}
       })
-    case UPDATE_ESCENARIO_EN_INDICADORES:
-      return update(state,{
-        escenario: {$set: JSON.parse(action.value)}
-      })
+
     case CARGA_ESCENARIOS_EN_INDICADORES:
       return update(state,{
         escenarios: {$set: action.lista}
-      })
-    case UPDATE_RESULTADO_EN_INDICADORES:
-      return update(state,{
-        resultado: {$set: action.value}
-      })
-    case CARGA_RESULTADOS_EN_INDICADORES:
-      return update(state,{
-        resultados: {$set: action.lista}
       })
     default:
       return state

@@ -35,7 +35,13 @@ class IParametroList extends React.Component{
                         </th>
                         <th>
                           VALOR
-                        </th>  
+                        </th>
+                        <th>
+                          DESCRIPCIÓN
+                        </th>
+                        <th>
+                          TIPO
+                        </th>                        
                         <th>
                           ACCIONES
                         </th>

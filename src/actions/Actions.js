@@ -41,7 +41,7 @@ import {
   UPDATE_ESCENARIO_EN_INDICADORES,
   CARGA_ESCENARIOS_EN_INDICADORES,
   UPDATE_RESULTADO_EN_INDICADORES,
-  CARGA_RESULTADOS_EN_INDICADORES,
+  CARGA_PARAMETROS_EN_INDICADORES,
   UPDATE_FORMULA,
   ACTUALIZA_PAGINADOR_PARAMETROS,
   CARGAR_PARAMETROS,
@@ -50,7 +50,8 @@ import {
   CARGAR_PARAMETRO_FORM,
   IR_PAGINA_PARAMETROS,
   UPDATE_ESCENARIO_EN_PARAMETROS,
-  CARGA_ESCENARIOS_EN_PARAMETROS
+  CARGA_ESCENARIOS_EN_PARAMETROS,
+  LIMPIAR_CONCILIACION_SELECCIONADA
 } from './const'
 
 import React from 'react'
@@ -445,9 +446,19 @@ export const borrarPolitica = () => (dispatch,getState) =>{
   let idpolitica = getState().politicaFormReducer.id
   APIInvoker.invokeDELETE('/politicas/'+idpolitica, response => {
   },error =>{
-    toast.error("Se eliminó la politica", {
-      position: toast.POSITION.BOTTOM_CENTER
-    })
+    if(error.codigo==200){
+      toast.success("Se eliminó la politica", {
+        position: toast.POSITION.BOTTOM_CENTER
+      })
+    }else if(error.codigo==500){
+      toast.error("No es posible eliminar la política, revise que no tenga conciliación asociada", {
+        position: toast.POSITION.BOTTOM_CENTER
+      })
+    }else{
+      toast.error("Error general al intentar eliminar una política", {
+        position: toast.POSITION.BOTTOM_CENTER
+      })
+    }
     dispatch(
       limpiarFormPolitica(),
       browserHistory.push('/politicas')
@@ -854,21 +865,40 @@ export const borrarConciliacion = () => (dispatch,getState) =>{
   let idtransformacion = getState().conciliacionFormReducer.idPaquete
   APIInvoker.invokeDELETE('/wstransformacion/'+idtransformacion, response => {
   },error =>{
-    toast.success("Se eliminó el paquete asociado", {
-      position: toast.POSITION.BOTTOM_CENTER
-    })
+    if(error.codigo==200){
+      toast.success("Se eliminó el paquete asociado", {
+        position: toast.POSITION.BOTTOM_CENTER
+      })
+    }else if(error.codigo==500){
+      toast.error("No se pudo eliminar el paquete asociado", {
+        position: toast.POSITION.BOTTOM_CENTER
+      })
+    }else{
+      toast.error("Error general al intentar eliminar el paquete asociado", {
+        position: toast.POSITION.BOTTOM_CENTER
+      })
+    }
     APIInvoker.invokeDELETE('/conciliaciones/'+idconciliacion, response => {
-    },error =>{
-        console.log(error)
-        toast.success("Se eliminó la conciliación", {
-          position: toast.POSITION.BOTTOM_CENTER
-        })
-        dispatch(
-          limpiarFormConciliacion(),
-          browserHistory.push('/conciliaciones')
-        )
+    },error2 =>{
+        if(error2.codigo==200){
+          toast.success("Se eliminó la conciliación", {
+            position: toast.POSITION.BOTTOM_CENTER
+          })
+        }else if(error2.codigo==500){
+          toast.error("No es posible eliminar la conciliación, revise que no tenga escenarios asociados", {
+            position: toast.POSITION.BOTTOM_CENTER
+          })
+        }else{
+          toast.error("Error general al intentar eliminar una conciliación", {
+            position: toast.POSITION.BOTTOM_CENTER
+          })
+        }
     })
   })
+  dispatch(
+    limpiarFormConciliacion(),
+    browserHistory.push('/conciliaciones')
+  )
 }
 
 //Funcion de cambio de pagina
@@ -1066,15 +1096,17 @@ export const saveEscenario = () => (dispatch,getState)=>{
         toast.success("Se grabó un nuevo escenario", {
           position: toast.POSITION.BOTTOM_CENTER
         })
-        //dispatch(limpiarFormEscenario())
-        //dispatch(updConciliacion(getState().escenarioReducer.conciliacion.id))
       }else{
-        console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
-        toast.error("Ya existe un escenario con el mismo nombre", {
-          position: toast.POSITION.BOTTOM_CENTER
-        })
-        //dispatch(limpiarFormEscenario())
-        //dispatch(updConciliacion(getState().escenarioReducer.conciliacion.id))
+        if(response.codigo==409){
+          //console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
+          toast.error("Ya existe un escenario con el mismo nombre", {
+            position: toast.POSITION.BOTTOM_CENTER
+          })
+        }else{
+          toast.error("Error general al intentar grabar un nuevo escenario", {
+            position: toast.POSITION.BOTTOM_CENTER
+          })
+        }
       }
     },error =>{
       console.log('No se ha podido crear la escenario')
@@ -1105,10 +1137,16 @@ export const saveEscenario = () => (dispatch,getState)=>{
         })
         //dispatch(limpiarFormEscenario(),browserHistory.push('/escenarios'))
       }else{
-        console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
-        toast.error("No se ha actualizado el escenario", {
-          position: toast.POSITION.BOTTOM_CENTER
-        })
+        //console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
+        if(response.codigo==409){
+          toast.error("No se ha actualizó el escenario, el nombre no puede asignarse", {
+            position: toast.POSITION.BOTTOM_CENTER
+          })
+        }else{
+          toast.error("Error general al intentar actualizar el escenario", {
+            position: toast.POSITION.BOTTOM_CENTER
+          })
+        }
         //dispatch(limpiarFormEscenario(),browserHistory.push('/escenarios'))
       }
     },error =>{
@@ -1142,9 +1180,19 @@ export const borrarEscenario = () => (dispatch,getState) =>{
   let idescenario = getState().escenarioFormReducer.id
   APIInvoker.invokeDELETE('/escenarios/'+idescenario, response => {
   },error =>{
-    toast.success("Se eliminó el escenario", {
-      position: toast.POSITION.BOTTOM_CENTER
-    })
+    if(error.codigo==200){
+      toast.success("Se eliminó el escenario", {
+        position: toast.POSITION.BOTTOM_CENTER
+      })
+    }else if(error.codigo==500){
+      toast.error("No es posible eliminar el escenario, revise que no tenga indicadores asociados", {
+        position: toast.POSITION.BOTTOM_CENTER
+      })
+    }else if(
+      toast.error("Error general al intentar eliminar un escenario", {
+        position: toast.POSITION.BOTTOM_CENTER
+      })
+    )
     dispatch(limpiarFormEscenario(),browserHistory.push('/escenarios'))
   })
 }
@@ -1168,11 +1216,18 @@ const irAPaginaEscenarios = (pagina) =>({
 *  para realizar todas las acciones necesarias modulo de ejecución
 */
 
+//Funcion que elimina el valor ultimo seleccionado del combo
+export const limpiarConciliacionSeleccionada = () => ({
+  type : LIMPIAR_CONCILIACION_SELECCIONADA,
+  lista : {"id":0,"nombre":"Ninguna"}
+})
+
 //Funcion que carga el combo de conciliaciones
 export const cargarComboConciliaciones = () =>(dispatch,getState) =>{
   APIInvoker.invokeGET('/conciliaciones', response => {
     if(Array.isArray(response) == true){
       dispatch(cargarConciliaciones(response))
+      dispatch(limpiarConciliacionSeleccionada())
     }
   })
 }
@@ -1344,12 +1399,13 @@ export const doEjecutarConciliacion = () => (dispatch,getState) => {
                 idConciliacion : idConciliacionEjecucion,
               }
               APIInvoker.invokePOST('/ejecucionproceso',ejecucion_salvar,response2 =>{
-                if(response.id!=undefined){
+                if(response2.idPlanInstance!=undefined){
                   toast.success("...y se almacenó la información de la ejecución", {
                     position: toast.POSITION.BOTTOM_CENTER
                   })
+                  dispatch(cargarComboConciliaciones())
                 }else{
-                  toast.error("No se pudo almacenar la información de la ejecución", {
+                  toast.error("No fue posible almacenar la información de la ejecución", {
                     position: toast.POSITION.BOTTOM_CENTER
                   })
                 }
@@ -1374,7 +1430,6 @@ export const doEjecutarConciliacion = () => (dispatch,getState) => {
       position: toast.POSITION.BOTTOM_CENTER,
     })
   }
-  dispatch(cargarComboConciliaciones())
 }
 
 export const doCancelarConciliacion = () => (dispatch,getState) => {
@@ -1429,6 +1484,7 @@ export const doCancelarConciliacion = () => (dispatch,getState) => {
               toast.success("Se detuvo la ejecución correctamente", {
                 position: toast.POSITION.BOTTOM_CENTER,
               })
+              dispatch(cargarComboConciliaciones())
             }else{
               toast.error("No se ha podido detener", {
                 position: toast.POSITION.BOTTOM_CENTER,
@@ -1628,7 +1684,7 @@ export const refreshListIndicador = (resp) =>(dispatch,getState) => {
           }else{
             dispatch(antesVerIndicadores(objetoVacio))
             console.log("Error : "+response1.codigo+" Mensaje: "+response1.mensaje+": "+response1.descripcion)
-            //alert("No se encuentra la indicador")
+            //alert("No se encuentra el indicador")
           }
         }
       })
@@ -1678,20 +1734,21 @@ const updateFormIndicadoresRequest = (field,value) => ({
 //Funcion para guardar o actualizar el indicador
 export const saveIndicador = () => (dispatch,getState)=>{
   let id_indicador = getState().indicadorFormReducer.id
-  //Si es un registro nuevo
-  let indicador_salvar = {
-    id : getState().indicadorFormReducer.id,
-    nombreFormula : getState().indicadorFormReducer.nombre,
-    descripcion : getState().indicadorFormReducer.descripcion,
-    textoFormula : getState().indicadorFormReducer.formula,
-    idEscenario: getState().indicadorReducer.escenario.id
-  }
+
   if(id_indicador == 0 || id_indicador == undefined){
+    //Si es un registro nuevo
+    let indicador_salvar = {
+      id : getState().indicadorFormReducer.id,
+      nombreFormula : getState().indicadorFormReducer.nombre,
+      descripcion : getState().indicadorFormReducer.descripcion,
+      textoFormula : getState().indicadorFormReducer.formula,
+      idEscenario: getState().indicadorFormReducer.escenario.id
+    }
     APIInvoker.invokePOST('/indicadores',indicador_salvar,response =>{
       if(response.id!=undefined){
         dispatch(limpiarFormIndicador())
         dispatch(refreshListIndicador())
-        toast.success("Se grabó la indicador", {
+        toast.success("Se grabó el indicador", {
           position: toast.POSITION.BOTTOM_CENTER
         })
       }else{
@@ -1714,6 +1771,14 @@ export const saveIndicador = () => (dispatch,getState)=>{
       console.log("No se ha podido crear el indicador con id"+id_indicador)
     })
   }else{
+    //Si es un registro existente
+    let indicador_salvar = {
+      id : getState().indicadorFormReducer.id,
+      nombreFormula : getState().indicadorFormReducer.nombre,
+      descripcion : getState().indicadorFormReducer.descripcion,
+      textoFormula : getState().indicadorFormReducer.formula,
+      idEscenario: getState().indicadorFormReducer.idEscenario
+    }
     APIInvoker.invokePUT('/indicadores',indicador_salvar,response =>{
       if(response.id!=undefined){
         toast.success("Se actualizó el indicador", {
@@ -1781,13 +1846,20 @@ export const borrarIndicador = () => (dispatch,getState) =>{
   let idindicador = getState().indicadorFormReducer.id
   APIInvoker.invokeDELETE('/indicadores/'+idindicador, response => {
   },error =>{
-    toast.error("Se eliminó el indicador", {
-      position: toast.POSITION.BOTTOM_CENTER
-    })
-    dispatch(
-      limpiarFormIndicador(),
-      browserHistory.push('/indicadores')
-    )
+    if(error.codigo==200){
+      toast.success("Se eliminó el indicador", {
+        position: toast.POSITION.BOTTOM_CENTER
+      })
+    }else if(error.codigo==500){
+      toast.error("No es posible eliminar el inidicador", {
+        position: toast.POSITION.BOTTOM_CENTER
+      })
+    }else{
+      toast.error("Error general al intentar eliminar un indicador", {
+        position: toast.POSITION.BOTTOM_CENTER
+      })
+    }
+    dispatch(limpiarFormIndicador(),browserHistory.push('/indicadores'))
   })
 }
 
@@ -1839,24 +1911,18 @@ const cargarEscenarios = (arrayEscenarios) => ({
   lista : arrayEscenarios
 })
 
-//Funcion que carga el combo de resultados
-export const cargarComboResultados = (idEscenario) =>(dispatch,getState) =>{
-  APIInvoker.invokeGET('/ejecucionproceso/findByEscenario?codEscenario='+idEscenario, response => {
+//Funcion que carga el combo de parametros
+export const cargarComboParametros = (idEscenario) =>(dispatch,getState) =>{
+  APIInvoker.invokeGET('/parametros/padre?tipo=escenario&codpadre='+idEscenario, response => {
     if(Array.isArray(response) == true){
-      dispatch(cargarResultados(response))
+      dispatch(cargarParametros(response))
     }
   })
 }
-//Envia resultado para llenar el combo a Reducer
-const cargarResultados = (arrayResultados) => ({
-  type : CARGA_RESULTADOS_EN_INDICADORES,
+//Envia parametros para llenar el combo a Reducer en indicadores
+const cargarParametros = (arrayResultados) => ({
+  type : CARGA_PARAMETROS_EN_INDICADORES,
   lista : arrayResultados
-})
-
-//Envia el resultado seleccionado actualmente en indicadores
-export const updResultadoReducerIndicadores = (objResultado) =>({
-  type : UPDATE_RESULTADO_EN_INDICADORES,
-  value : objResultado
 })
 
 //Añade a la formula la variable
@@ -2039,10 +2105,17 @@ const updateFormParametrosRequest = (field,value) => ({
 export const saveParametro = () => (dispatch,getState)=>{
   let id_parametro = getState().parametroFormReducer.id
   //Si es un registro nuevo
+  let codPadre = 0
+  if(getState().parametroFormReducer.tipo=="ESCENARIO"){
+    codPadre = getState().parametroFormReducer.escenario
+  }
   let parametro_salvar = {
     id : getState().parametroFormReducer.id,
     parametro : getState().parametroFormReducer.parametro,
-    valor : getState().parametroFormReducer.valor
+    valor : getState().parametroFormReducer.valor,
+    descripcion : getState().parametroFormReducer.descripcion,
+    tipo : getState().parametroFormReducer.tipo,
+    codPadre : codPadre
   }
   if(id_parametro == 0 || id_parametro == undefined){
     APIInvoker.invokePOST('/parametros',parametro_salvar,response =>{
@@ -2163,36 +2236,16 @@ const irAPaginaParametros = (pagina) =>({
   pagina : pagina
 })
 
-/*//Cargar el id escenario en el reducer de parametros
-export const updEscenario = (idescenario) => (dispatch,getState) =>{
-  APIInvoker.invokeGET('/escenarios/'+idescenario, response => {
-    if(response.id!=undefined){
-      dispatch(updEscenarioReducerParametros(JSON.stringify(response)))
-    }else{
-      console.log('No se encuentra el escenario')
-      dispatch(updEscenarioReducerParametros(JSON.stringify({"id":0,"nombre":"Ninguna conciliacion","escenarios":[]})))
-    }
-    dispatch(refreshListParametro())
-  },error =>{
-    console.log('No se pudo cargar las Propiedades del escenario '+idconciliacion+' en parametros listar')
-  })
-}
-//Actualiza el escenario en modulo de parametros
-const updEscenarioReducerParametros = (objEscenario)=>({
-  type : UPDATE_ESCENARIO_EN_PARAMETROS,
-  value : objEscenario
-})
-
 //Funcion que carga el combo de escenarios
-export const cargarComboEscenarios = () =>(dispatch,getState) =>{
+export const cargarEscenariosenParametros = () =>(dispatch,getState) =>{
   APIInvoker.invokeGET('/escenarios', response => {
     if(Array.isArray(response) == true){
-      dispatch(cargarEscenarios(response))
+      dispatch(cargarEscenPar(response))
     }
   })
 }
 //Envia resultado para llenar el combo a Reducer
-const cargarEscenarios = (arrayEscenarios) => ({
+const cargarEscenPar = (arrayEscenarios) => ({
   type : CARGA_ESCENARIOS_EN_PARAMETROS,
   lista : arrayEscenarios
-})*/
+})

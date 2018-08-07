@@ -2,7 +2,9 @@ import {
   UPDATE_INDICADORES_FORM_REQUEST,
   CARGAR_INDICADOR_FORM,
   LIMPIAR_FORM_INDICADOR,
-  UPDATE_FORMULA
+  UPDATE_FORMULA,
+  UPDATE_ESCENARIO_EN_INDICADORES,
+  CARGA_PARAMETROS_EN_INDICADORES
 } from '../actions/const'
 import update from 'react-addons-update'
 
@@ -12,7 +14,9 @@ const initialState = {
   descripcion : '',
   formula : '',
   idEscenario : '',
-  nombreEscenario : ''
+  nombreEscenario : '',
+  escenario:{"id":0,"nombre":"Ningun Escenario"},
+  parametros:[]
 }
 
 export const indicadorFormReducer = (state = initialState,action) =>{
@@ -28,7 +32,9 @@ export const indicadorFormReducer = (state = initialState,action) =>{
           descripcion : {$set: action.indicador[0].descripcion},
           formula : {$set: action.indicador[0].textoFormula},
           idEscenario : {$set: action.indicador[0].idEscenario},
-          nombreEscenario : {$set: action.indicador[0].nombreEscenario}
+          nombreEscenario : {$set: action.indicador[0].nombreEscenario},
+          escenario : {$set: JSON.parse('{"id":0,"nombre":"Ningun Escenario"}')},
+          parametros : {$set : []}
         })
     case LIMPIAR_FORM_INDICADOR:
         return update(state,{
@@ -37,11 +43,21 @@ export const indicadorFormReducer = (state = initialState,action) =>{
           descripcion : {$set: ''},
           formula : {$set: ''},
           idEscenario : {$set: ''},
-          nombreEscenario : {$set: ''}
+          nombreEscenario : {$set: ''},
+          escenario : {$set: JSON.parse('{"id":0,"nombre":"Ningun Escenario"}')},
+          parametros : {$set : []}
         })
     case UPDATE_FORMULA:
         return update(state,{
           formula : {$set: state.formula+action.value}
+        })
+    case UPDATE_ESCENARIO_EN_INDICADORES:
+        return update(state,{
+          escenario: {$set: JSON.parse(action.value)}
+        })
+    case CARGA_PARAMETROS_EN_INDICADORES:
+        return update(state,{
+          parametros: {$set: action.lista}
         })
     default:
         return state
