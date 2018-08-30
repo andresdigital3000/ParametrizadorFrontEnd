@@ -362,7 +362,7 @@ export const savePolitica = () => (dispatch,getState)=>{
       }else{
         //Enviar error específico a la consola
         console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
-        if(response.codigo==409){
+        if(response.mensaje=="CTRAINT_UQ_TBL_GAI_POLITICA_NOMBRE_POLITICA"){
           toast.error("Ya existe una política con el mismo nombre", {
             position: toast.POSITION.BOTTOM_CENTER
           })
@@ -386,7 +386,7 @@ export const savePolitica = () => (dispatch,getState)=>{
         })
         //dispatch(limpiarFormPolitica(),browserHistory.push('/politicas'))
       }else{
-        if(response.codigo==409){
+        if(response.mensaje=="CTRAINT_UQ_TBL_GAI_POLITICA_NOMBRE_POLITICA"){
           toast.error("Ya existe una política con el mismo nombre", {
             position: toast.POSITION.BOTTOM_CENTER
           })
@@ -723,6 +723,10 @@ export const saveConciliacion = () => (dispatch,getState)=>{
               toast.success("...y se insertó el paquete", {
                 position: toast.POSITION.BOTTOM_CENTER
               })
+            }else if(response2.mensaje="CTRAINT_UQ_TBL_GAI_WS_TRANSFORMACIONES"){
+              toast.error("No se puede usar el nombre de otro paquete existente", {
+                position: toast.POSITION.BOTTOM_CENTER
+              })
             }else{
               toast.error("No se pudo asociar el paquete", {
                 position: toast.POSITION.BOTTOM_CENTER
@@ -732,11 +736,9 @@ export const saveConciliacion = () => (dispatch,getState)=>{
             console.log('No se ha podido asignar el paquete')
           })
         }
-        dispatch(antesLimpiarFormConciliacion())
-        dispatch(refreshListConciliacion())
       }else{
         console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
-        if(response.codigo==409){
+        if(response.mensaje=="CTRAINT_UQ_TBL_GAI_CONCILIACION_NOMBRE_CONCILIACION"){
           toast.error("Ya existe otra conciliación con el mismo nombre ó está intentando asignar una política ya asignada", {
             position: toast.POSITION.BOTTOM_CENTER
           })
@@ -749,6 +751,7 @@ export const saveConciliacion = () => (dispatch,getState)=>{
     },error =>{
       console.log('No se ha podido crear la conciliacion')
     })
+    dispatch(antesLimpiarFormConciliacion())
   }else{
     //Si es un registro existente
     let idPoliticaGrabar = 0
@@ -789,6 +792,10 @@ export const saveConciliacion = () => (dispatch,getState)=>{
                 toast.success("actualizando el paquete", {
                   position: toast.POSITION.BOTTOM_CENTER
                 })
+              }else if(response.mensaje="CTRAINT_UQ_TBL_GAI_WS_TRANSFORMACIONES"){
+                toast.error("No se puede usar el nombre de otro paquete existente", {
+                  position: toast.POSITION.BOTTOM_CENTER
+                })
               }else{
                 toast.error("No se pudo actualizar el paquete", {
                   position: toast.POSITION.BOTTOM_CENTER
@@ -810,6 +817,10 @@ export const saveConciliacion = () => (dispatch,getState)=>{
                 toast.success("...y se agregó el paquete", {
                   position: toast.POSITION.BOTTOM_CENTER
                 })
+              }else if(response2.mensaje="CTRAINT_UQ_TBL_GAI_WS_TRANSFORMACIONES"){
+                toast.error("No se puede usar el nombre de otro paquete existente", {
+                  position: toast.POSITION.BOTTOM_CENTER
+                })
               }else{
                 toast.error("No se pudo agregar el paquete", {
                   position: toast.POSITION.BOTTOM_CENTER
@@ -825,16 +836,22 @@ export const saveConciliacion = () => (dispatch,getState)=>{
             position: toast.POSITION.BOTTOM_CENTER
           })
         }
+      }else if(response.mensaje=="CTRAINT_UQ_TBL_GAI_CONCILIACION_NOMBRE_CONCILIACION"){
+        toast.error("No se puede usar el nombre de otra conciliación existente", {
+          position: toast.POSITION.BOTTOM_CENTER
+        })
       }
     },error =>{
       console.log('No se ha podido actualizar la conciliacion')
     })
-}
+  }
 }
 
 //Funcion que vuelve a cargar el combo de politicas al limpiar el formulario de conciliaciones
 export const antesLimpiarFormConciliacion = () => (dispatch,getState) => {
-  dispatch(cargarComboPoliticas(),limpiarFormConciliacion())
+  dispatch(cargarComboPoliticas())
+  dispatch(refreshListConciliacion())
+  //dispatch(limpiarFormConciliacion())
 }
 
 //Funcion para limpiar los campos del formulario de Conciliaciones
@@ -863,37 +880,45 @@ const cargarConciliacionEnForm = (conciliacion) => ({
 export const borrarConciliacion = () => (dispatch,getState) =>{
   let idconciliacion = getState().conciliacionFormReducer.id
   let idtransformacion = getState().conciliacionFormReducer.idPaquete
-  APIInvoker.invokeDELETE('/wstransformacion/'+idtransformacion, response => {
-  },error =>{
-    if(error.codigo==200){
-      toast.success("Se eliminó el paquete asociado", {
-        position: toast.POSITION.BOTTOM_CENTER
-      })
-    }else if(error.codigo==500){
-      toast.error("No se pudo eliminar el paquete asociado", {
-        position: toast.POSITION.BOTTOM_CENTER
-      })
-    }else{
-      toast.error("Error general al intentar eliminar el paquete asociado", {
-        position: toast.POSITION.BOTTOM_CENTER
-      })
-    }
-    APIInvoker.invokeDELETE('/conciliaciones/'+idconciliacion, response => {
-    },error2 =>{
-        if(error2.codigo==200){
-          toast.success("Se eliminó la conciliación", {
-            position: toast.POSITION.BOTTOM_CENTER
-          })
-        }else if(error2.codigo==500){
-          toast.error("No es posible eliminar la conciliación, revise que no tenga escenarios asociados", {
-            position: toast.POSITION.BOTTOM_CENTER
-          })
-        }else{
-          toast.error("Error general al intentar eliminar una conciliación", {
-            position: toast.POSITION.BOTTOM_CENTER
-          })
-        }
+  console.log("idPaquete:")
+  console.log(idtransformacion)
+  if(idtransformacion!=undefined && idtransformacion!=""){
+    APIInvoker.invokeDELETE('/wstransformacion/'+idtransformacion, response => {
+    },error =>{
+      if(error.codigo==200){
+        toast.success("Se eliminó el paquete asociado", {
+          position: toast.POSITION.BOTTOM_CENTER
+        })
+      }else if(error.codigo==500){
+        toast.error("No se pudo eliminar el paquete asociado", {
+          position: toast.POSITION.BOTTOM_CENTER
+        })
+      }else{
+        toast.error("Error general al intentar eliminar el paquete asociado", {
+          position: toast.POSITION.BOTTOM_CENTER
+        })
+      }
     })
+  }else{
+    toast.info("No tiene paquete asociado", {
+      position: toast.POSITION.BOTTOM_CENTER
+    })
+  }
+  APIInvoker.invokeDELETE('/conciliaciones/'+idconciliacion, response2 => {
+    },error2 =>{
+      if(error2.codigo==200){
+        toast.success("Se eliminó la conciliación", {
+          position: toast.POSITION.BOTTOM_CENTER
+        })
+      }else if(error2.codigo==500){
+        toast.error("No es posible eliminar la conciliación, revise que no tenga escenarios asociados", {
+          position: toast.POSITION.BOTTOM_CENTER
+        })
+      }else{
+        toast.error("Error general al intentar eliminar una conciliación", {
+          position: toast.POSITION.BOTTOM_CENTER
+        })
+      }
   })
   dispatch(
     limpiarFormConciliacion(),
@@ -1097,7 +1122,7 @@ export const saveEscenario = () => (dispatch,getState)=>{
           position: toast.POSITION.BOTTOM_CENTER
         })
       }else{
-        if(response.codigo==409){
+        if(response.mensaje=="CTRAINT_UQ_TBL_GAI_ESCENARIO_NOMBRE_ESCENARIO"){
           //console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
           toast.error("Ya existe un escenario con el mismo nombre", {
             position: toast.POSITION.BOTTOM_CENTER
@@ -1138,7 +1163,7 @@ export const saveEscenario = () => (dispatch,getState)=>{
         //dispatch(limpiarFormEscenario(),browserHistory.push('/escenarios'))
       }else{
         //console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
-        if(response.codigo==409){
+        if(response.mensaje=="CTRAINT_UQ_TBL_GAI_ESCENARIO_NOMBRE_ESCENARIO"){
           toast.error("No se ha actualizó el escenario, el nombre no puede asignarse", {
             position: toast.POSITION.BOTTOM_CENTER
           })
@@ -1185,16 +1210,16 @@ export const borrarEscenario = () => (dispatch,getState) =>{
         position: toast.POSITION.BOTTOM_CENTER
       })
     }else if(error.codigo==500){
-      toast.error("No es posible eliminar el escenario, revise que no tenga indicadores asociados", {
+      toast.error("No es posible eliminar el escenario, revise que no tenga indicadores y/o parámetros asociados", {
         position: toast.POSITION.BOTTOM_CENTER
       })
-    }else if(
+    }else{
       toast.error("Error general al intentar eliminar un escenario", {
         position: toast.POSITION.BOTTOM_CENTER
       })
-    )
-    dispatch(limpiarFormEscenario(),browserHistory.push('/escenarios'))
+    }
   })
+  dispatch(limpiarFormEscenario(),browserHistory.push('/escenarios'))
 }
 
 //Funcion de cambio de pagina
@@ -1754,7 +1779,7 @@ export const saveIndicador = () => (dispatch,getState)=>{
       }else{
         //Enviar error específico a la consola
         console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
-        if(response.codigo==409){
+        if(response.mensaje=="CTRAINT_UQ_TBL_GAI_INDICADORES_NOMBRE_FORMULA"){
           toast.error("Ya existe un indicador con el mismo nombre", {
             position: toast.POSITION.BOTTOM_CENTER
           })
@@ -1786,7 +1811,7 @@ export const saveIndicador = () => (dispatch,getState)=>{
         })
         //dispatch(limpiarFormIndicador(),browserHistory.push('/indicadores'))
       }else{
-        if(response.codigo==409){
+        if(response.mensaje=="CTRAINT_UQ_TBL_GAI_INDICADORES_NOMBRE_FORMULA"){
           toast.error("Ya existe un indicador con el mismo nombre", {
             position: toast.POSITION.BOTTOM_CENTER
           })
@@ -2128,7 +2153,7 @@ export const saveParametro = () => (dispatch,getState)=>{
       }else{
         //Enviar error específico a la consola
         console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
-        if(response.codigo==409){
+        if(response.mensaje=="CTRAINT_UQ_TBL_GAI_PARAMETROS"){
           toast.error("Ya existe un parámetro con el mismo nombre", {
             position: toast.POSITION.BOTTOM_CENTER
           })
@@ -2152,7 +2177,7 @@ export const saveParametro = () => (dispatch,getState)=>{
         })
         //dispatch(limpiarFormParametro(),browserHistory.push('/parametros'))
       }else{
-        if(response.codigo==409){
+        if(response.mensaje=="CTRAINT_UQ_TBL_GAI_PARAMETROS"){
           toast.error("Ya existe un parámetro con el mismo nombre", {
             position: toast.POSITION.BOTTOM_CENTER
           })
@@ -2212,7 +2237,7 @@ export const borrarParametro = () => (dispatch,getState) =>{
   let idparametro = getState().parametroFormReducer.id
   APIInvoker.invokeDELETE('/parametros/'+idparametro, response => {
   },error =>{
-    toast.error("Se eliminó el parámetro", {
+    toast.success("Se eliminó el parámetro", {
       position: toast.POSITION.BOTTOM_CENTER
     })
     dispatch(

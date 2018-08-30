@@ -7,6 +7,7 @@ class APIInvoker {
       "Content-Type":"application/json",
       "Access-Control-Allow-Headers":"*",
       "Access-Control-Allow-Origin":"*",
+      "Access-Control-Allow-Methods":"*",
       authorization: window.localStorage.getItem("token")
     })
   }
@@ -48,9 +49,8 @@ class APIInvoker {
 
   invokeDELETE(url,idregistro,okCallback,failCallback){
     let params = {
-      method:'delete',
       headers: this.getAPIHeader(),
-      body: idregistro
+      method:'delete'
     };
     this.invoke(url, okCallback, failCallback, params);
   }
@@ -58,14 +58,14 @@ class APIInvoker {
   invoke(url, okCallback, failCallback, params){
     if(debug){
       console.log("Invoke => " + params.method + ":" + url );
-      console.log(params.body);
+      console.log(params);
     }
     let host_api
     if(configuration.server.port!=""){
       fetch(`${configuration.server.host}:${configuration.server.port}${url}`,params)
         .then((response)=>{
         if(debug){
-          console.log("Invoke Response => ");
+          console.log("Response => ");
           console.log(response);
         }
         return response.json()

@@ -43,6 +43,8 @@ class IConciliacionForm extends React.Component{
 
   //Limpiar el formulario
   limpiarConciliacion(e){
+    this.props.refreshListConciliacion()
+    //this.props.cargarComboPoliticas()
     this.props.limpiarFormConciliacion()
     this.props.updPolitica(0)
   }
@@ -92,7 +94,7 @@ class IConciliacionForm extends React.Component{
             <div className="form-group">
               <small>(*) Obligatorio</small>
               <hr/>
-              <Link to={"/conciliaciones"} onClick={this.props.limpiarFormConciliacion.bind(this)} className="btn btn-warning">Regresar</Link>&nbsp;&nbsp;&nbsp;
+              <Link to={"/conciliaciones"} onClick={this.limpiarConciliacion.bind(this)} className="btn btn-warning">Regresar</Link>&nbsp;&nbsp;&nbsp;
               {
                 this.props.state.nombre!="" && this.props.state.webservice!="" ?
                 <button onClick={this.props.saveConciliacion.bind(this)} className="btn btn-primary">Grabar</button> :
