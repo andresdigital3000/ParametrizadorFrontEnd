@@ -31,7 +31,7 @@ class IEjecucion extends React.Component{
               <div className="form-group">
                 <div className="col-sm-12">
                   <center>
-                      <h2>Ejecución</h2>
+                      <h2>Ejecución de conciliaciones</h2>
                   </center>
                 </div>
               </div>

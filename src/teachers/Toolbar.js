@@ -19,13 +19,12 @@ class Toolbar extends React.Component{
 
   render(){
     return(
-      <nav className="navigation">
-        <div className="container">
+      <nav className="navigation navbar-expand-lg">
           <a className="logo" href="#">Claro</a>
           <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
               <span className="navbar-toggler-icon"></span>
           </button>
-          <div className="main--menu" id="navbarNavDropdown">
+          <div className="main--menu navigation-collapse" id="navbarNavDropdown">
             <ul className="navigation-nav">
               <li className="nav-item active">
                 <a className="nav-link" href="#">
@@ -45,10 +44,13 @@ class Toolbar extends React.Component{
                 <Link to="/escenarios" className="nav-link">Escenarios</Link>
               </li>
               <li className="nav-item">
-                <Link to="/ejecucion" className="nav-link">Ejecución</Link>
+                <Link to="/ejecucion" className="nav-link">Ejecución<br/>Conciliaciones</Link>
               </li>
               <li className="nav-item">
-                <Link to="/resultados" className="nav-link">Resultados</Link>
+                <Link to="/ejecucione" className="nav-link">Ejecución<br/>Escenarios</Link>
+              </li>
+              <li className="nav-item">
+                <Link to="#" className="nav-link">Resultados</Link>
               </li>
               <li className="nav-item">
                 <Link to="/indicadores" className="nav-link">Indicadores</Link>
@@ -57,13 +59,15 @@ class Toolbar extends React.Component{
                 <Link to="/parametros" className="nav-link">Parámetros</Link>
               </li>
               <li className="nav-item">
+                <Link to="/querys" className="nav-link">Queries</Link>
+              </li>
+              <li className="nav-item">
                 <a href="#" className="nav-link"  onClick={this.logout.bind(this)}>
                     <i className="fa fa-power-off"/>
                 </a>
               </li>
             </ul>
           </div>
-        </div>
       </nav>
     )
   }

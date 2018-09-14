@@ -22,6 +22,7 @@ import IEscenarioList from './escenariosModule/IEscenarioList'
 import IEscenarioForm from './escenariosModule/IEscenarioForm'
 import IEscenarioDelete from './escenariosModule/IEscenarioDelete'
 import IEjecucion from './ejecucionModule/IEjecucion'
+import IEjecucionE from './ejecucionModule/IEjecucionE'
 import IProgramar from './ejecucionModule/IProgramar'
 import IResultados from './resultadosModule/IResultados'
 import IIndicador from './indicadoresModule/IIndicador'
@@ -32,6 +33,11 @@ import IParametro from './parametrosModule/IParametro'
 import IParametroList from './parametrosModule/IParametroList'
 import IParametroForm from './parametrosModule/IParametroForm'
 import IParametroDelete from './parametrosModule/IParametroDelete'
+import IQuery from './querysModule/IQuery'
+import IQueryList from './querysModule/IQueryList'
+import IQueryForm from './querysModule/IQueryForm'
+import IQueryDelete from './querysModule/IQueryDelete'
+import IQueryAprobar from './querysModule/IQueryAprobar'
 
 
 //import APIInvoker from './utils/APIInvoker'
@@ -66,6 +72,7 @@ render((
             <Route path="/escenarios/edit/:idescenario" component={IEscenarioForm}></Route>
             <Route path="/escenarios/delete/:idescenariodelete" component={IEscenarioDelete}></Route>
             <Route path="/ejecucion" component={IEjecucion}></Route>
+            <Route path="/ejecucione" component={IEjecucionE}></Route>
             <Route path="/ejecucion/programar" component={IProgramar}></Route>
             <Route path="/resultados" component={IResultados}></Route>
             <Route path="/indicadores" component={IIndicador}></Route>
@@ -76,6 +83,11 @@ render((
             <Route path="/parametros/:idparametro" component={IParametro}></Route>
             <Route path="/parametros/edit/:idparametro" component={IParametroForm}></Route>
             <Route path="/parametros/delete/:idparametrodelete" component={IParametroDelete}></Route>
+            <Route path="/querys" component={IQuery}></Route>
+            <Route path="/querys/:idconciliacion" component={IQuery}></Route>
+            <Route path="/querys/edit/:idquery" component={IQueryForm}></Route>
+            <Route path="/querys/delete/:idquerydelete" component={IQueryDelete}></Route>
+            <Route path="/querys/aprobar/:aprobar" component={IQueryAprobar}></Route>
           </Route>
       </Router>
     </Provider>

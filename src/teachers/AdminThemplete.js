@@ -11,6 +11,7 @@ import IEscenario from '../escenariosModule/IEscenario'
 import IEscenarioForm from '../escenariosModule/IEscenarioForm'
 import IEscenarioDelete from '../escenariosModule/IEscenarioDelete'
 import IEjecucion from '../ejecucionModule/IEjecucion'
+import IEjecucionE from '../ejecucionModule/IEjecucionE'
 import IProgramar from '../ejecucionModule/IProgramar'
 import IResultados from '../resultadosModule/IResultados'
 import IIndicador from '../indicadoresModule/IIndicador'
@@ -19,6 +20,10 @@ import IIndicadorDelete from '../indicadoresModule/IIndicadorDelete'
 import IParametro from '../parametrosModule/IParametro'
 import IParametroForm from '../parametrosModule/IParametroForm'
 import IParametroDelete from '../parametrosModule/IParametroDelete'
+import IQuery from '../querysModule/IQuery'
+import IQueryForm from '../querysModule/IQueryForm'
+import IQueryDelete from '../querysModule/IQueryDelete'
+import IQueryAprobar from '../querysModule/IQueryAprobar'
 
 import Loading from '../politicasModule/Loading.js'
 import { browserHistory } from 'react-router'
@@ -36,9 +41,12 @@ class AdminThemplete extends React.Component{
     this.props.relogin()
   }
 
+  componentDidMount(){
+    console.log("AdminThemplate PROPS==>")
+    console.log(this.props)
+  }
+
   render(){
-    //console.log("Props ==>>>")
-    //console.log(this.props)
     return(
       <div data-reactroot="" className="container-fluid">
           <ToastContainer autoClose={4000}/>
@@ -103,8 +111,11 @@ class AdminThemplete extends React.Component{
                     </Otherwise>
                   </Choose>
                 </If>
-                <If condition={this.props.location.pathname.substr(1,9) == 'ejecucion'}>
+                <If condition={this.props.location.pathname.substr(1,10) == 'ejecucion'}>
                     <IEjecucion/>
+                </If>
+                <If condition={this.props.location.pathname.substr(1,10) == 'ejecucione'}>
+                    <IEjecucionE/>
                 </If>
                 <If condition={this.props.location.pathname.substr(1,19) == 'ejecucion/programar'}>
                     <IProgramar/>
@@ -149,6 +160,30 @@ class AdminThemplete extends React.Component{
                     <Otherwise>
                       <IParametroForm/>
                       <IParametro/>
+                    </Otherwise>
+                  </Choose>
+                </If>
+                <If condition={this.props.location.pathname.substr(1,6) == 'querys'}>
+                  <Choose>
+                    <When condition={this.props.params.idquery}>
+                      <IQueryForm registro={this.props.params}/>
+                    </When>
+                    <When condition={this.props.params.idquerydelete}>
+                      <IQueryDelete registro={this.props.params}/>
+                    </When>
+                    <When condition={this.props.params.idquery}>
+                      <IQuery registro={this.props.params.idquery}/>
+                    </When>
+                    <When condition={this.props.params.idconciliacion}>
+                      <IQueryForm conciliacion={this.props.params.idconciliacion}/>
+                      <IQuery conciliacion={this.props.params.idconciliacion}/>
+                    </When>
+                    <When condition={this.props.params.aprobar}>
+                      <IQueryAprobar/>
+                    </When>
+                    <Otherwise>
+                      <IQueryForm/>
+                      <IQuery/>
                     </Otherwise>
                   </Choose>
                 </If>

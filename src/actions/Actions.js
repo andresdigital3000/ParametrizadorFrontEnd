@@ -51,7 +51,22 @@ import {
   IR_PAGINA_PARAMETROS,
   UPDATE_ESCENARIO_EN_PARAMETROS,
   CARGA_ESCENARIOS_EN_PARAMETROS,
-  LIMPIAR_CONCILIACION_SELECCIONADA
+  LIMPIAR_CONCILIACION_SELECCIONADA,
+  CARGAR_QUERYS,
+  UPDATE_QUERYS_FORM_REQUEST,
+  CARGAR_QUERY_FORM,
+  LIMPIAR_FORM_QUERY,
+  UPDATE_CONCILIACION_EN_QUERYS,
+  ACTUALIZA_PAGINADOR_QUERYS,
+  IR_PAGINA_QUERYS,
+  CARGA_ESCENARIOS_EN_QUERYS,
+  LIMPIAR_ESCENARIO_SELECCIONADO,
+  CARGAR_CONCILIACIONES_QUERY,
+  LIMPIAR_ESCENARIO_SELECCIONADO_EJ,
+  CARGA_ESCENARIOS_EJ,
+  UPDATE_VALUE_COMBO_ESCENARIOS_EJ,
+  UPDATE_EJECUTAR_ESCENARIO_FORM_REQUEST,
+  UPDATE_QUERYS_APROB_FORM_REQUEST
 } from './const'
 
 import React from 'react'
@@ -61,7 +76,6 @@ import update from 'react-addons-update'
 import config from '../../config'
 import { ToastContainer, toast } from 'react-toastify';
 import IMsg from '../ejecucionModule/IMsg'
-
 
 var configuration = require('../../config')
 const usarJsonServer = configuration.usarJsonServer
@@ -330,6 +344,27 @@ const verPoliticas = (res) =>({
 })
 //Actualizar tecla por tecla los campos del formulario de politicas
 export const updateFormPoliticas = (field,value) => (dispatch,getState) =>{
+  if(field=="nombre"){
+    APIInvoker.invokeGET('/parametros/findByAny?texto=Prefijo para politicas', response => {
+      if(response[0].valor!=undefined){
+        let long_parametro = response[0].valor.length;
+        let long_value = value.length;
+        if(long_parametro >= long_value){
+          if(value.substr(0,long_value)!=response[0].valor.substr(0,long_value)){
+            toast.error("El nombre de la política debe tener el prefijo '"+response[0].valor+"'", {
+              position: toast.POSITION.BOTTOM_CENTER
+            })
+          }
+        }else{
+          if(value.substr(0,long_parametro)!=response[0].valor.substr(0,long_parametro)){
+            toast.error("El nombre de la política debe tener el prefijo '"+response[0].valor+"'", {
+              position: toast.POSITION.BOTTOM_CENTER
+            })
+          }
+        }
+      }
+    })
+  }
   dispatch(updateFormPoliticasRequest(field,value))
 }
 //Enviar al reducer la tecla pulsada
@@ -351,56 +386,68 @@ export const savePolitica = () => (dispatch,getState)=>{
     fecha_actualizacion: '',
     usuario: getState().loginReducer.profile.userName
   }
-  if(id_politica == 0 || id_politica == undefined){
-    APIInvoker.invokePOST('/politicas',politica_salvar,response =>{
-      if(response.id!=undefined){
-        dispatch(limpiarFormPolitica())
-        dispatch(refreshListPolitica())
-        toast.success("Se grabó la política", {
+  //Verificar que el nombre tenga el prefijo para guardarlo
+  APIInvoker.invokeGET('/parametros/findByAny?texto=Prefijo para politicas', responseval => {
+    if(responseval[0].valor!=undefined){
+      let long_parametro = responseval[0].valor.length;
+      if(politica_salvar.nombre.substr(0,long_parametro)==responseval[0].valor){
+        if(id_politica == 0 || id_politica == undefined){
+          APIInvoker.invokePOST('/politicas',politica_salvar,response =>{
+            if(response.id!=undefined){
+              dispatch(limpiarFormPolitica())
+              dispatch(refreshListPolitica())
+              toast.success("Se grabó la política", {
+                position: toast.POSITION.BOTTOM_CENTER
+              })
+            }else{
+              //Enviar error específico a la consola
+              console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
+              if(response.mensaje=="CTRAINT_UQ_TBL_GAI_POLITICA_NOMBRE_POLITICA"){
+                toast.error("Ya existe una política con el mismo nombre", {
+                  position: toast.POSITION.BOTTOM_CENTER
+                })
+                dispatch(refreshListPolitica())
+              }else{
+                //Error sin tratamiento
+                toast.error("Error general al adicionar política", {
+                  position: toast.POSITION.BOTTOM_CENTER
+                })
+                dispatch(refreshListPolitica())
+              }
+            }
+          },error =>{
+            console.log("No se ha podido crear la politica con id"+id_politica)
+          })
+        }else{
+          APIInvoker.invokePUT('/politicas',politica_salvar,response =>{
+            if(response.id!=undefined){
+              toast.success("Se actualizó la política", {
+                position: toast.POSITION.BOTTOM_CENTER
+              })
+              //dispatch(limpiarFormPolitica(),browserHistory.push('/politicas'))
+            }else{
+              if(response.mensaje=="CTRAINT_UQ_TBL_GAI_POLITICA_NOMBRE_POLITICA"){
+                toast.error("Ya existe una política con el mismo nombre", {
+                  position: toast.POSITION.BOTTOM_CENTER
+                })
+                //dispatch(refreshListPolitica())
+              }else{
+                toast.error("Error general al intentar actualizar politica", {
+                  position: toast.POSITION.BOTTOM_CENTER
+                })
+              }
+            }
+          },error =>{
+            console.log("No se ha podido actualizar la politica")
+          })
+        }
+      }else{
+        toast.error("El nombre de la politica debe tener el prefijo "+responseval[0].valor, {
           position: toast.POSITION.BOTTOM_CENTER
         })
-      }else{
-        //Enviar error específico a la consola
-        console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
-        if(response.mensaje=="CTRAINT_UQ_TBL_GAI_POLITICA_NOMBRE_POLITICA"){
-          toast.error("Ya existe una política con el mismo nombre", {
-            position: toast.POSITION.BOTTOM_CENTER
-          })
-          dispatch(refreshListPolitica())
-        }else{
-          //Error sin tratamiento
-          toast.error("Error general al adicionar política", {
-            position: toast.POSITION.BOTTOM_CENTER
-          })
-          dispatch(refreshListPolitica())
-        }
       }
-    },error =>{
-      console.log("No se ha podido crear la politica con id"+id_politica)
-    })
-  }else{
-    APIInvoker.invokePUT('/politicas',politica_salvar,response =>{
-      if(response.id!=undefined){
-        toast.success("Se actualizó la política", {
-          position: toast.POSITION.BOTTOM_CENTER
-        })
-        //dispatch(limpiarFormPolitica(),browserHistory.push('/politicas'))
-      }else{
-        if(response.mensaje=="CTRAINT_UQ_TBL_GAI_POLITICA_NOMBRE_POLITICA"){
-          toast.error("Ya existe una política con el mismo nombre", {
-            position: toast.POSITION.BOTTOM_CENTER
-          })
-          //dispatch(refreshListPolitica())
-        }else{
-          toast.error("Error general al intentar actualizar politica", {
-            position: toast.POSITION.BOTTOM_CENTER
-          })
-        }
-      }
-    },error =>{
-      console.log("No se ha podido actualizar la politica")
-    })
-  }
+    }
+  })
 }
 
 //Funcion para limpiar los campos del formulario de Politicas
@@ -683,6 +730,27 @@ const updPoliticaReducerConciliacion = (objPolitica)=>({
 
 //Actualizar tecla por tecla los campos del formulario de conciliaciones
 export const updateFormConciliaciones = (field,value) => (dispatch,getState) =>{
+  if(field=="nombre"){
+    APIInvoker.invokeGET('/parametros/findByAny?texto=Prefijo para conciliaciones', response => {
+      if(response[0].valor!=undefined){
+        let long_parametro = response[0].valor.length;
+        let long_value = value.length;
+        if(long_parametro >= long_value){
+          if(value.substr(0,long_value)!=response[0].valor.substr(0,long_value)){
+            toast.error("El nombre de la conciliación debe tener el prefijo '"+response[0].valor+"'", {
+              position: toast.POSITION.BOTTOM_CENTER
+            })
+          }
+        }else{
+          if(value.substr(0,long_parametro)!=response[0].valor.substr(0,long_parametro)){
+            toast.error("El nombre de la conciliación debe tener el prefijo '"+response[0].valor+"'", {
+              position: toast.POSITION.BOTTOM_CENTER
+            })
+          }
+        }
+      }
+    })
+  }
   dispatch(updateFormConciliacionesRequest(field,value))
 }
 //Enviar al reducer la tecla pulsada
@@ -695,156 +763,167 @@ const updateFormConciliacionesRequest = (field,value) => ({
 //Funcion para guardar o actualizar la conciliacion
 export const saveConciliacion = () => (dispatch,getState)=>{
   let id_conciliacion = getState().conciliacionFormReducer.id
-  if(id_conciliacion == 0 || id_conciliacion == undefined){
-    //Si es un registro nuevo
-    let conciliacion_salvar = {
-      id : getState().conciliacionFormReducer.id,
-      nombre : getState().conciliacionFormReducer.nombre,
-      descripcion : getState().conciliacionFormReducer.descripcion,
-      idpolitica : getState().conciliacionReducer.politica.id,
-      usuario: getState().loginReducer.profile.userName
-    }
-    let id_grabado=0
-    APIInvoker.invokePOST('/conciliaciones',conciliacion_salvar,response =>{
-      if(response.id!=undefined){
-        id_grabado = response.id
-        toast.success("Se grabó una nueva conciliación", {
-          position: toast.POSITION.BOTTOM_CENTER
-        })
-        if(id_grabado!=0){
-          let paquete_salvar ={
-            nombreWs : getState().conciliacionFormReducer.webservice,
-            paqueteWs : getState().conciliacionFormReducer.webservice,
-            usuario: getState().loginReducer.profile.userName,
-            idConciliacion : id_grabado
+  APIInvoker.invokeGET('/parametros/findByAny?texto=Prefijo para conciliaciones', responseval => {
+    if(responseval[0].valor!=undefined){
+      let long_parametro = responseval[0].valor.length;
+      if(getState().conciliacionFormReducer.nombre.substr(0,long_parametro)==responseval[0].valor){
+        if(id_conciliacion == 0 || id_conciliacion == undefined){
+          //Si es un registro nuevo
+          let conciliacion_salvar = {
+            id : getState().conciliacionFormReducer.id,
+            nombre : getState().conciliacionFormReducer.nombre,
+            descripcion : getState().conciliacionFormReducer.descripcion,
+            idpolitica : getState().conciliacionReducer.politica.id,
+            usuario: getState().loginReducer.profile.userName
           }
-          APIInvoker.invokePOST('/wstransformacion',paquete_salvar,response2 =>{
-            if(response2.id!=undefined){
-              toast.success("...y se insertó el paquete", {
+          let id_grabado=0
+          APIInvoker.invokePOST('/conciliaciones',conciliacion_salvar,response =>{
+            if(response.id!=undefined){
+              id_grabado = response.id
+              toast.success("Se grabó una nueva conciliación", {
                 position: toast.POSITION.BOTTOM_CENTER
               })
-            }else if(response2.mensaje="CTRAINT_UQ_TBL_GAI_WS_TRANSFORMACIONES"){
-              toast.error("No se puede usar el nombre de otro paquete existente", {
-                position: toast.POSITION.BOTTOM_CENTER
-              })
+              if(id_grabado!=0){
+                let paquete_salvar ={
+                  nombreWs : getState().conciliacionFormReducer.webservice,
+                  paqueteWs : getState().conciliacionFormReducer.webservice,
+                  usuario: getState().loginReducer.profile.userName,
+                  idConciliacion : id_grabado
+                }
+                APIInvoker.invokePOST('/wstransformacion',paquete_salvar,response2 =>{
+                  if(response2.id!=undefined){
+                    toast.success("...y se insertó el paquete", {
+                      position: toast.POSITION.BOTTOM_CENTER
+                    })
+                  }else if(response2.mensaje="CTRAINT_UQ_TBL_GAI_WS_TRANSFORMACIONES"){
+                    toast.error("No se puede usar el nombre de otro paquete existente", {
+                      position: toast.POSITION.BOTTOM_CENTER
+                    })
+                  }else{
+                    toast.error("No se pudo asociar el paquete", {
+                      position: toast.POSITION.BOTTOM_CENTER
+                    })
+                  }
+                },error =>{
+                  console.log('No se ha podido asignar el paquete')
+                })
+              }
             }else{
-              toast.error("No se pudo asociar el paquete", {
+              console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
+              if(response.mensaje=="CTRAINT_UQ_TBL_GAI_CONCILIACION_NOMBRE_CONCILIACION"){
+                toast.error("Ya existe otra conciliación con el mismo nombre ó está intentando asignar una política ya asignada", {
+                  position: toast.POSITION.BOTTOM_CENTER
+                })
+              }else{
+                toast.error("Error general al adicionar conciliación", {
+                  position: toast.POSITION.BOTTOM_CENTER
+                })
+              }
+            }
+          },error =>{
+            console.log('No se ha podido crear la conciliacion')
+          })
+          dispatch(antesLimpiarFormConciliacion())
+        }else{
+          //Si es un registro existente
+          let idPoliticaGrabar = 0
+          let nombrePoliticaGrabar="Ninguna"
+          if(getState().conciliacionReducer.politica.id==0){
+            idPoliticaGrabar = getState().conciliacionFormReducer.idPolitica
+            nombrePoliticaGrabar = getState().conciliacionFormReducer.nombrePolitica
+          }else{
+            idPoliticaGrabar = getState().conciliacionReducer.politica.id
+            nombrePoliticaGrabar = getState().conciliacionReducer.politica.nombre
+          }
+          let conciliacion_salvar = {
+            id : getState().conciliacionFormReducer.id,
+            nombre : getState().conciliacionFormReducer.nombre,
+            descripcion : getState().conciliacionFormReducer.descripcion,
+            idPolitica : idPoliticaGrabar,
+            nombrePolitica : nombrePoliticaGrabar
+          }
+          APIInvoker.invokePUT('/conciliaciones',conciliacion_salvar,response =>{
+            if(response.id!=undefined){
+              toast.success("Se actualizó la conciliación", {
+                position: toast.POSITION.BOTTOM_CENTER
+              })
+              let id_grabado = getState().conciliacionFormReducer.id
+              if(id_grabado!=0){
+                //Al tener una conciliación seleccionada
+                if(response.transformaciones.length>0){
+                  //Si al editar la conciliacion tiene una transformación asociada
+                  let paquete_salvar ={
+                    nombreWs : getState().conciliacionFormReducer.webservice,
+                    paqueteWs : getState().conciliacionFormReducer.webservice,
+                    usuario: getState().loginReducer.profile.userName,
+                    idConciliacion : id_grabado,
+                    id : response.transformaciones[0].id
+                  }
+                  APIInvoker.invokePUT('/wstransformacion',paquete_salvar,response2 =>{
+                    if(response.id!=undefined){
+                      toast.success("actualizando el paquete", {
+                        position: toast.POSITION.BOTTOM_CENTER
+                      })
+                    }else if(response.mensaje="CTRAINT_UQ_TBL_GAI_WS_TRANSFORMACIONES"){
+                      toast.error("No se puede usar el nombre de otro paquete existente", {
+                        position: toast.POSITION.BOTTOM_CENTER
+                      })
+                    }else{
+                      toast.error("No se pudo actualizar el paquete", {
+                        position: toast.POSITION.BOTTOM_CENTER
+                      })
+                    }
+                  },error =>{
+                    console.log('No se ha podido editar el nombre del paquete')
+                  })
+                }else{
+                  //Si al editar la conciliación hay que crear una transformación
+                  let paquete_salvar ={
+                    nombreWs : getState().conciliacionFormReducer.webservice,
+                    paqueteWs : getState().conciliacionFormReducer.webservice,
+                    usuario: getState().loginReducer.profile.userName,
+                    idConciliacion : id_grabado
+                  }
+                  APIInvoker.invokePOST('/wstransformacion',paquete_salvar,response2 =>{
+                    if(response2.id!=undefined){
+                      toast.success("...y se agregó el paquete", {
+                        position: toast.POSITION.BOTTOM_CENTER
+                      })
+                    }else if(response2.mensaje="CTRAINT_UQ_TBL_GAI_WS_TRANSFORMACIONES"){
+                      toast.error("No se puede usar el nombre de otro paquete existente", {
+                        position: toast.POSITION.BOTTOM_CENTER
+                      })
+                    }else{
+                      toast.error("No se pudo agregar el paquete", {
+                        position: toast.POSITION.BOTTOM_CENTER
+                      })
+                    }
+                  },error =>{
+                    console.log('No se ha podido editar el nombre del paquete')
+                  })
+                }
+              }else{
+                console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
+                toast.error("No se ha podido actualizar la conciliación", {
+                  position: toast.POSITION.BOTTOM_CENTER
+                })
+              }
+            }else if(response.mensaje=="CTRAINT_UQ_TBL_GAI_CONCILIACION_NOMBRE_CONCILIACION"){
+              toast.error("No se puede usar el nombre de otra conciliación existente", {
                 position: toast.POSITION.BOTTOM_CENTER
               })
             }
           },error =>{
-            console.log('No se ha podido asignar el paquete')
+            console.log('No se ha podido actualizar la conciliacion')
           })
         }
       }else{
-        console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
-        if(response.mensaje=="CTRAINT_UQ_TBL_GAI_CONCILIACION_NOMBRE_CONCILIACION"){
-          toast.error("Ya existe otra conciliación con el mismo nombre ó está intentando asignar una política ya asignada", {
-            position: toast.POSITION.BOTTOM_CENTER
-          })
-        }else{
-          toast.error("Error general al adicionar conciliación", {
-            position: toast.POSITION.BOTTOM_CENTER
-          })
-        }
-      }
-    },error =>{
-      console.log('No se ha podido crear la conciliacion')
-    })
-    dispatch(antesLimpiarFormConciliacion())
-  }else{
-    //Si es un registro existente
-    let idPoliticaGrabar = 0
-    let nombrePoliticaGrabar="Ninguna"
-    if(getState().conciliacionReducer.politica.id==0){
-      idPoliticaGrabar = getState().conciliacionFormReducer.idPolitica
-      nombrePoliticaGrabar = getState().conciliacionFormReducer.nombrePolitica
-    }else{
-      idPoliticaGrabar = getState().conciliacionReducer.politica.id
-      nombrePoliticaGrabar = getState().conciliacionReducer.politica.nombre
-    }
-    let conciliacion_salvar = {
-      id : getState().conciliacionFormReducer.id,
-      nombre : getState().conciliacionFormReducer.nombre,
-      descripcion : getState().conciliacionFormReducer.descripcion,
-      idPolitica : idPoliticaGrabar,
-      nombrePolitica : nombrePoliticaGrabar
-    }
-    APIInvoker.invokePUT('/conciliaciones',conciliacion_salvar,response =>{
-      if(response.id!=undefined){
-        toast.success("Se actualizó la conciliación", {
-          position: toast.POSITION.BOTTOM_CENTER
-        })
-        let id_grabado = getState().conciliacionFormReducer.id
-        if(id_grabado!=0){
-          //Al tener una conciliación seleccionada
-          if(response.transformaciones.length>0){
-            //Si al editar la conciliacion tiene una transformación asociada
-            let paquete_salvar ={
-              nombreWs : getState().conciliacionFormReducer.webservice,
-              paqueteWs : getState().conciliacionFormReducer.webservice,
-              usuario: getState().loginReducer.profile.userName,
-              idConciliacion : id_grabado,
-              id : response.transformaciones[0].id
-            }
-            APIInvoker.invokePUT('/wstransformacion',paquete_salvar,response2 =>{
-              if(response.id!=undefined){
-                toast.success("actualizando el paquete", {
-                  position: toast.POSITION.BOTTOM_CENTER
-                })
-              }else if(response.mensaje="CTRAINT_UQ_TBL_GAI_WS_TRANSFORMACIONES"){
-                toast.error("No se puede usar el nombre de otro paquete existente", {
-                  position: toast.POSITION.BOTTOM_CENTER
-                })
-              }else{
-                toast.error("No se pudo actualizar el paquete", {
-                  position: toast.POSITION.BOTTOM_CENTER
-                })
-              }
-            },error =>{
-              console.log('No se ha podido editar el nombre del paquete')
-            })
-          }else{
-            //Si al editar la conciliación hay que crear una transformación
-            let paquete_salvar ={
-              nombreWs : getState().conciliacionFormReducer.webservice,
-              paqueteWs : getState().conciliacionFormReducer.webservice,
-              usuario: getState().loginReducer.profile.userName,
-              idConciliacion : id_grabado
-            }
-            APIInvoker.invokePOST('/wstransformacion',paquete_salvar,response2 =>{
-              if(response2.id!=undefined){
-                toast.success("...y se agregó el paquete", {
-                  position: toast.POSITION.BOTTOM_CENTER
-                })
-              }else if(response2.mensaje="CTRAINT_UQ_TBL_GAI_WS_TRANSFORMACIONES"){
-                toast.error("No se puede usar el nombre de otro paquete existente", {
-                  position: toast.POSITION.BOTTOM_CENTER
-                })
-              }else{
-                toast.error("No se pudo agregar el paquete", {
-                  position: toast.POSITION.BOTTOM_CENTER
-                })
-              }
-            },error =>{
-              console.log('No se ha podido editar el nombre del paquete')
-            })
-          }
-        }else{
-          console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
-          toast.error("No se ha podido actualizar la conciliación", {
-            position: toast.POSITION.BOTTOM_CENTER
-          })
-        }
-      }else if(response.mensaje=="CTRAINT_UQ_TBL_GAI_CONCILIACION_NOMBRE_CONCILIACION"){
-        toast.error("No se puede usar el nombre de otra conciliación existente", {
+        toast.error("El nombre de la conciliación debe tener el prefijo "+responseval[0].valor, {
           position: toast.POSITION.BOTTOM_CENTER
         })
       }
-    },error =>{
-      console.log('No se ha podido actualizar la conciliacion')
-    })
-  }
+    }
+  })
 }
 
 //Funcion que vuelve a cargar el combo de politicas al limpiar el formulario de conciliaciones
@@ -1096,6 +1175,27 @@ const updConciliacionReducerEscenario = (objConciliacion)=>({
 
 //Actualizar tecla por tecla los campos del formulario de escenarios
 export const updateFormEscenarios = (field,value) => (dispatch,getState) =>{
+  if(field=="nombre"){
+    APIInvoker.invokeGET('/parametros/findByAny?texto=Prefijo para escenarios', response => {
+      if(response[0].valor!=undefined){
+        let long_parametro = response[0].valor.length;
+        let long_value = value.length;
+        if(long_parametro >= long_value){
+          if(value.substr(0,long_value)!=response[0].valor.substr(0,long_value)){
+            toast.error("El nombre del escenario debe tener el prefijo '"+response[0].valor+"'", {
+              position: toast.POSITION.BOTTOM_CENTER
+            })
+          }
+        }else{
+          if(value.substr(0,long_parametro)!=response[0].valor.substr(0,long_parametro)){
+            toast.error("El nombre del escenario debe tener el prefijo '"+response[0].valor+"'", {
+              position: toast.POSITION.BOTTOM_CENTER
+            })
+          }
+        }
+      }
+    })
+  }
   dispatch(updateFormEscenariosRequest(field,value))
 }
 //Enviar al reducer la tecla pulsada
@@ -1107,77 +1207,88 @@ const updateFormEscenariosRequest = (field,value) => ({
 //Funcion para guardar o actualizar la escenario
 export const saveEscenario = () => (dispatch,getState)=>{
   let id_escenario = getState().escenarioFormReducer.id
-  if(id_escenario == 0 || id_escenario == undefined){
-    //Si es un escenario nuevo
-    let escenario_salvar = {
-      nombre : getState().escenarioFormReducer.nombre,
-      impacto : getState().escenarioFormReducer.impacto,
-      usuario : getState().loginReducer.profile.userName,
-      idConciliacion : getState().escenarioReducer.conciliacion.id,
-      nombreConciliacion : getState().escenarioReducer.conciliacion.nombre
-    }
-    APIInvoker.invokePOST('/escenarios',escenario_salvar,response =>{
-      if(response.id!=undefined){
-        toast.success("Se grabó un nuevo escenario", {
-          position: toast.POSITION.BOTTOM_CENTER
-        })
-      }else{
-        if(response.mensaje=="CTRAINT_UQ_TBL_GAI_ESCENARIO_NOMBRE_ESCENARIO"){
-          //console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
-          toast.error("Ya existe un escenario con el mismo nombre", {
-            position: toast.POSITION.BOTTOM_CENTER
-          })
+  APIInvoker.invokeGET('/parametros/findByAny?texto=Prefijo para escenarios', responseval => {
+    if(responseval[0].valor!=undefined){
+      let long_parametro = responseval[0].valor.length;
+      if(getState().escenarioFormReducer.nombre.substr(0,long_parametro)==responseval[0].valor){
+          if(id_escenario == 0 || id_escenario == undefined){
+            //Si es un escenario nuevo
+            let escenario_salvar = {
+              nombre : getState().escenarioFormReducer.nombre,
+              impacto : getState().escenarioFormReducer.impacto,
+              usuario : getState().loginReducer.profile.userName,
+              idConciliacion : getState().escenarioReducer.conciliacion.id,
+              nombreConciliacion : getState().escenarioReducer.conciliacion.nombre
+            }
+            APIInvoker.invokePOST('/escenarios',escenario_salvar,response =>{
+              if(response.id!=undefined){
+                toast.success("Se grabó un nuevo escenario", {
+                  position: toast.POSITION.BOTTOM_CENTER
+                })
+              }else{
+                if(response.mensaje=="CTRAINT_UQ_TBL_GAI_ESCENARIO_NOMBRE_ESCENARIO"){
+                  //console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
+                  toast.error("Ya existe un escenario con el mismo nombre", {
+                    position: toast.POSITION.BOTTOM_CENTER
+                  })
+                }else{
+                  toast.error("Error general al intentar grabar un nuevo escenario", {
+                    position: toast.POSITION.BOTTOM_CENTER
+                  })
+                }
+              }
+            },error =>{
+              console.log('No se ha podido crear la escenario')
+            })
+          }else{
+            //Si es actualizar un existente
+            let idConciliacionGrabar = 0
+            let nombreConciliacionGrabar="Ninguna"
+            if(getState().escenarioReducer.conciliacion.id==0){
+              idConciliacionGrabar = getState().escenarioFormReducer.idConciliacion
+              nombreConciliacionGrabar = getState().escenarioFormReducer.nombreConciliacion
+            }else{
+              idConciliacionGrabar = getState().escenarioReducer.conciliacion.id
+              nombreConciliacionGrabar = getState().escenarioReducer.conciliacion.nombre
+            }
+            let escenario_salvar = {
+              id :  getState().escenarioFormReducer.id,
+              nombre : getState().escenarioFormReducer.nombre,
+              impacto : getState().escenarioFormReducer.impacto,
+              usuario : getState().loginReducer.profile.userName,
+              idConciliacion : idConciliacionGrabar,
+              nombreConciliacion : nombreConciliacionGrabar
+            }
+            APIInvoker.invokePUT('/escenarios',escenario_salvar,response =>{
+              if(response.id!=undefined){
+                toast.success("Se actualizó el escenario", {
+                  position: toast.POSITION.BOTTOM_CENTER
+                })
+                //dispatch(limpiarFormEscenario(),browserHistory.push('/escenarios'))
+              }else{
+                //console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
+                if(response.mensaje=="CTRAINT_UQ_TBL_GAI_ESCENARIO_NOMBRE_ESCENARIO"){
+                  toast.error("No se ha actualizó el escenario, el nombre no puede asignarse", {
+                    position: toast.POSITION.BOTTOM_CENTER
+                  })
+                }else{
+                  toast.error("Error general al intentar actualizar el escenario", {
+                    position: toast.POSITION.BOTTOM_CENTER
+                  })
+                }
+                //dispatch(limpiarFormEscenario(),browserHistory.push('/escenarios'))
+              }
+            },error =>{
+              console.log('No se ha podido actualizar la escenario')
+            })
+          }
         }else{
-          toast.error("Error general al intentar grabar un nuevo escenario", {
+          toast.error("El nombre del escenario debe tener el prefijo "+responseval[0].valor, {
             position: toast.POSITION.BOTTOM_CENTER
           })
         }
       }
-    },error =>{
-      console.log('No se ha podido crear la escenario')
     })
-  }else{
-    //Si es actualizar un existente
-    let idConciliacionGrabar = 0
-    let nombreConciliacionGrabar="Ninguna"
-    if(getState().escenarioReducer.conciliacion.id==0){
-      idConciliacionGrabar = getState().escenarioFormReducer.idConciliacion
-      nombreConciliacionGrabar = getState().escenarioFormReducer.nombreConciliacion
-    }else{
-      idConciliacionGrabar = getState().escenarioReducer.conciliacion.id
-      nombreConciliacionGrabar = getState().escenarioReducer.conciliacion.nombre
-    }
-    let escenario_salvar = {
-      id :  getState().escenarioFormReducer.id,
-      nombre : getState().escenarioFormReducer.nombre,
-      impacto : getState().escenarioFormReducer.impacto,
-      usuario : getState().loginReducer.profile.userName,
-      idConciliacion : idConciliacionGrabar,
-      nombreConciliacion : nombreConciliacionGrabar
-    }
-    APIInvoker.invokePUT('/escenarios',escenario_salvar,response =>{
-      if(response.id!=undefined){
-        toast.success("Se actualizó el escenario", {
-          position: toast.POSITION.BOTTOM_CENTER
-        })
-        //dispatch(limpiarFormEscenario(),browserHistory.push('/escenarios'))
-      }else{
-        //console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
-        if(response.mensaje=="CTRAINT_UQ_TBL_GAI_ESCENARIO_NOMBRE_ESCENARIO"){
-          toast.error("No se ha actualizó el escenario, el nombre no puede asignarse", {
-            position: toast.POSITION.BOTTOM_CENTER
-          })
-        }else{
-          toast.error("Error general al intentar actualizar el escenario", {
-            position: toast.POSITION.BOTTOM_CENTER
-          })
-        }
-        //dispatch(limpiarFormEscenario(),browserHistory.push('/escenarios'))
-      }
-    },error =>{
-      console.log('No se ha podido actualizar la escenario')
-    })
-  }
 }
 //Funcion para limpiar los campos del formulario de Escenarios
 export const limpiarFormEscenario = () =>({
@@ -1554,6 +1665,315 @@ export const salvarProgramacion = () => (dispatch,getState) => {
     position: toast.POSITION.BOTTOM_CENTER,
   })
 }
+
+/**
+*  E J E C U C I O N  E S C E N A R I O S
+*/
+
+//Funcion que elimina el valor ultimo seleccionado del combo
+export const limpiarEscenarioSeleccionadoE = () => ({
+  type : LIMPIAR_ESCENARIO_SELECCIONADO_EJ,
+  lista : {"id":0,"nombre":"Ninguno"}
+})
+
+//Funcion que carga el combo de conciliaciones
+export const cargarComboEscenariosE = () =>(dispatch,getState) =>{
+  APIInvoker.invokeGET('/escenarios', response => {
+    if(Array.isArray(response) == true){
+      dispatch(cargarEscenariosE(response))
+      dispatch(limpiarEscenarioSeleccionadoE())
+    }
+  })
+}
+//Envia resultado para llenar el combo a Reducer
+const cargarEscenariosE = (arrayEscenarios) => ({
+  type : CARGA_ESCENARIOS_EJ,
+  lista : arrayEscenarios
+})
+
+export const updateEjecucionE = (field,value) => (dispatch,getState) =>{
+  dispatch(updateComboEscenariosE(field,value))
+}
+
+//Enviar el texto del buscador al reducer store
+const updateComboEscenariosE = (field,value) => ({
+  type : UPDATE_VALUE_COMBO_ESCENARIOS_EJ,
+  field : field,
+  value: value
+})
+
+//Solicita el estado de ejecución de una conciliacion
+export const getStatusEjecucionEscenarios = (operacion) => (dispatch,getState) => {
+  //Variables necesarias para llamar el webservice
+  var xmlhttp = new XMLHttpRequest();
+  let odiUser = configuration.webService.user
+  let pwUser = configuration.webService.pw
+  let repository = configuration.webService.repository
+  let loadplaninstanceid = 1
+  let idEscenarioEjecucion = getState().ejecucionReducer.escenario.id
+  let nomEscenarioEjecucion = getState().ejecucionReducer.escenario.nombre
+  //Construir peticion SOAP que solicita el estado de la ejecución
+  var sr = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:odi="xmlns.oracle.com/odi/OdiInvoke/">'+
+             '<soapenv:Header/>'+
+             '<soapenv:Body>'+
+                '<odi:OdiGetLoadPlanStatusRequest>'+
+                   '<Credentials>'+
+                    '  <!--You may enter the following 3 items in any order-->'+
+                    '  <!--Optional:-->'+
+                    '  <OdiUser>'+odiUser+'</OdiUser>'+
+                    '  <!--Optional:-->'+
+                    '  <OdiPassword>'+pwUser+'</OdiPassword>'+
+                    '  <WorkRepository>'+repository+'</WorkRepository>'+
+                   '</Credentials>'+
+                   '<!--Zero or more repetitions:-->'+
+                   '<LoadPlanInstanceId>'+loadplaninstanceid+'</LoadPlanInstanceId>'+
+                      '<LoadPlans>'+
+                      '<LoadPlanRunNumber>'+idEscenarioEjecucion+'</LoadPlanRunNumber>'+
+                   '</LoadPlans>'+
+                '</odi:OdiGetLoadPlanStatusRequest>'+
+             '</soapenv:Body>'+
+          '</soapenv:Envelope>'
+  if(xmlhttp){
+    xmlhttp.onreadystatechange = function () {
+      if (xmlhttp.readyState == 4) {
+        if(xmlhttp.status == 200) {
+          idInstance = 0
+          var XMLParser = require('react-xml-parser');
+          var xml = new XMLParser().parseFromString(xmlhttp.response);
+          if(xml.getElementsByTagName('LoadPlanStatus')[0].value=='D'){
+            idInstance = xml.getElementsByTagName('LoadPlaninstanceId')[0].value
+          }else if(xml.getElementsByTagName('LoadPlanStatus')[0].value=='E'){
+            toast.error("Error al ejecutar el proceso, por favorcomuniquese con el asesor", {
+              position: toast.POSITION.BOTTOM_CENTER,
+            })
+          }else if(xml.getElementsByTagName('LoadPlanStatus')[0].value=='M'){
+            idInstance = xml.getElementsByTagName('LoadPlaninstanceId')[0].value
+            toast.success("Se inició la ejecución con éxito pero con algunos warnings", {
+              position: toast.POSITION.BOTTOM_CENTER,
+            })
+          }else if(xml.getElementsByTagName('LoadPlanStatus')[0].value=='Q'){
+            idInstance = xml.getElementsByTagName('LoadPlaninstanceId')[0].value
+            toast.success("La ejecución queda en cola", {
+              position: toast.POSITION.BOTTOM_CENTER,
+            })
+          }else if(xml.getElementsByTagName('LoadPlanStatus')[0].value=='W'){
+            idInstance = xml.getElementsByTagName('LoadPlaninstanceId')[0].value
+            toast.success("La ejecución está en espera", {
+              position: toast.POSITION.BOTTOM_CENTER,
+            })
+          }else if(xml.getElementsByTagName('LoadPlanStatus')[0].value=='R'){
+            toast.warning("La ejecución ya se encuentra corriendo", {
+              position: toast.POSITION.BOTTOM_CENTER,
+            })
+          }
+        }
+      }
+    }
+    xmlhttp.open('POST',configuration.webService.url,true);
+    //xmlhttp.setRequestHeader('Content-Type','text/html');
+    xmlhttp.send(sr);
+  }else{
+    alert('no existe el objeto xmlhttp');
+  }
+}
+
+export const doEjecutarEscenario = () => (dispatch,getState) => {
+  //decidir si llamar el web service o no segun lo recibido
+  let idEscenarioEjecucion = getState().ejecucionReducer.escenario.id
+  let nomEscenarioEjecucion = getState().ejecucionReducer.escenario.nombre
+  let idPlanInstancia = 0
+
+  //Backend necesia proveerme por escenario sus ejecuciones así como lo hace con conciliaciones para saber si ya existe una ejecución
+  //let numEjecuciones = getState().ejecucionReducer.escenario.ejecucionesProceso.length - 1
+  //if(getState().ejecucionReducer.escenario.ejecucionesProceso.length > 0){
+  //  idPlanInstancia = getState().ejecucionReducer.escenario.ejecucionesProceso[numEjecuciones].idPlanInstance
+  //}
+  //tener en cuenta periodicidad
+  //APIInvoker.invokeGET('/parametros?findByAny=Periodicidad ws conciliacion', response => {
+  //  if(Array.isArray(response) == true){
+  //    dispatch(cargarConciliaciones(response))
+  //  }
+  //})
+  //Si hay instancia recuperada de la ejecución
+  if(idPlanInstancia==0){
+    //Variables necesarias para llamar el webservice
+    var xmlhttp = new XMLHttpRequest();
+    let odiUser = configuration.webService.user
+    let pwUser = configuration.webService.pw
+    let repository = configuration.webService.repository
+    let context = 1
+    let loglevel = 6
+    //Construir peticion SOAP
+    var sr = '<?xml version="1.0" encoding="utf-8"?>'+
+              '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:odi="xmlns.oracle.com/odi/OdiInvoke/">'+
+               '<soapenv:Header/>'+
+               '<soapenv:Body>'+
+                  '<odi:OdiStartLoadPlanRequest>'+
+                     '<!--You may enter the following 2 items in any order-->'+
+                     '<Credentials>'+
+                        '<!--You may enter the following 3 items in any order-->'+
+                        '<!--Optional:-->'+
+                        '<OdiUser>'+odiUser+'</OdiUser>'+
+                        '<!--Optional:-->'+
+                        '<OdiPassword>'+pwUser+'</OdiPassword>'+
+                        '<WorkRepository>'+repository+'</WorkRepository>'+
+                     '</Credentials>'+
+                     '<StartLoadPlanRequest>'+
+                        '<LoadPlanName>'+nomEscenarioEjecucion+'</LoadPlanName>'+
+                        '<Context>'+context+'</Context>'+
+                        '<!--Optional:-->'+
+                        '<Keywords></Keywords>'+
+                        '<!--Optional:-->'+
+                        '<LogLevel>'+loglevel+'</LogLevel>'+
+                        '<!--Zero or more repetitions:-->'+
+                        '<LoadPlanStartupParameters>'+
+                           '<!--You may enter the following 2 items in any order-->'+
+                           '<Name></Name>'+
+                           '<Value></Value>'+
+                        '</LoadPlanStartupParameters>'+
+                     '</StartLoadPlanRequest>'+
+                  '</odi:OdiStartLoadPlanRequest>'+
+               '</soapenv:Body>'+
+            '</soapenv:Envelope>';
+    if(xmlhttp){
+      xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4) {
+          if(xmlhttp.status == 200) {
+            var XMLParser = require('react-xml-parser');
+            var xml = new XMLParser().parseFromString(xmlhttp.response);
+            let idInstance = 0
+            if(xml.getElementsByTagName('OdiLoadPlanInstanceId')[0].value!=''){
+              idInstance = xml.getElementsByTagName('OdiLoadPlanInstanceId')[0].value
+              toast.success("Inicio de ejecución de proceso exitoso", {
+                position: toast.POSITION.BOTTOM_CENTER,
+              })
+            }
+            if(idInstance!=0){
+              let ejecucion_salvar ={
+                nombre : nomEscenarioEjecucion,
+                idPlanInstance : idInstance,
+                idEscenario : idEscenarioEjecucion,
+              }
+              APIInvoker.invokePOST('/ejecucionproceso',ejecucion_salvar,response2 =>{
+                if(response2.idPlanInstance!=undefined){
+                  toast.success("...y se almacenó la información de la ejecución", {
+                    position: toast.POSITION.BOTTOM_CENTER
+                  })
+                  dispatch(cargarComboEscenarios())
+                }else{
+                  toast.error("No fue posible almacenar la información de la ejecución", {
+                    position: toast.POSITION.BOTTOM_CENTER
+                  })
+                }
+              },error =>{
+                console.log('No almacenó la información de la ejecución')
+              })
+            }else{
+              toast.error("No se pudo obtener un id de ejecución desde ODI", {
+                position: toast.POSITION.BOTTOM_CENTER
+              })
+            }
+          }
+        }
+      }
+      xmlhttp.open('POST',configuration.webService.url,true);
+      xmlhttp.send(sr);
+    }else{
+      alert('no existe el objeto xmlhttp');
+    }
+  }else{
+    toast.error("Ya se encuentra en ejecución id "+idPlanInstancia, {
+      position: toast.POSITION.BOTTOM_CENTER,
+    })
+  }
+}
+
+export const doCancelarEscenario = () => (dispatch,getState) => {
+  //Variables necesarias para llamar el webservice
+  var xmlhttp = new XMLHttpRequest();
+  let idEscenarioEjecucion = getState().ejecucionReducer.escenario.id
+  let nomEscenarioEjecucion = getState().ejecucionReducer.escenario.nombre
+  let idPlanInstancia = 0
+  //let numEjecuciones = getState().ejecucionReducer.escenario.ejecucionesProceso.length - 1
+  //if(getState().ejecucionReducer.escenario.ejecucionesProceso.length > 0){
+  //  idPlanInstancia = getState().ejecucionReducer.escenario.ejecucionesProceso[numEjecuciones].idPlanInstance
+  //}
+  if(idPlanInstancia!=0){
+    let odiUser = configuration.webService.user
+    let pwUser = configuration.webService.pw
+    let repository = configuration.webService.repository
+    let context = 1
+    let loglevel = 6
+    let runcount = 0
+    let stoplevel = 1
+    //Construir peticion SOAP
+    var sr = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:odi="xmlns.oracle.com/odi/OdiInvoke/">'+
+               '<soapenv:Header/>'+
+               '<soapenv:Body>'+
+                  '<odi:OdiStopLoadPlanRequest>'+
+                  '   <!--You may enter the following 2 items in any order-->'+
+                  '   <Credentials>'+
+                  '      <!--You may enter the following 3 items in any order-->'+
+                  '      <!--Optional:-->'+
+                  '      <!--Optional:-->'+
+                  '      <OdiUser>'+odiUser+'</OdiUser>'+
+                  '      <OdiPassword>'+pwUser+'</OdiPassword>'+
+                  '      <WorkRepository>'+repository+'</WorkRepository>'+
+                  '   </Credentials>'+
+                  '   <OdiStopLoadPlanRequest>'+
+                  '      <LoadPlanInstanceId>'+idPlanInstancia+'</LoadPlanInstanceId>'+
+                  '      <LoadPlanInstanceRunCount>'+runcount+'</LoadPlanInstanceRunCount>'+
+                  '      <StopLevel>'+stoplevel+'</StopLevel>'+
+                  '   </OdiStopLoadPlanRequest>'+
+                  '</odi:OdiStopLoadPlanRequest>'+
+               '</soapenv:Body>'+
+            '</soapenv:Envelope>';
+    if(xmlhttp){
+      xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4) {
+          if(xmlhttp.status == 200) {
+            var XMLParser = require('react-xml-parser');
+            var xml = new XMLParser().parseFromString(xmlhttp.response);
+            console.log(getState().ejecucionReducer.escenario.id);
+            console.log(xml.getElementsByTagName('OdiLoadPlanInstanceId'));
+            if(xml.getElementsByTagName('OdiLoadPlanInstanceId')[0].value==idPlanInstancia){
+              toast.success("Se detuvo la ejecución correctamente", {
+                position: toast.POSITION.BOTTOM_CENTER,
+              })
+              dispatch(cargarComboConciliaciones())
+            }else{
+              toast.error("No se ha podido detener", {
+                position: toast.POSITION.BOTTOM_CENTER,
+              })
+            }
+          }
+        }
+      }
+      xmlhttp.open('POST',configuration.webService.url,true);
+      xmlhttp.send(sr);
+    }else{
+      alert('no existe el objeto xmlhttp');
+    }
+  }else{
+    toast.error("No se ha ejecutado", {
+      position: toast.POSITION.BOTTOM_CENTER,
+    })
+  }
+}
+
+
+//Programar Conciliaciones
+//Actualizar tecla por tecla los campos del formulario de conciliaciones
+export const updateFormEjecutarEscenarios = (field,value) => (dispatch,getState) =>{
+  dispatch(updateFormEjecutarEscenariosRequest(field,value))
+}
+
+//Enviar al reducer la tecla pulsada
+const updateFormEjecutarEscenariosRequest = (field,value) => ({
+  type : UPDATE_EJECUTAR_ESCENARIO_FORM_REQUEST,
+  field : field,
+  value: value
+})
 
 
 /*
@@ -2273,4 +2693,442 @@ export const cargarEscenariosenParametros = () =>(dispatch,getState) =>{
 const cargarEscenPar = (arrayEscenarios) => ({
   type : CARGA_ESCENARIOS_EN_PARAMETROS,
   lista : arrayEscenarios
+})
+
+/*
+*  A C C I O N E S  D E  Q U E R I E S
+*  para realizar todas las acciones necesarias del crud de querys
+*/
+
+//Actualizar tecla por tecla el campo de texto del buscador
+export const updateTextFindQuery = (field,value) => (dispatch,getState) =>{
+  dispatch(updateTextQueryFindRequest(field,value))
+}
+//Enviar el texto del buscador al reducer store
+const updateTextQueryFindRequest = (field,value) => ({
+  type : UPDATE_FINDER,
+  field : field,
+  value: value
+})
+//Realizar la búsqueda
+export const findTextQuery = () => (dispatch,getState) => {
+  let txtBuscar = getState().queryReducer.textoBuscar
+  APIInvoker.invokeGET('/queryescenario/findByAny?texto='+txtBuscar, response => {
+    if(Array.isArray(response) == true){
+      if(response[0].id!=undefined){
+        dispatch(verQuerys(response))
+      }else{
+        toast.warn("No se encuentran querys que cumplan con el criterio de búsqueda", {
+          position: toast.POSITION.BOTTOM_CENTER
+        })
+        console.log("Error : "+response[0].codigo+" Mensaje: "+response[0].mensaje+": "+response[0].descripcion)
+      }
+    }else{
+      if(response.id!=undefined){
+        dispatch(verQuerys(response))
+      }else{
+        console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
+        toast.warn("No se encuentran querys que cumplan con el criterio de búsqueda", {
+          position: toast.POSITION.BOTTOM_CENTER
+        })
+      }
+    }
+  })
+}
+
+//Recalcular el paginador de querys
+export const calculaPaginadorQuerys = () => (dispatch,getState) => {
+  let numregs=0
+  //Obtener el numero total de registros antes de filtrar
+  APIInvoker.invokeGET('/queryescenario/count',response =>{
+    if(!isNaN(response)){
+      numregs=response
+      //Recalcula el paginador
+      let totRegistros = numregs
+      let regPagina = getState().queryReducer.registrosPorPagina
+      let totPaginas = Math.ceil(totRegistros / regPagina)
+      let array_paginador = new Array()
+      let offset = 0
+      let regfin = 0
+      //console.log("TotRegistros ==")
+      //console.log(totRegistros)
+      for(let i=1;i<=totPaginas;i++){
+        regfin=offset+regPagina-1
+        array_paginador.push({"id":i,"offset":offset})
+        offset=regfin+1
+      }
+      //console.log("Variable de paginador ==>")
+      //console.log(array_paginador)
+      //preparar variable para Enviar
+      let update_paginador={
+        totalRegistros :  numregs,
+        registrosPorPagina : regPagina,
+        paginador: array_paginador
+      }
+      dispatch(actualizarPaginadorQuerys(update_paginador))
+    }else{
+      console.log("Conteo de Registros de querys no válido")
+    }
+  })
+}
+//Envia las variables al store
+const actualizarPaginadorQuerys = (array_paginador) =>({
+  type : ACTUALIZA_PAGINADOR_QUERYS,
+  lista : array_paginador
+})
+
+//Actualizar el listado de query
+export const refreshListQuery = () =>(dispatch,getState) => {
+  //console.log("EJECUTA REFRESH QUERY")
+  let objetoVacio = new Object()
+  let conciliacionActual = getState().queryReducer.conciliacion.id
+  if(conciliacionActual!=0){
+    APIInvoker.invokeGET('/queryescenario?conciliacion='+conciliacionActual, response => {
+      if(response.id!=undefined){
+        console.log("Detecta conciliacionActual ==>>"+conciliacionActual)
+        console.log(response.querys)
+        dispatch(antesVerQuerys(response.querys))
+      }else{
+        console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
+        dispatch(antesVerQuerys(objetoVacio))
+      }
+    })
+  }else{
+    //si no existe resp
+    let regInicial = 0
+    let pagActual = getState().queryReducer.paginaActual
+    if(getState().queryReducer.paginador.length > 0){
+      regInicial = getState().queryReducer.paginador[pagActual-1].offset
+    }
+    let regPagina = getState().queryReducer.registrosPorPagina
+    APIInvoker.invokeGET('/queryescenario?offset='+regInicial+'&limit='+regPagina, response => {
+      if(Array.isArray(response)){
+        if(response[0].id!=undefined){
+          dispatch(antesVerQuerys(response))
+        }else{
+          console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
+          dispatch(antesVerQuerys(objetoVacio))
+        }
+      }else{
+        //console.log("****** ******Como es el response ::")
+        //console.log(response)
+        if(response.codigo==404){
+          dispatch(antesVerQuerys(objetoVacio))
+        }
+      }
+    })
+  }
+}
+
+const antesVerQuerys = (resp) => (dispatch,getState) =>{
+  dispatch(calculaPaginadorQuerys()),
+  dispatch(verQuerys(resp))
+}
+//Enviar la accion de ver querys al Reducer STORE
+const verQuerys = (res) =>({
+  type : CARGAR_QUERYS,
+  lista : res
+})
+
+//Cargar el id conciliacion en el reducer de querys
+export const updConciliacionQuerys = (idconciliacion) => (dispatch,getState) =>{
+  APIInvoker.invokeGET('/conciliaciones/'+idconciliacion, response => {
+    if(response.id!=undefined){
+      dispatch(updConciliacionenQuery(JSON.stringify(response)))
+    }else{
+      console.log('No se encuentra la conciliacion')
+      dispatch(updConciliacionenQuery(JSON.stringify({"id":0,"nombre":"Ninguna conciliacion"})))
+    }
+    dispatch(refreshListQuery())
+  },error =>{
+    console.log('No se pudo cargar las Propiedades de la conciliacion '+idconciliacion+' en querys listar')
+  })
+}
+
+const updConciliacionenQuery = (objConciliacion)=>({
+  type : UPDATE_CONCILIACION_EN_QUERYS,
+  value : objConciliacion
+})
+
+//Actualizar tecla por tecla los campos del formulario de querys
+export const updateFormQuerys = (field,value) => (dispatch,getState) =>{
+  if(field=="query"){
+    APIInvoker.invokeGET('/parametros/findByAny?texto=Palabras restringidas en queries', response => {
+      if(response[0].valor!=undefined){
+        let array_restringidas = response[0].valor.split(';');
+        let palabras_usadas = value.split(' ');
+        let palabras_prohibidas = 0;
+        for(var i=0;i<array_restringidas.length;i++){
+          for(var j=0;j<palabras_usadas.length;j++){
+            if(array_restringidas[i].toLowerCase()==palabras_usadas[j].toLowerCase()){palabras_prohibidas++;}
+          }
+        }
+        if(palabras_prohibidas>0){
+          toast.error("Está usando palabras prohibidas en el query : '"+response[0].valor+"'", {
+            position: toast.POSITION.BOTTOM_CENTER
+          })
+        }
+      }
+    })
+  }
+  dispatch(updateFormQuerysRequest(field,value))
+}
+//Enviar al reducer la tecla pulsada
+const updateFormQuerysRequest = (field,value) => ({
+  type : UPDATE_QUERYS_FORM_REQUEST,
+  field : field,
+  value: value
+})
+//Funcion para guardar o actualizar la query
+export const saveQuery = () => (dispatch,getState)=>{
+  let id_query = getState().queryFormReducer.id
+  APIInvoker.invokeGET('/parametros/findByAny?texto=Palabras restringidas en queries', response => {
+    if(response[0].valor!=undefined){
+      let array_restringidas = response[0].valor.split(';');
+      let palabras_usadas = getState().queryFormReducer.query.split(' ');
+      let palabras_prohibidas = 0;
+      for(var i=0;i<array_restringidas.length;i++){
+        for(var j=0;j<palabras_usadas.length;j++){
+          if(array_restringidas[i].toLowerCase()==palabras_usadas[j].toLowerCase()){palabras_prohibidas++;}
+        }
+      }
+      if(palabras_prohibidas>0){
+        toast.error("Está usando palabras prohibidas en el query : '"+response[0].valor+"'", {
+          position: toast.POSITION.BOTTOM_CENTER
+        })
+      }else{
+        if(id_query == 0 || id_query == undefined){
+          //Si es un query nuevo
+          let query_salvar = {
+            nombreQuery : getState().queryFormReducer.nombre,
+            query : getState().queryFormReducer.query,
+            orden : getState().queryFormReducer.orden,
+            idEscenario : getState().queryFormReducer.idEscenario,
+            usuario : getState().loginReducer.profile.userName
+          }
+          APIInvoker.invokePOST('/queryescenario',query_salvar,response =>{
+            if(response.nombreQuery!=undefined){
+              toast.success("Se grabó un nuevo query", {
+                position: toast.POSITION.BOTTOM_CENTER
+              })
+              dispatch(limpiarFormQuery())
+            }else{
+              if(response.mensaje=="CTRAINT_UQ_TBL_GAI_QUERIES_ESCENARIOS_COD_ESCENARIO"){
+                //console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
+                toast.error("Ya existe un query con el mismo nombre", {
+                  position: toast.POSITION.BOTTOM_CENTER
+                })
+              }else{
+                toast.error("Error general al intentar grabar un nuevo query", {
+                  position: toast.POSITION.BOTTOM_CENTER
+                })
+              }
+            }
+          },error =>{
+            console.log('No se ha podido crear la query')
+          })
+        }else{
+          //Si es actualizar un existente
+          let idConciliacionGrabar = 0
+          let nombreConciliacionGrabar="Ninguna"
+          if(getState().queryReducer.conciliacion.id==0){
+            idConciliacionGrabar = getState().queryFormReducer.idConciliacion
+            nombreConciliacionGrabar = getState().queryFormReducer.nombreConciliacion
+          }else{
+            idConciliacionGrabar = getState().queryReducer.conciliacion.id
+            nombreConciliacionGrabar = getState().queryReducer.conciliacion.nombre
+          }
+          let query_salvar = {
+            id :  getState().queryFormReducer.id,
+            nombreQuery : getState().queryFormReducer.nombre,
+            query : getState().queryFormReducer.query,
+            orden : getState().queryFormReducer.orden,
+            idEscenario : getState().queryFormReducer.idEscenario,
+            usuario : getState().loginReducer.profile.userName
+          }
+          APIInvoker.invokePUT('/queryescenario',query_salvar,response =>{
+            if(response.id!=undefined){
+              toast.success("Se actualizó el query", {
+                position: toast.POSITION.BOTTOM_CENTER
+              })
+              //dispatch(limpiarFormQuery(),browserHistory.push('/queryescenario'))
+            }else{
+              //console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
+              if(response.mensaje=="CTRAINT_UQ_TBL_GAI_QUERIES_ESCENARIOS_COD_ESCENARIO"){
+                toast.error("No se ha actualizó el query, el nombre no puede asignarse", {
+                  position: toast.POSITION.BOTTOM_CENTER
+                })
+              }else{
+                toast.error("Error general al intentar actualizar el query", {
+                  position: toast.POSITION.BOTTOM_CENTER
+                })
+              }
+              //dispatch(limpiarFormQuery(),browserHistory.push('/queryescenario'))
+            }
+          },error =>{
+            console.log('No se ha podido actualizar la query')
+          })
+        }
+      }
+    }
+  })
+}
+//Funcion para limpiar los campos del formulario de Querys
+export const limpiarFormQuery = () =>({
+  type : LIMPIAR_FORM_QUERY
+})
+//Funcion para cargar la query en el formulario
+export const cargarQuery =(idquery) => (dispatch,getState) =>{
+  APIInvoker.invokeGET('/queryescenario/'+idquery, response => {
+    if(Array.isArray(response) == true){
+      dispatch(cargarQueryEnForm(response))
+    }else{
+      dispatch(cargarQueryEnForm([response]))
+    }
+  },error =>{
+    console.log('No se pudo actualizar los campos')
+  })
+}
+//Enviar la acción de cargar la query al reducer
+const cargarQueryEnForm = (query) => ({
+  type : CARGAR_QUERY_FORM,
+  query : query
+})
+//Funcion que elimina una query
+export const borrarQuery = () => (dispatch,getState) =>{
+  let idquery = getState().queryFormReducer.id
+  APIInvoker.invokeDELETE('/queryescenario/'+idquery, response => {
+  },error =>{
+    if(error.codigo==200){
+      toast.success("Se eliminó el query", {
+        position: toast.POSITION.BOTTOM_CENTER
+      })
+    }else if(error.codigo==500){
+      toast.error("No es posible eliminar el query, revise que no tenga indicadores y/o parámetros asociados", {
+        position: toast.POSITION.BOTTOM_CENTER
+      })
+    }else{
+      toast.error("Error general al intentar eliminar un query", {
+        position: toast.POSITION.BOTTOM_CENTER
+      })
+    }
+  })
+  dispatch(limpiarFormQuery(),browserHistory.push('/querys'))
+}
+
+//Funcion de cambio de pagina
+export const moverPaginaQuerys = (pagina) =>(dispatch,getState) =>{
+  let NumPagsTotales = getState().queryReducer.paginador.length
+  if(pagina > 0 && pagina <= NumPagsTotales){
+    dispatch(irAPaginaQuerys(pagina))
+    dispatch(refreshListQuery())
+  }
+}
+const irAPaginaQuerys = (pagina) =>({
+  type : IR_PAGINA_QUERYS,
+  pagina : pagina
+})
+
+//Funcion que carga el combo de escenarios
+export const cargarComboEscenariosEnQuerys = () =>(dispatch,getState) =>{
+  APIInvoker.invokeGET('/escenarios', response => {
+    if(Array.isArray(response) == true){
+      dispatch(cargarEscenariosenQuerys(response))
+    }
+  })
+}
+//Envia resultado para llenar el combo a Reducer
+const cargarEscenariosenQuerys = (arrayEscenarios) => ({
+  type : CARGA_ESCENARIOS_EN_QUERYS,
+  lista : arrayEscenarios
+})
+
+//Funcion que elimina el valor ultimo seleccionado del combo
+export const limpiarEscenarioSeleccionado = () => ({
+  type : LIMPIAR_ESCENARIO_SELECCIONADO,
+  lista : {"id":0,"nombre":"Ninguno"}
+})
+
+//Funcion que carga las opciones de Conciliaciones en el combo de la parte superior en querys
+export const cargarConciliacionesQuery = () =>(dispatch,getState) =>{
+  APIInvoker.invokeGET('/conciliaciones',response => {
+    if(Array.isArray(response) == true){
+      dispatch(cargarConciliacionesenQuery(response))
+    }
+  })
+}
+const cargarConciliacionesenQuery = (arrayConciliaciones) => ({
+  type : CARGAR_CONCILIACIONES_QUERY,
+  lista : arrayConciliaciones
+})
+
+//Funcion que graba cuando se rechazan los query de una conciliacion
+export const rechazarConciliacion = () =>(dispatch,getState) => {
+  let aprobacion_salvar = {
+    idConciliacion : getState().queryReducer.conciliacion.id,
+    mensaje : getState().queryReducer.mensaje,
+    estadoAprobacion : '2',
+    usuario : getState().loginReducer.profile.userName
+  }
+  APIInvoker.invokePOST('/queryaprobacion',aprobacion_salvar,response =>{
+    if(response.nombreConciliacion!=undefined){
+      toast.success("Se rechazaron los queries de la conciliación "+response.nombreConciliacion, {
+        position: toast.POSITION.BOTTOM_CENTER
+      })
+    }else{
+      if(response.mensaje=="CTRAINT_UQ_TBL_GAI_QUERIES_ESCENARIOS_COD_ESCENARIO"){
+        //console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
+        toast.error("Ya existe una aprobación igual", {
+          position: toast.POSITION.BOTTOM_CENTER
+        })
+      }else{
+        toast.error("Error general al intentar rechazar queries de una conciliación", {
+          position: toast.POSITION.BOTTOM_CENTER
+        })
+      }
+    }
+  },error =>{
+    console.log('No se ha podido crear el rechazo de queries para una conciliación')
+  })
+}
+
+//Funcion que graba cuando se aprueban los query de una conciliacion
+export const aprobarConciliacion = () =>(dispatch,getState) => {
+  let aprobacion_salvar = {
+    idConciliacion : getState().queryReducer.conciliacion.id,
+    mensaje : getState().queryReducer.mensaje,
+    estadoAprobacion : '1',
+    usuario : getState().loginReducer.profile.userName
+  }
+  APIInvoker.invokePOST('/queryaprobacion',aprobacion_salvar,response =>{
+    if(response.nombreConciliacion!=undefined){
+      toast.success("Se aprobaron los queries de la conciliación "+response.nombreConciliacion, {
+        position: toast.POSITION.BOTTOM_CENTER
+      })
+    }else{
+      if(response.mensaje=="CTRAINT_UQ_TBL_GAI_QUERIES_ESCENARIOS_COD_ESCENARIO"){
+        //console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
+        toast.error("Ya existe una aprobación igual", {
+          position: toast.POSITION.BOTTOM_CENTER
+        })
+      }else{
+        toast.error("Error general al intentar rechazar queries de una conciliación", {
+          position: toast.POSITION.BOTTOM_CENTER
+        })
+      }
+    }
+  },error =>{
+    console.log('No se ha podido crear la aprobación de queries para una conciliación')
+  })
+}
+
+//Actualizar tecla por tecla los campos del formulario de querys
+export const updateFormAprobQuerys = (field,value) => (dispatch,getState) =>{
+  dispatch(updateFormAprobQuerysRequest(field,value))
+}
+//Enviar al reducer la tecla pulsada
+const updateFormAprobQuerysRequest = (field,value) => ({
+  type : UPDATE_QUERYS_APROB_FORM_REQUEST,
+  field : field,
+  value: value
 })

@@ -1,18 +1,20 @@
 import { combineReducers } from 'redux'
-import loginReducer from './LoginReducer'
-import loginFormReducer from './LoginFormReducer'
-import politicaReducer from './PoliticaReducer'
-import politicaFormReducer from './PoliticaFormReducer'
-import conciliacionReducer from './ConciliacionReducer'
-import conciliacionFormReducer from './ConciliacionFormReducer'
-import escenarioReducer from './EscenarioReducer'
-import escenarioFormReducer from './EscenarioFormReducer'
-import ejecucionReducer from './EjecucionReducer'
-import resultadoReducer from './ResultadoReducer'
+import loginReducer from './loginReducer'
+import loginFormReducer from './loginFormReducer'
+import politicaReducer from './politicaReducer'
+import politicaFormReducer from './politicaFormReducer'
+import conciliacionReducer from './conciliacionReducer'
+import conciliacionFormReducer from './conciliacionFormReducer'
+import escenarioReducer from './escenarioReducer'
+import escenarioFormReducer from './escenarioFormReducer'
+import ejecucionReducer from './ejecucionReducer'
+import resultadoReducer from './resultadoReducer'
 import indicadorReducer from './indicadorReducer'
 import indicadorFormReducer from './indicadorFormReducer'
 import parametroReducer from './parametroReducer'
 import parametroFormReducer from './parametroFormReducer'
+import queryReducer from './queryReducer'
+import queryFormReducer from './queryFormReducer'
 
 
 export default combineReducers({
@@ -29,5 +31,7 @@ export default combineReducers({
   indicadorReducer,
   indicadorFormReducer,
   parametroReducer,
-  parametroFormReducer
+  parametroFormReducer,
+  queryReducer,
+  queryFormReducer
 })
