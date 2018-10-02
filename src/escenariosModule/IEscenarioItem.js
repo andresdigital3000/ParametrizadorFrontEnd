@@ -26,11 +26,16 @@ class IEscenarioItem extends React.Component{
                     {currentValue.nombre}
                   </td>
                   <td>
-                    {currentValue.impacto}
+                    <If condition={currentValue.impacto==0}>
+                      BAJO
+                    </If>
+                    <If condition={currentValue.impacto==1}>
+                      ALTO
+                    </If>
                   </td>
                   <td>
                     <If condition={currentValue.idConciliacion!=undefined}>
-                      <Link to={"/conciliaciones/"+currentValue.idConciliacion}>{currentValue.nombreConciliacion}</Link>
+                      <Link to={"/conciliaciones/"+currentValue.idConciliacion}>{currentValue.idConciliacion} - {currentValue.nombreConciliacion}</Link>
                     </If>
                     <If condition={currentValue.idConciliacion==undefined}>
                       No tiene

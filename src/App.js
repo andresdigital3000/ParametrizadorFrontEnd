@@ -38,6 +38,7 @@ import IQueryList from './querysModule/IQueryList'
 import IQueryForm from './querysModule/IQueryForm'
 import IQueryDelete from './querysModule/IQueryDelete'
 import IQueryAprobar from './querysModule/IQueryAprobar'
+import IUnderConstruction from './IUnderConstruction'
 
 
 //import APIInvoker from './utils/APIInvoker'
@@ -88,6 +89,7 @@ render((
             <Route path="/querys/edit/:idquery" component={IQueryForm}></Route>
             <Route path="/querys/delete/:idquerydelete" component={IQueryDelete}></Route>
             <Route path="/querys/aprobar/:aprobar" component={IQueryAprobar}></Route>
+            <Route path="/uc" component={IUnderConstruction}></Route>
           </Route>
       </Router>
     </Provider>

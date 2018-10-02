@@ -26,8 +26,8 @@ class IQuery extends React.Component{
   }
 
   cambioConciliacionesQuery(e){
-    let jsonConciliacion = JSON.parse(e.target.value)
-    this.props.updConciliacionQuerys(jsonConciliacion.id)
+    //let jsonConciliacion = JSON.parse(e.target.value)
+    this.props.updConciliacionQuerys(e.target.value)
   }
 
   render(){
@@ -57,18 +57,18 @@ class IQuery extends React.Component{
             <div className="row">
               <div className="col-sm-4">
                 <label htmlFor='conciliacion'>Conciliación</label>
-                <select id="conciliacion" name="conciliacion" className='form-control' value={this.props.state.conciliacion} onChange={this.cambioConciliacionesQuery.bind(this)}>
-                  <option value='{"id":"0","nombre":"Todas"}'>Todas</option>
+                <select id="conciliacion" name="conciliacion" className='form-control' value={this.props.state.conciliacion.id} onChange={this.cambioConciliacionesQuery.bind(this)}>
+                  <option key="0" value="0">Todas</option>
                   {this.props.state.conciliaciones.map(function(currentValue,index,array){
                     return(
-                      <option key={currentValue.id} value={JSON.stringify(currentValue)}>{currentValue.nombre}</option>
+                      <option key={currentValue.id} value={currentValue.id}>{currentValue.nombre}</option>
                     );
                   })}
                 </select>
               </div>
               <div className="col-sm-8">
                 <label htmlFor='estado'>Estado</label>
-                 <input id='estado' type='text' className='form-control form-control-lg' value={this.props.state.estado} readOnly/>
+                <p><b>{this.props.state.estado}</b></p>
               </div>
             </div>
             <hr/>
@@ -87,15 +87,19 @@ class IQuery extends React.Component{
             <div className="row">
               <div className="col-sm-1">
               </div>
-              <div className="col-sm-9">
+              <div className="col-sm-8">
                 <center>
                   <IQueryPaginador/>
                 </center>
               </div>
               <div className="col-sm-1">
-                <Link to="/querys/aprobar/form" className="btn btn-primary">Aprobar Conciliación</Link>
+                {
+                  this.props.state.conciliacion.id!="0" && this.props.state.querys.length>0 ?
+                  <Link to="/querys/aprobar/form" className="btn btn-primary">Aprobar Conciliación</Link> :
+                  <p>&nbsp;</p>
+                }
               </div>
-              <div className="col-sm-1">
+              <div className="col-sm-2">
               </div>
             </div>
           </header>
@@ -107,9 +111,10 @@ class IQuery extends React.Component{
 const mapStateToProps = (state) =>{
   return{
     state: {
-      conciliacion : JSON.stringify(state.queryReducer.conciliacion),
+      conciliacion : state.queryReducer.conciliacion,
       conciliaciones : state.queryReducer.conciliaciones,
-      estado : state.queryReducer.mensaje
+      querys : state.queryReducer.querys,
+      estado : state.queryReducer.conciliacion.queryAprobaciones.mensaje
     }
   }
 }

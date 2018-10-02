@@ -37,7 +37,6 @@ export const parametroFormReducer = (state = initialState,action) =>{
           parametro : {$set: ''},
           valor : {$set: ''},
           descripcion : {$set: ''},
-          tipo : {$set: ''},
           escenario : {$set : 0}
         })
     case CARGA_ESCENARIOS_EN_PARAMETROS:

@@ -1,4 +1,5 @@
 import React from 'react'
+import ReactDOM from 'react-dom'
 //import Menu from './Menu'
 import Toolbar from './Toolbar'
 import IPolitica from '../politicasModule/IPolitica'
@@ -24,13 +25,16 @@ import IQuery from '../querysModule/IQuery'
 import IQueryForm from '../querysModule/IQueryForm'
 import IQueryDelete from '../querysModule/IQueryDelete'
 import IQueryAprobar from '../querysModule/IQueryAprobar'
-
+import IUnderConstruction from '../IUnderConstruction'
+import IModal from '../IModal'
 import Loading from '../politicasModule/Loading.js'
 import { browserHistory } from 'react-router'
 import { connect } from 'react-redux'
 import { relogin } from '../actions/Actions'
 import { ToastContainer, toast } from 'react-toastify';
 import '!style-loader!css-loader!react-toastify/dist/ReactToastify.css';
+
+import { mostrarModal,ocultarModal } from '../actions/Actions';
 
 class AdminThemplete extends React.Component{
   constructor(props){
@@ -46,13 +50,27 @@ class AdminThemplete extends React.Component{
     console.log(this.props)
   }
 
+  mostrarModal() {
+    this.props.mostrarModal()
+  }
+
+  ocultarModal(){
+    this.props.ocultarModal()
+  }
+
+  //<button className="btn btn-primary" data-toggle="modal" data-target="#modalMsg"><i className="fa fa-plus-circle"/>Mostrar Modal</button>
+  
   render(){
     return(
       <div data-reactroot="" className="container-fluid">
-          <ToastContainer autoClose={4000}/>
+          <ToastContainer modal={true} zIndex={9999} hideProgressBar={true} autoClose={5000}/>
+          <IModal/>
           <Choose>
             <When condition={this.props.load}>
                 <Toolbar/>
+                <If condition={this.props.location.pathname == '/uc'}>
+                  <IUnderConstruction/>
+                </If>
                 <If condition={this.props.location.pathname.substr(1,9) == 'politicas'}>
                   <Choose>
                     <When condition={this.props.params.idpolitica && this.props.location.pathname.substr(1,14) == 'politicas/edit'}>
@@ -200,8 +218,11 @@ class AdminThemplete extends React.Component{
 const mapStateToProps = (state) => {
   return {
     load : state.loginReducer.load,
-    profile : state.loginReducer.profile
+    profile : state.loginReducer.profile,
+    showmodal : state.loginReducer.showmodal
   }
 }
 
-export default connect(mapStateToProps,{ relogin })(AdminThemplete);
+export default connect(mapStateToProps,{
+  relogin, mostrarModal, ocultarModal
+})(AdminThemplete);

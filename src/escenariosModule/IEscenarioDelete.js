@@ -58,7 +58,12 @@ class IEscenarioDelete extends React.Component{
                       </div>
                       <div className="form-group">
                         <label htmlFor='impacto'>Impacto</label>
-                        <input id='impacto' type='text' className='form-control form-control-lg' value={this.props.state.impacto} disabled />
+                        <If condition={this.props.state.impacto==0}>
+                        <input type='text' className='form-control form-control-lg' value="BAJO" disabled />
+                        </If>
+                        <If condition={this.props.state.impacto==1}>
+                        <input type='text' className='form-control form-control-lg' value="ALTO" disabled />
+                        </If>
                       </div>
                   </When>
                   <Otherwise>

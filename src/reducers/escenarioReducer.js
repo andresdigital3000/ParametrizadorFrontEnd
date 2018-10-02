@@ -13,7 +13,7 @@ const initialState = {
   totalRegistros:15,
   textoBuscar:"",
   escenarios:[],
-  conciliacion:{"id":0,"nombre":"Ninguna conciliación","escenarios":[]},
+  conciliacion:{"id":0},
   paginador: []
 }
 
@@ -34,18 +34,12 @@ export const escenarioReducer = (state = initialState,action) =>{
               paginaActual : {$set: action.pagina}
             })
         case CARGAR_ESCENARIOS:
-          if(state.conciliacion.id!=0){
-            return update(state,{
-              escenarios : {$set: state.conciliacion.escenarios}
-            })
-          }else{
             return update(state,{
               escenarios : {$set: action.lista}
             })
-          }
         case UPDATE_CONCILIACION_EN_ESCENARIOS:
           return update(state,{
-            conciliacion: {$set: JSON.parse(action.value)}
+            conciliacion: {$set: action.value}
           })
       default:
         return state

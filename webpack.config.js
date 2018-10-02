@@ -15,7 +15,7 @@ module.exports = {
   },
   module:{
     loaders:[{
-      test: /\.jsx?$/,
+      test: /\.jsx?$|html/,
       exclude: /node_modules/,
       loader: 'babel',
       query:{

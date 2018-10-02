@@ -39,7 +39,7 @@ class IPoliticaItem extends React.Component{
                     </td>
                     <td>
                       <If condition={id_conciliacion!=0}>
-                          <Link to={"/conciliaciones/"+id_conciliacion}>{nom_conciliacion}</Link>
+                          <Link to={"/conciliaciones/"+id_conciliacion}>{id_conciliacion} - {nom_conciliacion}</Link>
                       </If>
                       <If condition={id_conciliacion==0}>
                           No tiene

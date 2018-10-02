@@ -14,7 +14,7 @@ const initialState = {
   totalRegistros:1,
   textoBuscar:"",
   conciliaciones:[],
-  politica:{"id":0,"nombre":"Ninguna política"},
+  politica:{"id":0},
   politicas:[],
   paginador: []
 }
@@ -41,7 +41,7 @@ export const conciliacionReducer = (state = initialState,action) =>{
         })
       case UPDATE_POLITICA_EN_CONCILIACIONES:
         return update(state,{
-          politica: {$set: JSON.parse(action.value)}
+          politica: {$set: action.value}
         })
       case CARGA_POLITICAS:
         return update(state,{

@@ -45,10 +45,10 @@ class IQueryAprobar extends React.Component{
           </header>
           <div className="form-group">
             <label htmlFor='conciliacion'>Conciliación</label>
-            <select id="conciliacion" name="conciliacion" className='form-control form-control-lg' value={this.props.state.conciliacion} readOnly>
+            <select id="conciliacion" name="conciliacion" className='form-control form-control-lg' value={this.props.state.conciliacion.id} readOnly>
               {this.props.state.conciliaciones.map(function(currentValue,index,array){
                 return(
-                  <option key={currentValue.id} value={JSON.stringify(currentValue)}>{currentValue.nombre}</option>
+                  <option key={currentValue.id} value={currentValue.id}>{currentValue.nombre}</option>
                 );
               })}
             </select>
@@ -83,7 +83,7 @@ class IQueryAprobar extends React.Component{
 const mapStateToProps = (state) =>{
   return{
     state: {
-      conciliacion : JSON.stringify(state.queryReducer.conciliacion),
+      conciliacion : state.queryReducer.conciliacion,
       conciliaciones : state.queryReducer.conciliaciones,
       mensaje : state.queryReducer.mensaje
     }
