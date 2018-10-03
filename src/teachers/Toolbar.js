@@ -22,13 +22,13 @@ class Toolbar extends React.Component{
 //<div className="main--menu navigation-collapse" id="navbarSupportedContent"><ul className="navigation-nav mr-auto">
   render(){
     return(
-      <nav className="navbar navbar-expand-lg">
+      <nav className="navbar navigation navbar-expand-lg">
           <a className="logo" href="#">Claro</a>
           <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
               <span className="navbar-toggler-icon"></span>
           </button>
           <div className="main--menu navbar-collapse" id="navbarSupportedContent">
-            <ul className="navbar-nav mr-auto">
+            <ul className="navbar-nav navigation-nav mr-auto">
               <li className="nav-item dropdown">
                 <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Administrativo
@@ -55,7 +55,7 @@ class Toolbar extends React.Component{
               </li>
               <li className="nav-item dropdown">
                 <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown3" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Ejecución
+                  Consulta
                 </a>
                 <div className="dropdown-menu" aria-labelledby="navbarDropdown3">
                   <Link to="/uc" className="dropdown-item">Resultados</Link>

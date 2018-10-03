@@ -4,7 +4,7 @@ import APIInvoker from '../utils/APIInvoker'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { Link } from 'react-router';
 import { connect } from 'react-redux'
-import { cargarConciliacion, borrarConciliacion, limpiarFormConciliacion } from '../actions/Actions';
+import { cargarConciliacion, borrarConciliacion, limpiarFormConciliacion, refreshListConciliacion } from '../actions/Actions';
 
 
 class IConciliacionDelete extends React.Component{
@@ -20,6 +20,7 @@ class IConciliacionDelete extends React.Component{
 
   borrarConciliacion(e){
     this.props.borrarConciliacion()
+    this.props.refreshListConciliacion()
   }
 
   //Limpiar el formulario
@@ -97,5 +98,5 @@ const mapStateToProps = (state) =>{
   }
 }
 export default connect (mapStateToProps,{
-  cargarConciliacion, borrarConciliacion, limpiarFormConciliacion
+  cargarConciliacion, borrarConciliacion, limpiarFormConciliacion, refreshListConciliacion
 })(IConciliacionDelete)

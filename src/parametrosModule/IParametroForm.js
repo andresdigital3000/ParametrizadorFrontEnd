@@ -6,6 +6,9 @@ import { Link } from 'react-router';
 import { connect } from 'react-redux'
 import { updateFormParametros, saveParametro, cargarParametro, limpiarFormParametro, refreshListParametro, cargarEscenariosenParametros } from '../actions/Actions';
 
+import Select from 'react-select';
+//import 'react-select/dist/react-select.css';
+
 class IParametroForm extends React.Component{
   constructor(){
     super(...arguments)
@@ -74,6 +77,7 @@ class IParametroForm extends React.Component{
               </select>
               <small id="tipoHelp" className="form-text text-muted">Clasifique el tipo de parámetro</small>
             </div>
+            
             <div className="form-group">
               {
                 this.props.state.tipo!='' && this.props.state.tipo!='GENERAL' ?

@@ -43,12 +43,12 @@ class IEscenarioItem extends React.Component{
                   </td>
                   <td>
                     <center>
-                      <Link to={"#"}><i className="fa fa-file-text-o"/></Link>
+                      <Link to={"/uc"}><i className="fa fa-file-text-o"/></Link>
                     </center>
                   </td>
                   <td>
                     <center>
-                      <Link to={"#"}><i className="fa fa-pencil-square-o"/></Link>
+                      <Link to={"/uc"}><i className="fa fa-pencil-square-o"/></Link>
                     </center>
                   </td>
                   <td>

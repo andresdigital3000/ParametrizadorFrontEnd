@@ -82,6 +82,7 @@ class IConciliacionForm extends React.Component{
             <div className="form-group">
               <label htmlFor='politica'>* Política</label>
               <select id="politica" name="politica" className='form-control' value={this.props.state.politica.id} onChange={this.cambioPolitica.bind(this)}>
+                <option key={this.props.state.idPolitica} value={this.props.state.idPolitica}>{this.props.state.nombrePolitica}</option>
                 {this.props.state.politicas.map(function(currentValue,index,array){
                   return(
                     <option key={currentValue.id} value={currentValue.id}>{currentValue.nombre}</option>
@@ -151,7 +152,7 @@ class IConciliacionForm extends React.Component{
                     <hr/>
                     <button onClick={this.limpiarConciliacion.bind(this)} type="button" className="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                     {
-                      this.props.state.idPolitica!="0" && this.props.state.emailasignado!="" && this.props.state.nombre!="" && this.props.state.webservice!="" && this.props.state.politica!='{"id":0,"nombre":"Ninguna"}' ?
+                      this.props.state.politica.id!="0" && this.props.state.emailasignado!="" && this.props.state.nombre!="" && this.props.state.webservice!="" ?
                       <button onClick={this.grabarConciliacion.bind(this)} className="btn btn-primary">Grabar</button> :
                       <button className="btn btn-primary" disabled>Formulario incompleto</button>
                     }
