@@ -13,7 +13,7 @@ const initialState = {
   nombre : '',
   descripcion : '',
   formula : '',
-  idEscenario : '',
+  idEscenario : '0',
   nombreEscenario : '',
   escenario:{"id":0,"nombre":"Ningun Escenario"},
   parametros:[]
@@ -42,7 +42,7 @@ export const indicadorFormReducer = (state = initialState,action) =>{
           nombre : {$set: ''},
           descripcion : {$set: ''},
           formula : {$set: ''},
-          idEscenario : {$set: ''},
+          idEscenario : {$set: '0'},
           nombreEscenario : {$set: ''},
           escenario : {$set: JSON.parse('{"id":0,"nombre":"Ningun Escenario"}')},
           parametros : {$set : []}
@@ -53,7 +53,9 @@ export const indicadorFormReducer = (state = initialState,action) =>{
         })
     case UPDATE_ESCENARIO_EN_INDICADORES:
         return update(state,{
-          escenario: {$set: JSON.parse(action.value)}
+          escenario: {$set: action.value},
+          idEscenario : {$set : action.value.id},
+          nombreEscenario : {$set : action.value.nombre}
         })
     case CARGA_PARAMETROS_EN_INDICADORES:
         return update(state,{

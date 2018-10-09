@@ -1,6 +1,6 @@
+import 'babel-polyfill'
 import React from 'react'
 import ReactDOM from 'react-dom'
-//import Menu from './Menu'
 import Toolbar from './Toolbar'
 import IPolitica from '../politicasModule/IPolitica'
 import IPoliticaForm from '../politicasModule/IPoliticaForm'
@@ -59,7 +59,7 @@ class AdminThemplete extends React.Component{
   }
 
   //<button className="btn btn-primary" data-toggle="modal" data-target="#modalMsg"><i className="fa fa-plus-circle"/>Mostrar Modal</button>
-  
+
   render(){
     return(
       <div data-reactroot="" className="container-fluid">

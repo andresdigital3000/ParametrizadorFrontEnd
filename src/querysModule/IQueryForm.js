@@ -52,12 +52,12 @@ class IQueryForm extends React.Component{
             </header>
             <div className="form-group">
               <label htmlFor='nombre'>* Nombre</label>
-              <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un nombre de query' autoComplete='off'/>
+              <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un nombre de query' autoComplete='off' maxLength='100'/>
               <small id="nombreHelp" className="form-text text-muted">Que sea descriptivo</small>
             </div>
             <div className="form-group">
               <label htmlFor='query'>* Query</label>
-              <textarea id='query' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.query} onChange={this.handleInput.bind(this)} placeholder='Digite el query' autoComplete='off' rows="5"/>
+              <textarea id='query' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.query} onChange={this.handleInput.bind(this)} placeholder='Digite el query' autoComplete='off' rows="5"  maxLength='5000'/>
               <small id="queryHelp" className="form-text text-muted">Escriba la instrucción query</small>
             </div>
             <div className="form-group">
@@ -102,12 +102,12 @@ class IQueryForm extends React.Component{
                   <div className="modal-body">
                     <div className="form-group">
                       <label htmlFor='nombre'>* Nombre</label>
-                      <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un nombre de query' autoComplete='off'/>
+                      <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un nombre de query' autoComplete='off' maxLength='100'/>
                       <small id="nombreHelp" className="form-text text-muted">Que sea descriptivo</small>
                     </div>
                     <div className="form-group">
                       <label htmlFor='query'>* Query</label>
-                      <textarea id='query' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.query} onChange={this.handleInput.bind(this)} placeholder='Digite el query' autoComplete='off' rows="5"/>
+                      <textarea id='query' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.query} onChange={this.handleInput.bind(this)} placeholder='Digite el query' autoComplete='off' rows="5" maxLength='5000'/>
                       <small id="queryHelp" className="form-text text-muted">Escriba la instrucción query</small>
                     </div>
                     <div className="form-group">

@@ -1499,6 +1499,10 @@ export const getStatusEjecucionConciliacion = (operacion) => (dispatch,getState)
               position: toast.POSITION.BOTTOM_RIGHT,
             })
           }
+        }else{
+          toast.error("No hay conexión con el servicio de ODI", {
+            position: toast.POSITION.BOTTOM_RIGHT
+          })
         }
       }
     }
@@ -1605,6 +1609,10 @@ export const doEjecutarConciliacion = () => (dispatch,getState) => {
                 position: toast.POSITION.BOTTOM_RIGHT
               })
             }
+          }else{
+            toast.error("No hay conexión con el servicio de ODI", {
+              position: toast.POSITION.BOTTOM_RIGHT
+            })
           }
         }
       }
@@ -1679,6 +1687,10 @@ export const doCancelarConciliacion = () => (dispatch,getState) => {
                 position: toast.POSITION.BOTTOM_RIGHT,
               })
             }
+          }else{
+            toast.error("No hay conexión con el servicio de ODI", {
+              position: toast.POSITION.BOTTOM_RIGHT
+            })
           }
         }
       }
@@ -1819,6 +1831,10 @@ export const getStatusEjecucionEscenarios = (operacion) => (dispatch,getState) =
               position: toast.POSITION.BOTTOM_RIGHT,
             })
           }
+        }else{
+          toast.error("No hay conexión con el servicio de ODI", {
+            position: toast.POSITION.BOTTOM_RIGHT
+          })
         }
       }
     }
@@ -1927,6 +1943,10 @@ export const doEjecutarEscenario = () => (dispatch,getState) => {
                 position: toast.POSITION.BOTTOM_RIGHT
               })
             }
+          }else{
+            toast.error("No hay conexión con el servicio de ODI", {
+              position: toast.POSITION.BOTTOM_RIGHT
+            })
           }
         }
       }
@@ -2001,6 +2021,10 @@ export const doCancelarEscenario = () => (dispatch,getState) => {
                 position: toast.POSITION.BOTTOM_RIGHT,
               })
             }
+          }else{
+            toast.error("No hay conexión con el servicio de ODI", {
+              position: toast.POSITION.BOTTOM_RIGHT
+            })
           }
         }
       }
@@ -2383,10 +2407,10 @@ const irAPaginaIndicadores = (pagina) =>({
 export const updEscenario = (idescenario) => (dispatch,getState) =>{
   APIInvoker.invokeGET('/escenarios/'+idescenario, response => {
     if(response.id!=undefined){
-      dispatch(updEscenarioReducerIndicadores(JSON.stringify(response)))
+      dispatch(updEscenarioReducerIndicadores(response))
     }else{
       console.log('No se encuentra el escenario')
-      dispatch(updEscenarioReducerIndicadores(JSON.stringify({"id":0,"nombre":"Ninguna conciliacion","escenarios":[]})))
+      dispatch(updEscenarioReducerIndicadores({"id":0,"nombre":"Ninguna conciliacion","escenarios":[]}))
     }
     dispatch(refreshListIndicador())
   },error =>{
@@ -2768,7 +2792,7 @@ const updateTextQueryFindRequest = (field,value) => ({
 //Realizar la búsqueda
 export const findTextQuery = () => (dispatch,getState) => {
   let txtBuscar = getState().queryReducer.textoBuscar
-  APIInvoker.invokeGET('/queryescenario/findByAny?texto='+txtBuscar, response => {
+  APIInvoker.invokeGET('/queryescenario?texto='+txtBuscar, response => {
     if(Array.isArray(response) == true){
       if(response[0].id!=undefined){
         dispatch(verQuerys(response))

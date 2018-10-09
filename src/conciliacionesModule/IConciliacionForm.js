@@ -61,22 +61,22 @@ class IConciliacionForm extends React.Component{
             </header>
             <div className="form-group">
               <label htmlFor='nombre'>* Nombre</label>
-              <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un nombre de conciiación' autoComplete='off'/>
+              <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un nombre de conciiación' autoComplete='off' maxLength='100'/>
               <small id="nombreHelp" className="form-text text-muted">Que sea descriptivo pero breve</small>
             </div>
             <div className="form-group">
               <label htmlFor='webservice'>* Paquete</label>
-              <input id='webservice' type='text' className='form-control form-control-lg' value={this.props.state.webservice} onChange={this.handleInput.bind(this)} placeholder='Digite Web Service' autoComplete='off'/>
+              <input id='webservice' type='text' className='form-control form-control-lg' value={this.props.state.webservice} onChange={this.handleInput.bind(this)} placeholder='Digite Web Service' autoComplete='off' maxLength='100'/>
               <small id="webserviceHelp" className="form-text text-muted">Paquete</small>
             </div>
             <div className="form-group">
               <label htmlFor='descripcion'>Descripción</label>
-              <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite una descripcion de la conciliación' />
+              <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite una descripcion de la conciliación' maxLength='200'/>
               <small id="descripcionHelp" className="form-text text-muted">Defina para la conciliación</small>
             </div>
             <div className="form-group">
               <label htmlFor='emailasignado'>* Email Usuario Asignado</label>
-              <input id='emailasignado' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.emailasignado} onChange={this.handleInput.bind(this)} placeholder='Digite un correo electrónico válido' />
+              <input id='emailasignado' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.emailasignado} onChange={this.handleInput.bind(this)} placeholder='Digite un correo electrónico válido'  maxLength='100'/>
               <small id="emailHelp" className="form-text text-muted">Defina usuario asignado para la conciliación</small>
             </div>
             <div className="form-group">
@@ -116,22 +116,22 @@ class IConciliacionForm extends React.Component{
                   <div className="modal-body">
                     <div className="form-group">
                       <label htmlFor='nombre'>* Nombre</label>
-                      <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un nombre de conciliación' autoComplete='off'/>
+                      <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un nombre de conciliación' autoComplete='off' maxLength='100'/>
                       <small id="nombreHelp" className="form-text text-muted">Que sea descriptivo</small>
                     </div>
                     <div className="form-group">
                       <label htmlFor='webservice'>* Paquete</label>
-                      <input id='webservice' type='text' className='form-control form-control-lg' value={this.props.state.webservice} onChange={this.handleInput.bind(this)} placeholder='Digite Web service' autoComplete='off'/>
+                      <input id='webservice' type='text' className='form-control form-control-lg' value={this.props.state.webservice} onChange={this.handleInput.bind(this)} placeholder='Digite Web service' autoComplete='off' maxLength='100'/>
                       <small id="webserviceHelp" className="form-text text-muted">Paquete</small>
                     </div>
                     <div className="form-group">
                       <label htmlFor='descripcion'>Descripcion</label>
-                      <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite una descripción para la conciliación' />
+                      <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite una descripción para la conciliación'  maxLength='200'/>
                       <small id="descripcionHelp" className="form-text text-muted">Defina para la política</small>
                     </div>
                     <div className="form-group">
                       <label htmlFor='emailasignado'>* Email Usuario Asignado</label>
-                      <input id='emailasignado' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.emailasignado} onChange={this.handleInput.bind(this)} placeholder='Digite un correo electrónico válido' />
+                      <input id='emailasignado' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.emailasignado} onChange={this.handleInput.bind(this)} placeholder='Digite un correo electrónico válido'  maxLength='100'/>
                       <small id="emailHelp" className="form-text text-muted">Defina usuario asignado para la conciliación</small>
                     </div>
                     <div className="form-group">

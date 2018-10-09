@@ -20,8 +20,6 @@ class IParametroForm extends React.Component{
   }
 
   componentDidMount(){
-    console.log("PROPS en EditarParametros ==>>")
-    console.log(this.props)
     if(this.props.registro!=undefined){
       this.props.cargarParametro(this.props.registro.idparametro)
     }else{
@@ -77,7 +75,6 @@ class IParametroForm extends React.Component{
               </select>
               <small id="tipoHelp" className="form-text text-muted">Clasifique el tipo de parámetro</small>
             </div>
-            
             <div className="form-group">
               {
                 this.props.state.tipo!='' && this.props.state.tipo!='GENERAL' ?
@@ -101,17 +98,17 @@ class IParametroForm extends React.Component{
             </div>
             <div className="form-group">
               <label htmlFor='parametro'>* Parámetro</label>
-              <input id='parametro' type='text' className='form-control form-control-lg' value={this.props.state.parametro} onChange={this.handleInput.bind(this)} placeholder='Digite el nombre del parámetro' autoComplete='off'/>
+              <input id='parametro' type='text' className='form-control form-control-lg' value={this.props.state.parametro} onChange={this.handleInput.bind(this)} placeholder='Digite el nombre del parámetro' autoComplete='off' maxLength='100'/>
               <small id="parametroHelp" className="form-text text-muted">Nombre del parámetro</small>
             </div>
             <div className="form-group">
               <label htmlFor='valor'>* Valor</label>
-              <textarea id='valor' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.valor} onChange={this.handleInput.bind(this)} placeholder='Qué valor posee el parámetro' />
+              <textarea id='valor' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.valor} onChange={this.handleInput.bind(this)} placeholder='Qué valor posee el parámetro' maxLength='200'/>
               <small id="valorHelp" className="form-text text-muted">Dé un valor al parámetro</small>
             </div>
             <div className="form-group">
               <label htmlFor='descripcion'>* Descripción</label>
-              <input id='descripcion' type='text' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Descripción' autoComplete='off'/>
+              <textarea id='descripcion' type='text' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Descripción' autoComplete='off' maxLength='200'/>
               <small id="descripcionHelp" className="form-text text-muted">Describa de forma detallada</small>
             </div>
             <div className="modal-footer">
@@ -179,17 +176,17 @@ class IParametroForm extends React.Component{
                     </div>
                     <div className="form-group">
                       <label htmlFor='parametro'>* Parámetro</label>
-                      <input id='parametro' type='text' className='form-control form-control-lg' value={this.props.state.parametro} onChange={this.handleInput.bind(this)} placeholder='Digite el nombre del parámetro' autoComplete='off'/>
+                      <input id='parametro' type='text' className='form-control form-control-lg' value={this.props.state.parametro} onChange={this.handleInput.bind(this)} placeholder='Digite el nombre del parámetro' autoComplete='off' maxLength='100'/>
                       <small id="parametroHelp" className="form-text text-muted">nombre del parámetro</small>
                     </div>
                     <div className="form-group">
                       <label htmlFor='valor'>* Valor</label>
-                      <input id='valor' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.valor} onChange={this.handleInput.bind(this)} placeholder='Qué valor tendrá el parámetro' />
+                      <input id='valor' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.valor} onChange={this.handleInput.bind(this)} placeholder='Qué valor tendrá el parámetro' maxLength='200'/>
                       <small id="valorHelp" className="form-text text-muted">Defina un valor para el parámetro</small>
                     </div>
                     <div className="form-group">
                       <label htmlFor='descripcion'>Descripción</label>
-                      <textarea id='descripcion' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Descripción' autoComplete='off'/>
+                      <textarea id='descripcion' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Descripción' autoComplete='off' maxLength='200'/>
                       <small id="descripcionHelp" className="form-text text-muted">Describa de forma detallada</small>
                     </div>
                     <div className="modal-footer">

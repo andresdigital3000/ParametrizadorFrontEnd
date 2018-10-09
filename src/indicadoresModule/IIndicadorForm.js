@@ -33,9 +33,8 @@ class IIndicadorForm extends React.Component{
 
   //Detecta cambio en el combo de Conciliaciones
   cambioEscenarios(e){
-    let idesc=JSON.parse(e.target.value)
-    this.props.updEscenario(idesc.id)
-    this.props.cargarComboParametros(idesc.id)
+    this.props.updEscenario(e.target.value)
+    this.props.cargarComboParametros(e.target.value)
     this.props.refreshListIndicador()
   }
 
@@ -82,21 +81,21 @@ class IIndicadorForm extends React.Component{
             <input id='id' ref='id' type='hidden' defaultValue={this.props.state.id}/>
             <div className="form-group">
               <label htmlFor='nombre'>* Nombre</label>
-              <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite el nombre del indicador' autoComplete='off'/>
+              <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite el nombre del indicador' autoComplete='off' maxLength='100'/>
               <small id="nombreHelp" className="form-text text-muted">Que sea descriptivo</small>
             </div>
             <div className="form-group">
               <label htmlFor='descripcion'>* Descripcion</label>
-              <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite la descripción del indicador' />
+              <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite la descripción del indicador' maxLength='200'/>
               <small id="descripcionHelp" className="form-text text-muted">Defina para éste indicador</small>
             </div>
             <div className="form-group">
               <label htmlFor='escenario'>* Escenario</label>
-              <select id="escenario" name="escenario" className='form-control' value={this.props.state.escenario} onChange={this.cambioEscenarios.bind(this)}>
-                <option value={JSON.stringify({"id" : this.props.state.idEscenario, "nombre" : this.props.state.nombreEscenario})}>{this.props.state.nombreEscenario}</option>
+              <select id="escenario" name="escenario" className='form-control' value={this.props.state.idEscenario} onChange={this.cambioEscenarios.bind(this)}>
+                <option value={this.props.state.idEscenario}>{this.props.state.nombreEscenario}</option>
                 {this.props.state.escenarios.map(function(currentValue,index,array){
                   return(
-                    <option key={currentValue.id} value={JSON.stringify(currentValue)}>{currentValue.nombre}</option>
+                    <option key={currentValue.id} value={currentValue.id}>{currentValue.nombre}</option>
                   );
                 })}
               </select>
@@ -115,7 +114,7 @@ class IIndicadorForm extends React.Component{
             </div>
             <div className="form-group">
               <label htmlFor='formula'>* Fórmula</label>
-              <textarea id='formula' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.formula} onChange={this.handleInput.bind(this)} placeholder='Digite la fórmula' />
+              <textarea id='formula' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.formula} onChange={this.handleInput.bind(this)} placeholder='Digite la fórmula' maxLength='800'/>
               <small id="formulaHelp" className="form-text text-muted">Escriba la fórmula</small>
             </div>
             <div className="modal-footer">
@@ -123,7 +122,7 @@ class IIndicadorForm extends React.Component{
               <hr/>
               <Link to={"/indicadores"} onClick={this.props.limpiarFormIndicador.bind(this)} className="btn btn-warning">Regresar</Link>&nbsp;&nbsp;&nbsp;
               {
-                this.props.state.escenario!='{"id":0,"nombre":"Ninguna"}' && this.props.state.nombre!="" && this.props.state.descripcion!="" && this.props.state.formula!="" ?
+                this.props.state.idEscenario!='0' && this.props.state.nombre!="" && this.props.state.descripcion!="" && this.props.state.formula!="" ?
                 <button onClick={this.grabarIndicador.bind(this)} className="btn btn-primary">Grabar</button> :
                 <button className="btn btn-primary"  disabled>Formulario incompleto</button>
               }
@@ -144,21 +143,21 @@ class IIndicadorForm extends React.Component{
                     <input id='id' ref='id' type='hidden' onChange={this.handleInput.bind(this)} defaultValue={this.props.state.id}/>
                     <div className="form-group">
                       <label htmlFor='nombre'>* Nombre</label>
-                      <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite el nombre del indicador' autoComplete='off'/>
+                      <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite el nombre del indicador' autoComplete='off' maxLength='100'/>
                       <small id="nombreHelp" className="form-text text-muted">Que sea descriptivo</small>
                     </div>
                     <div className="form-group">
                       <label htmlFor='descripcion'>* Descripcion</label>
-                      <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite la descripción del indicador' />
+                      <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite la descripción del indicador' maxLength='200' />
                       <small id="descripcionHelp" className="form-text text-muted">Defina para éste indicador</small>
                     </div>
                     <div className="form-group">
                       <label htmlFor='escenario'>* Escenario</label>
-                      <select id="escenario" name="escenario" className='form-control' value={this.props.state.escenario} onChange={this.cambioEscenarios.bind(this)}>
-                        <option value='{"id":0,"nombre":"Ninguna"}'>Seleccione uno</option>
+                      <select id="escenario" name="escenario" className='form-control' value={this.props.state.idEscenario} onChange={this.cambioEscenarios.bind(this)}>
+                        <option value='0'>Seleccione uno</option>
                         {this.props.state.escenarios.map(function(currentValue,index,array){
                           return(
-                            <option key={currentValue.id} value={JSON.stringify(currentValue)}>{currentValue.nombre}</option>
+                            <option key={currentValue.id} value={currentValue.id}>{currentValue.nombre}</option>
                           );
                         })}
                       </select>
@@ -177,7 +176,7 @@ class IIndicadorForm extends React.Component{
                     </div>
                     <div className="form-group">
                       <label htmlFor='formula'>* Fórmula</label>
-                      <textarea id='formula' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.formula} onChange={this.handleInput.bind(this)} placeholder='Digite la fórmula' />
+                      <textarea id='formula' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.formula} onChange={this.handleInput.bind(this)} placeholder='Digite la fórmula' maxLength='800' />
                       <small id="formulaHelp" className="form-text text-muted">Escriba la fórmula</small>
                     </div>
                     <div className="modal-footer">
@@ -185,7 +184,7 @@ class IIndicadorForm extends React.Component{
                       <hr/>
                       <button onClick={this.limpiarIndicador.bind(this)} type="button" className="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                       {
-                        this.props.state.escenario!='{"id":0,"nombre":"Ninguna"}' && this.props.state.nombre!="" && this.props.state.descripcion!="" && this.props.state.formula!="" ?
+                        this.props.state.idEscenario!='0' && this.props.state.nombre!="" && this.props.state.descripcion!="" && this.props.state.formula!="" ?
                         <button onClick={this.grabarIndicador.bind(this)} className="btn btn-primary">Grabar</button> :
                         <button className="btn btn-primary"  disabled>Formulario incompleto</button>
                       }

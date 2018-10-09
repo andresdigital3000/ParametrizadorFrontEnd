@@ -15,6 +15,7 @@ class APIInvoker {
   invokeGET(url,okCallback,failCallback){
     let params = {
       method: 'get',
+      mode : 'cors',
       headers: this.getAPIHeader()
     }
     this.invoke(url, okCallback, failCallback, params);
@@ -23,6 +24,7 @@ class APIInvoker {
   invokePUT(url,body,okCallback,failCallback){
     let params = {
       method:'put',
+      mode : 'cors',
       headers: this.getAPIHeader(),
       body: JSON.stringify(body)
     };
@@ -32,6 +34,7 @@ class APIInvoker {
   invokePOST(url,body,okCallback,failCallback){
     let params = {
       method:'post',
+      mode : 'cors',
       headers: this.getAPIHeader(),
       body: JSON.stringify(body)
     };
@@ -41,6 +44,7 @@ class APIInvoker {
   invokePATCH(url,body,okCallback,failCallback){
     let params = {
       method:'patch',
+      mode : 'cors',
       headers: this.getAPIHeader(),
       body: JSON.stringify(body)
     };
@@ -50,7 +54,8 @@ class APIInvoker {
   invokeDELETE(url,idregistro,okCallback,failCallback){
     let params = {
       headers: this.getAPIHeader(),
-      method:'delete'
+      method:'delete',
+      mode : 'cors'
     };
     this.invoke(url, okCallback, failCallback, params);
   }
@@ -98,7 +103,7 @@ class APIInvoker {
         if(responseData){
           okCallback(responseData)
         }else{
-          console.log("Sin respuesta de Backend")
+          console.log("Sin respuesta")
         }
       })
     }
