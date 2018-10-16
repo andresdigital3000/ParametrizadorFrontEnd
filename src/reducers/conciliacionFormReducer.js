@@ -23,8 +23,8 @@ export const conciliacionFormReducer = (state = initialState,action) =>{
           [action.field] : {$set: action.value}
         })
     case CARGAR_CONCILIACION_FORM:
-        //console.log("conciliacion en reducer ==>")
-        //console.log(action.conciliacion[0])
+        console.log("conciliacion en reducer ==>")
+        console.log(action.conciliacion[0])
         if(action.conciliacion[0].transformaciones.length!=0){
           return update(state,{
               id : {$set: action.conciliacion[0].id},
@@ -41,7 +41,7 @@ export const conciliacionFormReducer = (state = initialState,action) =>{
               id : {$set: action.conciliacion[0].id},
               nombre : {$set: action.conciliacion[0].nombre},
               descripcion : {$set: action.conciliacion[0].descripcion},
-              emailasignado : {$set: action.conciliacion[0].emailasignado},
+              emailasignado : {$set: action.conciliacion[0].usuarioAsignado},
               idPolitica : {$set: action.conciliacion[0].idPolitica},
               nombrePolitica : {$set: action.conciliacion[0].nombrePolitica}
             })

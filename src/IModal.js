@@ -31,7 +31,9 @@ class IModal extends React.Component{
                 </button>
               </div>
               <div className="modal-body">
-                <h4>{this.props.state.mensaje}</h4>
+                <p>
+                  <h4>{this.props.state.mensaje.substr(0,50)}...</h4>
+                </p>
               </div>
               <div className="modal-footer">
                 <button onClick={this.ocultarModal.bind(this)} data-dismiss="modal">Cerrar</button>

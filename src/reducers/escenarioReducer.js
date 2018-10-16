@@ -1,7 +1,6 @@
 import {
   UPDATE_FINDER,
   CARGAR_ESCENARIOS,
-  UPDATE_CONCILIACION_EN_ESCENARIOS,
   ACTUALIZA_PAGINADOR_ESCENARIOS,
   IR_PAGINA_ESCENARIOS
 } from '../actions/const'
@@ -37,10 +36,6 @@ export const escenarioReducer = (state = initialState,action) =>{
             return update(state,{
               escenarios : {$set: action.lista}
             })
-        case UPDATE_CONCILIACION_EN_ESCENARIOS:
-          return update(state,{
-            conciliacion: {$set: action.value}
-          })
       default:
         return state
   }

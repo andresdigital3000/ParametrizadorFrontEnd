@@ -655,6 +655,7 @@ export const refreshListConciliacion = (resp) =>(dispatch,getState) => {
     let regInicial = 0
     let pagActual = getState().conciliacionReducer.paginaActual
     if(getState().conciliacionReducer.paginador.length > 0){
+      //console.log("Pagina actual : "+pagActual)
       regInicial = getState().conciliacionReducer.paginador[pagActual-1].offset
     }
     let regPagina = getState().conciliacionReducer.registrosPorPagina
@@ -835,7 +836,7 @@ export const saveConciliacion = () => (dispatch,getState)=>{
               }else{
                 console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
                 if(response.mensaje=="CT_UQ_TBL_GAI_CONCILIACION_NOMBRE_CONCILIACION"){
-                  toast.error("Ya existe otra conciliación con el mismo nombre ó está intentando asignar una política ya asignada", {
+                  toast.error("Ya existe otra conciliación con el mismo nombre", {
                     position: toast.POSITION.BOTTOM_RIGHT
                   })
                 }else{
@@ -891,7 +892,7 @@ export const saveConciliacion = () => (dispatch,getState)=>{
                           position: toast.POSITION.BOTTOM_RIGHT
                         })
                       }else if(response2.mensaje="CT_UQ_TBL_GAI_WS_TRANSFORMACIONES"){
-                        toast.error("No se puede usar el nombre de otro paquete existente", {
+                        toast.error("No se puede usar el nombre de otro paquete existente ", {
                           position: toast.POSITION.BOTTOM_RIGHT
                         })
                       }else{
@@ -994,22 +995,22 @@ export const borrarConciliacion = () => (dispatch,getState) =>{
   let nomconciliacion = getState().conciliacionFormReducer.nombre
   let idtransformacion = getState().conciliacionFormReducer.idPaquete
   let paquete_eliminado = false
-  //console.log("idPaquete:")
-  //console.log(idtransformacion)
+  let conciliacion_eliminada = false
   if(idtransformacion!=undefined && idtransformacion!=""){
     APIInvoker.invokeDELETE('/wstransformacion/'+idtransformacion, response => {
     },error =>{
       if(error.codigo==200){
+        paquete_eliminado = true
         toast.success("Se eliminó el paquete asociado", {
           position: toast.POSITION.BOTTOM_RIGHT
         })
         APIInvoker.invokeDELETE('/conciliaciones/'+idconciliacion, response2 => {
           },error2 =>{
             if(error2.codigo==200){
-              paquete_eliminado = true
+              conciliacion_eliminada = true
               dispatch(mostrarModal("alert alert-success","Se eliminó la conciliación "+nomconciliacion))
             }else if(error2.codigo==409){
-              toast.error("No es posible eliminar la conciliación, revise que no tenga escenarios asociados o paquetes asociados", {
+              toast.error("No es posible eliminar la conciliación, revise que no tenga escenarios asociados", {
                 position: toast.POSITION.BOTTOM_RIGHT
               })
             }else{
@@ -1018,7 +1019,7 @@ export const borrarConciliacion = () => (dispatch,getState) =>{
               })
             }
             dispatch(
-              refreshListConciliacion(),
+              moverPaginaConciliaciones(1),
               browserHistory.push('/conciliaciones')
             )
         })
@@ -1034,27 +1035,29 @@ export const borrarConciliacion = () => (dispatch,getState) =>{
       }
     })
   }else{
-    toast.info("No tiene paquete asociado", {
+    toast.info("Ya no tiene paquete asociado, se eliminó anteriormente", {
       position: toast.POSITION.BOTTOM_RIGHT
     })
   }
-  if(paquete_eliminado==false){
+  if(paquete_eliminado==false && conciliacion_eliminada==false){
     APIInvoker.invokeDELETE('/conciliaciones/'+idconciliacion, response2 => {
       },error2 =>{
         if(error2.codigo==200){
           dispatch(mostrarModal("alert alert-success","Se eliminó la conciliación "+nomconciliacion))
         }else if(error2.codigo==409){
-          console.log("La conciliación ya no existe")
+          toast.error("No es posible eliminar la conciliación, revise que no tenga escenarios asociados", {
+            position: toast.POSITION.BOTTOM_RIGHT
+          })
         }else{
           toast.error("Error general al intentar eliminar una conciliación", {
             position: toast.POSITION.BOTTOM_RIGHT
           })
         }
+        dispatch(
+          moverPaginaConciliaciones(1),
+          browserHistory.push('/conciliaciones')
+        )
     })
-    dispatch(
-      refreshListConciliacion(),
-      browserHistory.push('/conciliaciones')
-    )
   }
 }
 
@@ -1210,10 +1213,10 @@ const verEscenarios = (res) =>({
 export const updConciliacion = (idconciliacion) => (dispatch,getState) =>{
   APIInvoker.invokeGET('/conciliaciones/'+idconciliacion, response => {
     if(response.id!=undefined){
-      dispatch(updConciliacionReducerEscenario(response))
+      dispatch(updConciliacionReducerEscenario(response.id))
     }else{
       console.log('No se encuentra la conciliacion')
-      dispatch(updConciliacionReducerEscenario({"id":0,"nombre":"Ninguna"}))
+      dispatch(updConciliacionReducerEscenario(0))
     }
     dispatch(refreshListEscenario())
   },error =>{
@@ -1270,9 +1273,9 @@ export const saveEscenario = () => (dispatch,getState)=>{
               nombre : getState().escenarioFormReducer.nombre,
               impacto : getState().escenarioFormReducer.impacto,
               usuario : getState().loginReducer.profile.userName,
-              idConciliacion : getState().escenarioReducer.conciliacion.id,
-              nombreConciliacion : getState().escenarioReducer.conciliacion.nombre
+              idConciliacion : getState().escenarioFormReducer.idConciliacion
             }
+            //, nombreConciliacion : getState().escenarioFormReducer.nombreConciliacion
             APIInvoker.invokePOST('/escenarios',escenario_salvar,response =>{
               if(response.id!=undefined){
                 $('#modalAdd').modal('hide');
@@ -1318,7 +1321,7 @@ export const saveEscenario = () => (dispatch,getState)=>{
                 dispatch(mostrarModal("alert alert-success","Se actualizó el escenario "+escenario_salvar.nombre))
               }else{
                 if(response.mensaje=="CT_UQ_TBL_GAI_ESCENARIO_NOMBRE_ESCENARIO"){
-                  toast.error("No se ha actualizó el escenario, el nombre no puede asignarse", {
+                  toast.error("No se ha actualizó el escenario, el nombre de escenario que intenta guardar ya ha sido asignado", {
                     position: toast.POSITION.BOTTOM_RIGHT
                   })
                 }else{
@@ -1373,6 +1376,10 @@ export const borrarEscenario = () => (dispatch,getState) =>{
       dispatch(mostrarModal("alert alert-success","Se eliminó el escenario "+nomescenario))
     }else if(error.codigo==500){
       toast.error("No es posible eliminar el escenario, revise que no tenga indicadores y/o parámetros asociados", {
+        position: toast.POSITION.BOTTOM_RIGHT
+      })
+    }else if(error.mensaje=="CT_TBL_GAI_QUERIES_ESCENARIOS_FK_ESCENARIO"){
+      toast.error("No es posible eliminar el escenario, tiene queries asociados", {
         position: toast.POSITION.BOTTOM_RIGHT
       })
     }else{
@@ -2736,9 +2743,10 @@ const cargarParametroEnForm = (parametro) => ({
 //Funcion que elimina un parametro
 export const borrarParametro = () => (dispatch,getState) =>{
   let idparametro = getState().parametroFormReducer.id
+  let nomparametro = getState().parametroFormReducer.parametro
   APIInvoker.invokeDELETE('/parametros/'+idparametro, response => {
   },error =>{
-    dispatch(mostrarModal("alert alert-success","Se eliminó el parámetro "+idparametro))
+    dispatch(mostrarModal("alert alert-success","Se eliminó el parámetro "+nomparametro))
     dispatch(
       limpiarFormParametro(),
       browserHistory.push('/parametros')
@@ -3075,10 +3083,11 @@ const cargarQueryEnForm = (query) => ({
 //Funcion que elimina una query
 export const borrarQuery = () => (dispatch,getState) =>{
   let idquery = getState().queryFormReducer.id
+  let nomquery = getState().queryFormReducer.nombre
   APIInvoker.invokeDELETE('/queryescenario/'+idquery, response => {
   },error =>{
     if(error.codigo==200){
-      dispatch(mostrarModal("alert alert-success","Se eliminó el query "+idquery))
+      dispatch(mostrarModal("alert alert-success","Se eliminó el query "+nomquery))
     }else if(error.codigo==500){
       toast.error("No es posible eliminar el query, revise que no tenga indicadores y/o parámetros asociados", {
         position: toast.POSITION.BOTTOM_RIGHT

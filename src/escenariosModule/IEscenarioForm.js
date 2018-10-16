@@ -133,7 +133,7 @@ class IEscenarioForm extends React.Component{
                     </div>
                     <div className="form-group">
                       <label htmlFor='conciliacion'>* Conciliación</label>
-                      <select id="conciliacion" name="conciliacion" className='form-control' value={this.props.state.conciliacion.id} onChange={this.cambioConciliaciones.bind(this)}>
+                      <select id="conciliacion" name="conciliacion" className='form-control' value={this.props.state.idConciliacion} onChange={this.cambioConciliaciones.bind(this)}>
                         <option key="0" value="0">Seleccione una</option>
                         {this.props.state.conciliaciones.map(function(currentValue,index,array){
                           return(
@@ -149,7 +149,7 @@ class IEscenarioForm extends React.Component{
                     <hr/>
                     <button onClick={this.limpiarEscenario.bind(this)} type="button" className="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                     {
-                      this.props.state.conciliacion.id!='0' && this.props.state.nombre!="" ?
+                      this.props.state.idConciliacion!='0' && this.props.state.nombre!="" ?
                       <button onClick={this.grabarEscenario.bind(this)} className="btn btn-primary">Grabar</button> :
                       <button className="btn btn-primary" disabled>Formulario incompleto</button>
                     }

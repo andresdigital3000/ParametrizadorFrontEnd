@@ -6,7 +6,7 @@ import { Link } from 'react-router';
 import { connect } from 'react-redux'
 import { updateFormParametros, saveParametro, cargarParametro, limpiarFormParametro, refreshListParametro, cargarEscenariosenParametros } from '../actions/Actions';
 
-import Select from 'react-select';
+//import Select from 'react-select';
 //import 'react-select/dist/react-select.css';
 
 class IParametroForm extends React.Component{

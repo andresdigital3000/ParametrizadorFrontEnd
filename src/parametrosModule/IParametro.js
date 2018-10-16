@@ -35,7 +35,7 @@ class IParametro extends React.Component{
               </div>
               <hr/>
               <div className="row-fluid">
-                <IParametroList registro={this.props.registro}/>
+                <IParametroList registro={this.props.registro} idescenario={this.props.idescenario}/>
               </div>
               <hr/>
               <div className="row">

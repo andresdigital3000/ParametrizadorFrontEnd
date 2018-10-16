@@ -1,6 +1,7 @@
 import {
   UPDATE_ESCENARIOS_FORM_REQUEST,
   CARGAR_ESCENARIO_FORM,
+  UPDATE_CONCILIACION_EN_ESCENARIOS,
   LIMPIAR_FORM_ESCENARIO
 } from '../actions/const'
 import update from 'react-addons-update'
@@ -38,6 +39,10 @@ export const escenarioFormReducer = (state = initialState,action) =>{
           idConciliacion : {$set: ''},
           nombreConciliacion : {$set: ''}
         })
+    case UPDATE_CONCILIACION_EN_ESCENARIOS:
+      return update(state,{
+        idConciliacion: {$set: action.value}
+      })
     default:
         return state
   }

@@ -81,7 +81,7 @@ render((
             <Route path="/indicadores/edit/:idindicador" component={IIndicadorForm}></Route>
             <Route path="/indicadores/delete/:idindicadordelete" component={IIndicadorDelete}></Route>
             <Route path="/parametros" component={IParametro}></Route>
-            <Route path="/parametros/:idparametro" component={IParametro}></Route>
+            <Route path="/parametros/:idescenario" component={IParametro}></Route>
             <Route path="/parametros/edit/:idparametro" component={IParametroForm}></Route>
             <Route path="/parametros/delete/:idparametrodelete" component={IParametroDelete}></Route>
             <Route path="/querys" component={IQuery}></Route>
