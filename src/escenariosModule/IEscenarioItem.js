@@ -26,12 +26,7 @@ class IEscenarioItem extends React.Component{
                     {currentValue.nombre}
                   </td>
                   <td>
-                    <If condition={currentValue.impacto==0}>
-                      BAJO
-                    </If>
-                    <If condition={currentValue.impacto==1}>
-                      ALTO
-                    </If>
+                    {currentValue.impacto}
                   </td>
                   <td>
                     <If condition={currentValue.idConciliacion!=undefined}>

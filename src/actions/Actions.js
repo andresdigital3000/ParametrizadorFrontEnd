@@ -76,7 +76,7 @@ import APIInvoker from '../utils/APIInvoker'
 import { browserHistory } from 'react-router'
 import update from 'react-addons-update'
 import config from '../../config'
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast, dismiss } from 'react-toastify';
 import IMsg from '../ejecucionModule/IMsg'
 
 var configuration = require('../../config');
@@ -367,17 +367,19 @@ export const updateFormPoliticas = (field,value) => (dispatch,getState) =>{
       if(response[0].valor!=undefined){
         let long_parametro = response[0].valor.length;
         let long_value = value.length;
-        if(long_parametro >= long_value){
-          if(value.substr(0,long_value)!=response[0].valor.substr(0,long_value)){
-            toast.error("El nombre de la política debe tener el prefijo '"+response[0].valor+"'", {
-              position: toast.POSITION.BOTTOM_RIGHT
-            })
-          }
-        }else{
-          if(value.substr(0,long_parametro)!=response[0].valor.substr(0,long_parametro)){
-            toast.error("El nombre de la política debe tener el prefijo '"+response[0].valor+"'", {
-              position: toast.POSITION.BOTTOM_RIGHT
-            })
+        if(long_value==long_parametro+1){
+          if(long_parametro >= long_value){
+            if(value.substr(0,long_value)!=response[0].valor.substr(0,long_value)){
+              toast.error("El nombre de la política debe tener el prefijo '"+response[0].valor+"'", {
+                position: toast.POSITION.BOTTOM_RIGHT
+              })
+            }
+          }else{
+            if(value.substr(0,long_parametro)!=response[0].valor.substr(0,long_parametro)){
+              toast.error("El nombre de la política debe tener el prefijo '"+response[0].valor+"'", {
+                position: toast.POSITION.BOTTOM_RIGHT
+              })
+            }
           }
         }
       }
@@ -753,17 +755,19 @@ export const updateFormConciliaciones = (field,value) => (dispatch,getState) =>{
       if(response[0].valor!=undefined){
         let long_parametro = response[0].valor.length;
         let long_value = value.length;
-        if(long_parametro >= long_value){
-          if(value.substr(0,long_value)!=response[0].valor.substr(0,long_value)){
-            toast.error("El nombre de la conciliación debe tener el prefijo '"+response[0].valor+"'", {
-              position: toast.POSITION.BOTTOM_RIGHT
-            })
-          }
-        }else{
-          if(value.substr(0,long_parametro)!=response[0].valor.substr(0,long_parametro)){
-            toast.error("El nombre de la conciliación debe tener el prefijo '"+response[0].valor+"'", {
-              position: toast.POSITION.BOTTOM_RIGHT
-            })
+        if(long_value==long_parametro+1){
+          if(long_parametro >= long_value){
+            if(value.substr(0,long_value)!=response[0].valor.substr(0,long_value)){
+              toast.error("El nombre de la conciliación debe tener el prefijo '"+response[0].valor+"'", {
+                position: toast.POSITION.BOTTOM_RIGHT
+              })
+            }
+          }else{
+            if(value.substr(0,long_parametro)!=response[0].valor.substr(0,long_parametro)){
+              toast.error("El nombre de la conciliación debe tener el prefijo '"+response[0].valor+"'", {
+                position: toast.POSITION.BOTTOM_RIGHT
+              })
+            }
           }
         }
       }
@@ -796,7 +800,8 @@ export const saveConciliacion = () => (dispatch,getState)=>{
               descripcion : getState().conciliacionFormReducer.descripcion,
               usuarioAsignado : getState().conciliacionFormReducer.emailasignado,
               idPolitica : getState().conciliacionReducer.politica.id,
-              usuario: getState().loginReducer.profile.userName
+              usuario: getState().loginReducer.profile.userName,
+              paquete: getState().conciliacionFormReducer.webservice
             }
             let id_grabado=0
             APIInvoker.invokePOST('/conciliaciones',conciliacion_salvar,response =>{
@@ -805,34 +810,7 @@ export const saveConciliacion = () => (dispatch,getState)=>{
                 $('#modalAdd').modal('hide');
                 dispatch(mostrarModal("alert alert-success","Se grabó la conciliación "+conciliacion_salvar.nombre))
                 dispatch(antesLimpiarFormConciliacion())
-                //toast.success("Se grabó una nueva conciliación", {
-                //  position: toast.POSITION.BOTTOM_RIGHT
-                //})
-                if(id_grabado!=0){
-                  let paquete_salvar ={
-                    nombreWs : getState().conciliacionFormReducer.webservice,
-                    paqueteWs : getState().conciliacionFormReducer.webservice,
-                    usuario: getState().loginReducer.profile.userName,
-                    idConciliacion : id_grabado
-                  }
-                  APIInvoker.invokePOST('/wstransformacion',paquete_salvar,response2 =>{
-                    if(response2.id!=undefined){
-                      toast.success("...y se insertó el paquete", {
-                        position: toast.POSITION.BOTTOM_RIGHT
-                      })
-                    }else if(response2.mensaje="CT_UQ_TBL_GAI_WS_TRANSFORMACIONES"){
-                      toast.error("No se puede usar el nombre de otro paquete existente", {
-                        position: toast.POSITION.BOTTOM_RIGHT
-                      })
-                    }else{
-                      toast.error("No se pudo asociar el paquete", {
-                        position: toast.POSITION.BOTTOM_RIGHT
-                      })
-                    }
-                  },error =>{
-                    console.log('No se ha podido asignar el paquete')
-                  })
-                }
+                dispatch(limpiarFormConciliacion())
               }else{
                 console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
                 if(response.mensaje=="CT_UQ_TBL_GAI_CONCILIACION_NOMBRE_CONCILIACION"){
@@ -866,75 +844,12 @@ export const saveConciliacion = () => (dispatch,getState)=>{
               descripcion : getState().conciliacionFormReducer.descripcion,
               usuarioAsignado : getState().conciliacionFormReducer.emailasignado,
               idPolitica : idPoliticaGrabar,
-              nombrePolitica : nombrePoliticaGrabar
+              nombrePolitica : nombrePoliticaGrabar,
+              paquete: getState().conciliacionFormReducer.webservice
             }
             APIInvoker.invokePUT('/conciliaciones',conciliacion_salvar,response =>{
               if(response.id!=undefined){
                 dispatch(mostrarModal("alert alert-success","Se actualizó la conciliación "+conciliacion_salvar.nombre))
-                //toast.success("Se actualizó la conciliación", {
-                //  position: toast.POSITION.BOTTOM_RIGHT
-                //})
-                let id_grabado = getState().conciliacionFormReducer.id
-                if(id_grabado!=0){
-                  //Al tener una conciliación seleccionada
-                  if(response.transformaciones.length>0){
-                    //Si al editar la conciliacion tiene una transformación asociada
-                    let paquete_salvar ={
-                      nombreWs : getState().conciliacionFormReducer.webservice,
-                      paqueteWs : getState().conciliacionFormReducer.webservice,
-                      usuario: getState().loginReducer.profile.userName,
-                      idConciliacion : id_grabado,
-                      id : response.transformaciones[0].id
-                    }
-                    APIInvoker.invokePUT('/wstransformacion',paquete_salvar,response2 =>{
-                      if(response2.id!=undefined){
-                        toast.success("Se actualizó el paquete", {
-                          position: toast.POSITION.BOTTOM_RIGHT
-                        })
-                      }else if(response2.mensaje="CT_UQ_TBL_GAI_WS_TRANSFORMACIONES"){
-                        toast.error("No se puede usar el nombre de otro paquete existente ", {
-                          position: toast.POSITION.BOTTOM_RIGHT
-                        })
-                      }else{
-                        toast.error("No se pudo actualizar el paquete", {
-                          position: toast.POSITION.BOTTOM_RIGHT
-                        })
-                      }
-                    },error =>{
-                      console.log('No se ha podido editar el nombre del paquete')
-                    })
-                  }else{
-                    //Si al editar la conciliación hay que crear una transformación
-                    let paquete_salvar ={
-                      nombreWs : getState().conciliacionFormReducer.webservice,
-                      paqueteWs : getState().conciliacionFormReducer.webservice,
-                      usuario: getState().loginReducer.profile.userName,
-                      idConciliacion : id_grabado
-                    }
-                    APIInvoker.invokePOST('/wstransformacion',paquete_salvar,response2 =>{
-                      if(response2.id!=undefined){
-                        toast.success("...y se agregó el paquete", {
-                          position: toast.POSITION.BOTTOM_RIGHT
-                        })
-                      }else if(response2.mensaje="CT_UQ_TBL_GAI_WS_TRANSFORMACIONES"){
-                        toast.error("No se puede usar el nombre de otro paquete existente", {
-                          position: toast.POSITION.BOTTOM_RIGHT
-                        })
-                      }else{
-                        toast.error("No se pudo agregar el paquete", {
-                          position: toast.POSITION.BOTTOM_RIGHT
-                        })
-                      }
-                    },error =>{
-                      console.log('No se ha podido editar el nombre del paquete')
-                    })
-                  }
-                }else{
-                  console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
-                  toast.error("No se ha podido actualizar la conciliación", {
-                    position: toast.POSITION.BOTTOM_RIGHT
-                  })
-                }
               }else if(response.mensaje=="CT_UQ_TBL_GAI_CONCILIACION_NOMBRE_CONCILIACION"){
                 toast.error("No se puede usar el nombre de otra conciliación existente", {
                   position: toast.POSITION.BOTTOM_RIGHT
@@ -993,72 +908,28 @@ const cargarConciliacionEnForm = (conciliacion) => ({
 export const borrarConciliacion = () => (dispatch,getState) =>{
   let idconciliacion = getState().conciliacionFormReducer.id
   let nomconciliacion = getState().conciliacionFormReducer.nombre
-  let idtransformacion = getState().conciliacionFormReducer.idPaquete
-  let paquete_eliminado = false
-  let conciliacion_eliminada = false
-  if(idtransformacion!=undefined && idtransformacion!=""){
-    APIInvoker.invokeDELETE('/wstransformacion/'+idtransformacion, response => {
-    },error =>{
-      if(error.codigo==200){
-        paquete_eliminado = true
-        toast.success("Se eliminó el paquete asociado", {
-          position: toast.POSITION.BOTTOM_RIGHT
-        })
-        APIInvoker.invokeDELETE('/conciliaciones/'+idconciliacion, response2 => {
-          },error2 =>{
-            if(error2.codigo==200){
-              conciliacion_eliminada = true
-              dispatch(mostrarModal("alert alert-success","Se eliminó la conciliación "+nomconciliacion))
-            }else if(error2.codigo==409){
-              toast.error("No es posible eliminar la conciliación, revise que no tenga escenarios asociados", {
-                position: toast.POSITION.BOTTOM_RIGHT
-              })
-            }else{
-              toast.error("Error general al intentar eliminar una conciliación", {
-                position: toast.POSITION.BOTTOM_RIGHT
-              })
-            }
-            dispatch(
-              moverPaginaConciliaciones(1),
-              browserHistory.push('/conciliaciones')
-            )
-        })
-
-      }else if(error.codigo==409){
-        toast.error("No se pudo eliminar el paquete asociado", {
+  APIInvoker.invokeDELETE('/conciliaciones/'+idconciliacion, response2 => {
+    },error2 =>{
+      if(error2.codigo==200){
+        //conciliacion_eliminada = true
+        dispatch(
+            limpiarFormConciliacion(),
+            mostrarModal("alert alert-success","Se eliminó la conciliación "+nomconciliacion)
+        )
+      }else if(error2.codigo==409){
+        toast.error("Error al intentar eliminar una conciliación asociada a uno o varios escenarios", {
           position: toast.POSITION.BOTTOM_RIGHT
         })
       }else{
-        toast.error("Error general al intentar eliminar el paquete asociado", {
+        toast.error("Error general al intentar eliminar una conciliación", {
           position: toast.POSITION.BOTTOM_RIGHT
         })
       }
-    })
-  }else{
-    toast.info("Ya no tiene paquete asociado, se eliminó anteriormente", {
-      position: toast.POSITION.BOTTOM_RIGHT
-    })
-  }
-  if(paquete_eliminado==false && conciliacion_eliminada==false){
-    APIInvoker.invokeDELETE('/conciliaciones/'+idconciliacion, response2 => {
-      },error2 =>{
-        if(error2.codigo==200){
-          dispatch(mostrarModal("alert alert-success","Se eliminó la conciliación "+nomconciliacion))
-        }else if(error2.codigo==409){
-          toast.error("No es posible eliminar la conciliación, revise que no tenga escenarios asociados", {
-            position: toast.POSITION.BOTTOM_RIGHT
-          })
-        }else{
-          toast.error("Error general al intentar eliminar una conciliación", {
-            position: toast.POSITION.BOTTOM_RIGHT
-          })
-        }
-        dispatch(
-          moverPaginaConciliaciones(1),
-          browserHistory.push('/conciliaciones')
-        )
-    })
-  }
+      dispatch(
+        moverPaginaConciliaciones(1),
+        browserHistory.push('/conciliaciones')
+      )
+  })
 }
 
 //Funcion de cambio de pagina
@@ -1236,17 +1107,19 @@ export const updateFormEscenarios = (field,value) => (dispatch,getState) =>{
       if(response[0].valor!=undefined){
         let long_parametro = response[0].valor.length;
         let long_value = value.length;
-        if(long_parametro >= long_value){
-          if(value.substr(0,long_value)!=response[0].valor.substr(0,long_value)){
-            toast.error("El nombre del escenario debe tener el prefijo '"+response[0].valor+"'", {
-              position: toast.POSITION.BOTTOM_RIGHT
-            })
-          }
-        }else{
-          if(value.substr(0,long_parametro)!=response[0].valor.substr(0,long_parametro)){
-            toast.error("El nombre del escenario debe tener el prefijo '"+response[0].valor+"'", {
-              position: toast.POSITION.BOTTOM_RIGHT
-            })
+        if(long_value==long_parametro+1){
+          if(long_parametro >= long_value){
+            if(value.substr(0,long_value)!=response[0].valor.substr(0,long_value)){
+              toast.error("El nombre del escenario debe tener el prefijo '"+response[0].valor+"'", {
+                position: toast.POSITION.BOTTOM_RIGHT
+              })
+            }
+          }else{
+            if(value.substr(0,long_parametro)!=response[0].valor.substr(0,long_parametro)){
+              toast.error("El nombre del escenario debe tener el prefijo '"+response[0].valor+"'", {
+                position: toast.POSITION.BOTTOM_RIGHT
+              })
+            }
           }
         }
       }
@@ -2956,7 +2829,8 @@ export const updateFormQuerys = (field,value) => (dispatch,getState) =>{
           }
         }
         if(palabras_prohibidas>0){
-          toast.error("Está usando palabras prohibidas en el query : '"+response[0].valor+"'", {
+          toast.dismiss()
+          toast.error("No use : '"+response[0].valor+"'", {
             position: toast.POSITION.BOTTOM_RIGHT
           })
         }

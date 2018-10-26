@@ -34,7 +34,12 @@ class IParametroItem extends React.Component{
                         <Link to={"/parametros/edit/"+currentValue.id} className="btn btn-info"><i className="fa fa-list"/></Link>
                       </div>
                       <div className="button-wrap">
-                        <Link to={"/parametros/delete/"+currentValue.id} className="btn btn-danger"><i className="fa fa-trash-o"/></Link>
+                        <If condition={currentValue.tipo=="SISTEMA"}>
+                          &nbsp;
+                        </If>
+                        <If condition={currentValue.tipo!="SISTEMA"}>
+                          <Link to={"/parametros/delete/"+currentValue.id} className="btn btn-danger"><i className="fa fa-trash-o"/></Link>
+                        </If>
                       </div>
                     </td>
                 </tr>

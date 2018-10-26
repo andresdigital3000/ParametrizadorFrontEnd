@@ -1,5 +1,6 @@
-import React from 'react'
-import { render } from 'react-dom'
+import 'babel-polyfill';
+import React from 'react';
+import { render } from 'react-dom';
 import { Router, Route, browserHistory, IndexRoute, Match } from "react-router";
 import { createStore, applyMiddleware } from 'redux'
 import { Provider } from 'react-redux'
@@ -7,7 +8,6 @@ import thunk from 'redux-thunk'
 import { createLogger } from 'redux-logger'
 import reducers from './reducers'
 import AdminThemplete from './teachers/AdminThemplete'
-//import Dashboard from './teachers/Dashboard'
 import ILogin from './ILogin'
 import IPolitica from './politicasModule/IPolitica'
 import IPoliticaList from './politicasModule/IPoliticaList'

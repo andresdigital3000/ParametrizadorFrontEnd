@@ -1,3 +1,4 @@
+import 'babel-polyfill';
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Toolbar from './Toolbar'
@@ -31,7 +32,7 @@ import { browserHistory } from 'react-router'
 import { connect } from 'react-redux'
 import { relogin } from '../actions/Actions'
 import { ToastContainer, toast } from 'react-toastify';
-import '!style-loader!css-loader!react-toastify/dist/ReactToastify.css';
+import '!style-loader!css-loader!react-toastify/../../resources/css/ReactToastify.css';
 
 import { mostrarModal,ocultarModal } from '../actions/Actions';
 

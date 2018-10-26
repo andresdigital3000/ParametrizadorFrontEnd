@@ -66,51 +66,71 @@ class IParametroForm extends React.Component{
               </div>
             </header>
             <input id='id' ref='id' type='hidden' defaultValue={this.props.state.id}/>
-            <div className="form-group">
-              <label htmlFor='tipo'>* Tipo</label>
-              <select id='tipo' value={this.props.state.tipo} className='form-control form-control-lg' onChange={this.handleInput.bind(this)}>
-                <option value=''>Seleccione uno</option>
-                <option value='GENERAL'>GENERAL</option>
-                <option value='ESCENARIO'>ESCENARIO</option>
-              </select>
-              <small id="tipoHelp" className="form-text text-muted">Clasifique el tipo de parámetro</small>
-            </div>
-            <div className="form-group">
-              {
-                this.props.state.tipo!='' && this.props.state.tipo!='GENERAL' ?
-                <label htmlFor='escenario'>* Escenario</label> :
-                <label htmlFor='escenario'>Escenario</label>
-              }
-              {
-                this.props.state.tipo!='' && this.props.state.tipo!='GENERAL' ?
-                <select id='escenario' className='form-control' value={this.props.state.escenario} onChange={this.handleInput.bind(this)}>
-                  <option value="">Seleccione uno</option>
-                  {this.props.state.escenarios.map(function(currentValue,index,array){
-                    return(
-                      <option key={currentValue.id} value={currentValue.id}>{currentValue.nombre}</option>
-                    );
-                  })}
-                </select> :
-                <select id='escenario' className='form-control' value={this.props.state.escenario}>
-                  <option value='0'>No aplica</option>
+            <If condition={this.props.state.tipo!='SISTEMA'}>
+              <div className="form-group">
+                <label htmlFor='tipo'>* Tipo</label>
+                <select id='tipo' value={this.props.state.tipo} className='form-control form-control-lg' onChange={this.handleInput.bind(this)}>
+                  <option value=''>Seleccione uno</option>
+                  <option value='GENERAL'>GENERAL</option>
+                  <option value='ESCENARIO'>ESCENARIO</option>
                 </select>
-              }
-            </div>
-            <div className="form-group">
-              <label htmlFor='parametro'>* Parámetro</label>
-              <input id='parametro' type='text' className='form-control form-control-lg' value={this.props.state.parametro} onChange={this.handleInput.bind(this)} placeholder='Digite el nombre del parámetro' autoComplete='off' maxLength='100'/>
-              <small id="parametroHelp" className="form-text text-muted">Nombre del parámetro</small>
-            </div>
+                <small id="tipoHelp" className="form-text text-muted">Clasifique el tipo de parámetro</small>
+              </div>
+              <div className="form-group">
+                {
+                  this.props.state.tipo!='' && this.props.state.tipo!='GENERAL' ?
+                  <label htmlFor='escenario'>* Escenario</label> :
+                  <label htmlFor='escenario'>Escenario</label>
+                }
+                {
+                  this.props.state.tipo!='' && this.props.state.tipo!='GENERAL' ?
+                  <select id='escenario' className='form-control' value={this.props.state.escenario} onChange={this.handleInput.bind(this)}>
+                    <option value="">Seleccione uno</option>
+                    {this.props.state.escenarios.map(function(currentValue,index,array){
+                      return(
+                        <option key={currentValue.id} value={currentValue.id}>{currentValue.nombre}</option>
+                      );
+                    })}
+                  </select> :
+                  <select id='escenario' className='form-control' value={this.props.state.escenario}>
+                    <option value='0'>No aplica</option>
+                  </select>
+                }
+              </div>
+            </If>
+            <If condition={this.props.state.tipo!='SISTEMA'}>
+              <div className="form-group">
+                <label htmlFor='parametro'>* Parámetro</label>
+                <input id='parametro' type='text' className='form-control form-control-lg' value={this.props.state.parametro} onChange={this.handleInput.bind(this)} placeholder='Digite el nombre del parámetro' autoComplete='off' maxLength='100'/>
+                <small id="parametroHelp" className="form-text text-muted">Nombre del parámetro</small>
+              </div>
+            </If>
+            <If condition={this.props.state.tipo=='SISTEMA'}>
+              <div className="form-group">
+                <label htmlFor='parametro'>* Parámetro</label>
+                <input id='parametro' type='text' className='form-control form-control-lg' value={this.props.state.parametro} placeholder='Digite el nombre del parámetro' autoComplete='off' maxLength='100' readOnly/>
+                <small id="parametroHelp" className="form-text text-muted">Nombre del parámetro</small>
+              </div>
+            </If>
             <div className="form-group">
               <label htmlFor='valor'>* Valor</label>
               <textarea id='valor' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.valor} onChange={this.handleInput.bind(this)} placeholder='Qué valor posee el parámetro' maxLength='200'/>
               <small id="valorHelp" className="form-text text-muted">Dé un valor al parámetro</small>
             </div>
-            <div className="form-group">
-              <label htmlFor='descripcion'>* Descripción</label>
-              <textarea id='descripcion' type='text' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Descripción' autoComplete='off' maxLength='200'/>
-              <small id="descripcionHelp" className="form-text text-muted">Describa de forma detallada</small>
-            </div>
+            <If condition={this.props.state.tipo!='SISTEMA'}>
+              <div className="form-group">
+                <label htmlFor='descripcion'>* Descripción</label>
+                <textarea id='descripcion' type='text' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Descripción' autoComplete='off' maxLength='200'/>
+                <small id="descripcionHelp" className="form-text text-muted">Describa de forma detallada</small>
+              </div>
+            </If>
+            <If condition={this.props.state.tipo=='SISTEMA'}>
+              <div className="form-group">
+                <label htmlFor='descripcion'>* Descripción</label>
+                <textarea id='descripcion' type='text' className='form-control form-control-lg' value={this.props.state.descripcion} placeholder='Descripción' autoComplete='off' maxLength='200' readOnly/>
+                <small id="descripcionHelp" className="form-text text-muted">Describa de forma detallada</small>
+              </div>
+            </If>
             <div className="modal-footer">
               (*) Obligatorio
               <hr/>

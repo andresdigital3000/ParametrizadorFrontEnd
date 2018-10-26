@@ -9,7 +9,7 @@ import update from 'react-addons-update'
 const initialState = {
   id : 0,
   nombre : '',
-  impacto : '0',
+  impacto : 'BAJO',
   conciliacion : {"id":0},
   idConciliacion:'',
   nombreConciliacion:''
@@ -34,7 +34,7 @@ export const escenarioFormReducer = (state = initialState,action) =>{
         return update(state,{
           id : {$set: 0},
           nombre : {$set: ''},
-          impacto : {$set: '0'},
+          impacto : {$set: 'BAJO'},
           conciliacion: {$set: {"id":"0"}},
           idConciliacion : {$set: ''},
           nombreConciliacion : {$set: ''}

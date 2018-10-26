@@ -79,8 +79,9 @@ class IEscenarioForm extends React.Component{
             <div className="form-group">
               <label htmlFor='impacto'>Impacto</label>
               <select id='impacto' className='form-control form-control-lg' value={this.props.state.impacto} onChange={this.handleInput.bind(this)}>
-                <option value='0'>Bajo</option>
-                <option value='1'>Alto</option>
+                <option value='BAJO'>Bajo</option>
+                <option value='MEDIO'>Medio</option>
+                <option value='ALTO'>Alto</option>
               </select>
               <small id="impactoHelp" className="form-text text-muted">Defina impacto para el escenario</small>
             </div>
@@ -126,8 +127,9 @@ class IEscenarioForm extends React.Component{
                     <div className="form-group">
                       <label htmlFor='impacto'>Impacto</label>
                       <select id='impacto' className='form-control form-control-lg' value={this.props.state.impacto} onChange={this.handleInput.bind(this)}>
-                        <option value='0'>Bajo</option>
-                        <option value='1'>Alto</option>
+                        <option value='BAJO'>Bajo</option>
+                        <option value='MEDIO'>Medio</option>
+                        <option value='ALTO'>Alto</option>
                       </select>
                       <small id="impactoHelp" className="form-text text-muted">Defina impacto para el escenario</small>
                     </div>

@@ -22,9 +22,9 @@ class IPoliticaItem extends React.Component{
               {this.props.state.items.map(function(currentValue,index,array){
                 let id_conciliacion=0
                 let nom_conciliacion="Ninguna"
-                if(currentValue.conciliaciones!=undefined){
-                    id_conciliacion=currentValue.conciliaciones.id
-                    nom_conciliacion=currentValue.conciliaciones.nombre
+                if(currentValue.conciliaciones.length==1){
+                    id_conciliacion=currentValue.conciliaciones[0].id
+                    nom_conciliacion=currentValue.conciliaciones[0].nombre
                 }
                 return (
                   <tr key={currentValue.id}>

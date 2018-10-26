@@ -6,8 +6,8 @@
   "scripts": {
     "postinstall" : "webpack --config webpack.config.js --progress",
     "build": "webpack -p",
-    "server": "NODE_ENV=production&&node server.js",
-    "server_windows": "set NODE_ENV=production&&node server.js",
+    "server": "NODE_ENV=production&&node cluster.js",
+    "server_windows": "set NODE_ENV=production&&node cluster.js",
     "start": "npm run postinstall && npm run build && npm run server_windows"
   },
   "author": "Leonardo Rodriguez",

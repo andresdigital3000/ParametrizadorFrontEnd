@@ -6,7 +6,7 @@ import IConciliacionFinder from './IConciliacionFinder'
 import IConciliacionPaginador from './IConciliacionPaginador'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { connect } from 'react-redux'
-import { updPolitica,calculaPaginadorConciliaciones } from '../actions/Actions';
+import { updPolitica,calculaPaginadorConciliaciones,limpiarFormConciliacion } from '../actions/Actions';
 
 class IConciliacion extends React.Component{
   constructor(){
@@ -21,8 +21,13 @@ class IConciliacion extends React.Component{
     }
   }
 
+  limpiarForm(){
+    this.props.limpiarFormConciliacion();
+  }
+
   componentDidMount(){
     this.props.calculaPaginadorConciliaciones()
+    this.props.limpiarFormConciliacion();
   }
 
   render(){
@@ -78,5 +83,5 @@ const mapStateToProps = (state) =>{
 }
 
 export default connect (mapStateToProps,{
-  updPolitica, calculaPaginadorConciliaciones
+  updPolitica, calculaPaginadorConciliaciones, limpiarFormConciliacion
 })(IConciliacion)
