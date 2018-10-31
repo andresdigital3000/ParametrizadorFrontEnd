@@ -30,7 +30,7 @@ class IConciliacionItem extends React.Component{
                   </td>
                   <td>
                     <If condition={currentValue.idPolitica != 0}>
-                      <Link to={"/politicas/"+currentValue.idPolitica}>{currentValue.idPolitica} - {currentValue.nombrePolitica}</Link>
+                      <Link to={"/politicas/"+currentValue.idPolitica}>{currentValue.nombrePolitica}</Link>
                     </If>
                     <If condition={currentValue.idPolitica == 0}>
                       No tiene

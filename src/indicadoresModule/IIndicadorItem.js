@@ -33,7 +33,7 @@ class IIndicadorItem extends React.Component{
                     </td>
                     <td>
                       <If condition={currentValue.idEscenario!=0}>
-                          <Link to={"/escenarios/"+currentValue.idEscenario}>{currentValue.idEscenario} - {currentValue.nombreEscenario}</Link>
+                          <Link to={"/escenarios/"+currentValue.idEscenario}>{currentValue.nombreEscenario}</Link>
                       </If>
                       <If condition={currentValue.idEscenario==0}>
                           No tiene

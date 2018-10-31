@@ -14,6 +14,8 @@ class IEscenario extends React.Component{
   }
 
   componentWillMount(){
+    //console.log("Escenario props ===>")
+    //console.log(this.props)
     if(this.props.conciliacion != undefined && this.props.conciliacion != 0){
       this.props.updConciliacion(this.props.conciliacion)
     }else if(this.props.registro != undefined && this.props.registro != 0){

@@ -34,7 +34,7 @@ class IQueryItem extends React.Component{
                   </td>
                   <td>
                     <If condition={currentValue.idEscenario!=undefined}>
-                      <Link to={"/conciliaciones/"+currentValue.idEscenario}>{currentValue.idEscenario} - {currentValue.nombreEscenario}</Link>
+                      <Link to={"/conciliaciones/"+currentValue.idEscenario}>{currentValue.nombreEscenario}</Link>
                     </If>
                     <If condition={currentValue.idEscenario==undefined}>
                       No tiene
@@ -42,7 +42,7 @@ class IQueryItem extends React.Component{
                   </td>
                   <td>
                     <If condition={currentValue.idConciliacion!=undefined}>
-                      <Link to={"/conciliaciones/"+currentValue.idConciliacion}>{currentValue.idConciliacion} - {currentValue.nombreConciliacion}</Link>
+                      <Link to={"/conciliaciones/"+currentValue.idConciliacion}>{currentValue.nombreConciliacion}</Link>
                     </If>
                     <If condition={currentValue.idConciliacion==undefined}>
                       No tiene

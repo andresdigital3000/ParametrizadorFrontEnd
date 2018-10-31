@@ -222,28 +222,32 @@ export const findTextPolitica = () => (dispatch,getState) => {
     //con API REST}
     let objetoVacio = new Object()
     let txtBuscar = getState().politicaReducer.textoBuscar
-    APIInvoker.invokeGET('/politicas/findByAny?texto='+txtBuscar, response => {
-      if(Array.isArray(response) == true){
-        if(response[0].id!=undefined){
-            dispatch(verPoliticas(response))
+    if(txtBuscar!=''){
+      APIInvoker.invokeGET('/politicas/findByAny?texto='+txtBuscar, response => {
+        if(Array.isArray(response) == true){
+          if(response[0].id!=undefined){
+              dispatch(verPoliticas(response))
+          }else{
+              console.log("Error "+response[0].codigo+" : "+response[0].mensaje)
+              toast.warn("No se encontraron registros que satisfagan el criterio de búsqueda", {
+                  position: toast.POSITION.BOTTOM_RIGHT
+              })
+          }
         }else{
-            console.log("Error "+response[0].codigo+" : "+response[0].mensaje)
-            toast.warn("No se encontraron registros que satisfagan el criterio de búsqueda", {
+          if(response.id!=undefined){
+              dispatch(verPoliticas(response))
+          }else{
+              console.log("Error "+response.codigo+" : "+response.mensaje)
+              toast.warn("No se encontraron registros que satisfagan el criterio de búsqueda", {
                 position: toast.POSITION.BOTTOM_RIGHT
-            })
+              })
+              //dispatch(verPoliticas(objetoVacio))
+          }
         }
-      }else{
-        if(response.id!=undefined){
-            dispatch(verPoliticas(response))
-        }else{
-            console.log("Error "+response.codigo+" : "+response.mensaje)
-            toast.warn("No se encontraron registros que satisfagan el criterio de búsqueda", {
-              position: toast.POSITION.BOTTOM_RIGHT
-            })
-            //dispatch(verPoliticas(objetoVacio))
-        }
-      }
-    })
+      })
+    }else{
+      dispatch(moverPaginaPoliticas(1));
+    }
   }else{
     //con json-server
     let txtBuscar = getState().politicaReducer.textoBuscar
@@ -584,28 +588,32 @@ const updateTextConciliacionFindRequest = (field,value) => ({
 
 //Realizar la búsqueda
 export const findTextConciliacion = () => (dispatch,getState) => {
-  let txtBuscar = getState().conciliacionReducer.textoBuscar
-  APIInvoker.invokeGET('/conciliaciones/findByAny?texto='+txtBuscar, response => {
-    if(Array.isArray(response) == true){
-      if(response[0].id!=undefined){
-        dispatch(verConciliaciones(response))
+  if(txtBuscar!=''){
+    let txtBuscar = getState().conciliacionReducer.textoBuscar
+    APIInvoker.invokeGET('/conciliaciones/findByAny?texto='+txtBuscar, response => {
+      if(Array.isArray(response) == true){
+        if(response[0].id!=undefined){
+          dispatch(verConciliaciones(response))
+        }else{
+          console.log("Error : "+response[0].codigo+" Mensaje: "+response[0].mensaje+": "+response[0].descripcion)
+          toast.warn("No se encuentran conciliaciones que satisfagan el criterio de búsqueda", {
+            position: toast.POSITION.BOTTOM_RIGHT
+          })
+        }
       }else{
-        console.log("Error : "+response[0].codigo+" Mensaje: "+response[0].mensaje+": "+response[0].descripcion)
-        toast.warn("No se encuentran conciliaciones que satisfagan el criterio de búsqueda", {
-          position: toast.POSITION.BOTTOM_RIGHT
-        })
+        if(response.id!=undefined){
+          dispatch(verConciliaciones(response))
+        }else{
+          console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
+          toast.warn("No se encuentran conciliaciones que satisfagan el criterio de búsqueda", {
+            position: toast.POSITION.BOTTOM_RIGHT
+          })
+        }
       }
-    }else{
-      if(response.id!=undefined){
-        dispatch(verConciliaciones(response))
-      }else{
-        console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
-        toast.warn("No se encuentran conciliaciones que satisfagan el criterio de búsqueda", {
-          position: toast.POSITION.BOTTOM_RIGHT
-        })
-      }
-    }
-  })
+    })
+  }else{
+    dispatch(moverPaginaConciliaciones(1));
+  }
 }
 
 //Recalcular el paginador de conciliaciones
@@ -801,7 +809,7 @@ export const saveConciliacion = () => (dispatch,getState)=>{
               usuarioAsignado : getState().conciliacionFormReducer.emailasignado,
               idPolitica : getState().conciliacionReducer.politica.id,
               usuario: getState().loginReducer.profile.userName,
-              paquete: getState().conciliacionFormReducer.webservice
+              paqueteWs: getState().conciliacionFormReducer.webservice
             }
             let id_grabado=0
             APIInvoker.invokePOST('/conciliaciones',conciliacion_salvar,response =>{
@@ -845,7 +853,7 @@ export const saveConciliacion = () => (dispatch,getState)=>{
               usuarioAsignado : getState().conciliacionFormReducer.emailasignado,
               idPolitica : idPoliticaGrabar,
               nombrePolitica : nombrePoliticaGrabar,
-              paquete: getState().conciliacionFormReducer.webservice
+              paqueteWs: getState().conciliacionFormReducer.webservice
             }
             APIInvoker.invokePUT('/conciliaciones',conciliacion_salvar,response =>{
               if(response.id!=undefined){
@@ -963,27 +971,31 @@ const updateTextEscenarioFindRequest = (field,value) => ({
 //Realizar la búsqueda
 export const findTextEscenario = () => (dispatch,getState) => {
   let txtBuscar = getState().escenarioReducer.textoBuscar
-  APIInvoker.invokeGET('/escenarios/findByAny?texto='+txtBuscar, response => {
-    if(Array.isArray(response) == true){
-      if(response[0].id!=undefined){
-        dispatch(verEscenarios(response))
+  if(txtBuscar!=''){
+    APIInvoker.invokeGET('/escenarios/findByAny?texto='+txtBuscar, response => {
+      if(Array.isArray(response) == true){
+        if(response[0].id!=undefined){
+          dispatch(verEscenarios(response))
+        }else{
+          toast.warn("No se encuentran escenarios que cumplan con el criterio de búsqueda", {
+            position: toast.POSITION.BOTTOM_RIGHT
+          })
+          console.log("Error : "+response[0].codigo+" Mensaje: "+response[0].mensaje+": "+response[0].descripcion)
+        }
       }else{
-        toast.warn("No se encuentran escenarios que cumplan con el criterio de búsqueda", {
-          position: toast.POSITION.BOTTOM_RIGHT
-        })
-        console.log("Error : "+response[0].codigo+" Mensaje: "+response[0].mensaje+": "+response[0].descripcion)
+        if(response.id!=undefined){
+          dispatch(verEscenarios(response))
+        }else{
+          console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
+          toast.warn("No se encuentran escenarios que cumplan con el criterio de búsqueda", {
+            position: toast.POSITION.BOTTOM_RIGHT
+          })
+        }
       }
-    }else{
-      if(response.id!=undefined){
-        dispatch(verEscenarios(response))
-      }else{
-        console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
-        toast.warn("No se encuentran escenarios que cumplan con el criterio de búsqueda", {
-          position: toast.POSITION.BOTTOM_RIGHT
-        })
-      }
-    }
-  })
+    })
+  }else{
+    dispatch(moverPaginaEscenarios(1));
+  }
 }
 
 //Recalcular el paginador de escenarios
@@ -1987,28 +1999,32 @@ export const findTextIndicador = () => (dispatch,getState) => {
     //con API REST}
     let objetoVacio = new Object()
     let txtBuscar = getState().indicadorReducer.textoBuscar
-    APIInvoker.invokeGET('/indicadores/findByAny?texto='+txtBuscar, response => {
-      if(Array.isArray(response) == true){
-        if(response[0].id!=undefined){
-            dispatch(verIndicadores(response))
+    if(txtBuscar!=''){
+      APIInvoker.invokeGET('/indicadores/findByAny?texto='+txtBuscar, response => {
+        if(Array.isArray(response) == true){
+          if(response[0].id!=undefined){
+              dispatch(verIndicadores(response))
+          }else{
+              console.log("Error "+response[0].codigo+" : "+response[0].mensaje)
+              toast.warn("No se encontraron registros que satisfagan el criterio de búsqueda", {
+                  position: toast.POSITION.BOTTOM_RIGHT
+              })
+          }
         }else{
-            console.log("Error "+response[0].codigo+" : "+response[0].mensaje)
-            toast.warn("No se encontraron registros que satisfagan el criterio de búsqueda", {
+          if(response.id!=undefined){
+              dispatch(verIndicadores(response))
+          }else{
+              console.log("Error "+response.codigo+" : "+response.mensaje)
+              toast.warn("No se encontraron registros que satisfagan el criterio de búsqueda", {
                 position: toast.POSITION.BOTTOM_RIGHT
-            })
+              })
+              //dispatch(verIndicadores(objetoVacio))
+          }
         }
-      }else{
-        if(response.id!=undefined){
-            dispatch(verIndicadores(response))
-        }else{
-            console.log("Error "+response.codigo+" : "+response.mensaje)
-            toast.warn("No se encontraron registros que satisfagan el criterio de búsqueda", {
-              position: toast.POSITION.BOTTOM_RIGHT
-            })
-            //dispatch(verIndicadores(objetoVacio))
-        }
-      }
-    })
+      })
+    }else{
+      dispatch(moverPaginaIndicadores(1));
+    }
   }else{
     //con json-server
     let txtBuscar = getState().indicadorReducer.textoBuscar
@@ -2359,28 +2375,32 @@ export const findTextParametro = () => (dispatch,getState) => {
     //con API REST}
     let objetoVacio = new Object()
     let txtBuscar = getState().parametroReducer.textoBuscar
-    APIInvoker.invokeGET('/parametros/findByAny?texto='+txtBuscar, response => {
-      if(Array.isArray(response) == true){
-        if(response[0].id!=undefined){
-            dispatch(verParametros(response))
+    if(txtBuscar!=''){
+      APIInvoker.invokeGET('/parametros/findByAny?texto='+txtBuscar, response => {
+        if(Array.isArray(response) == true){
+          if(response[0].id!=undefined){
+              dispatch(verParametros(response))
+          }else{
+              console.log("Error "+response[0].codigo+" : "+response[0].mensaje)
+              toast.warn("No se encontraron registros que satisfagan el criterio de búsqueda", {
+                  position: toast.POSITION.BOTTOM_RIGHT
+              })
+          }
         }else{
-            console.log("Error "+response[0].codigo+" : "+response[0].mensaje)
-            toast.warn("No se encontraron registros que satisfagan el criterio de búsqueda", {
+          if(response.id!=undefined){
+              dispatch(verParametros(response))
+          }else{
+              console.log("Error "+response.codigo+" : "+response.mensaje)
+              toast.warn("No se encontraron registros que satisfagan el criterio de búsqueda", {
                 position: toast.POSITION.BOTTOM_RIGHT
-            })
+              })
+              //dispatch(verParametros(objetoVacio))
+          }
         }
-      }else{
-        if(response.id!=undefined){
-            dispatch(verParametros(response))
-        }else{
-            console.log("Error "+response.codigo+" : "+response.mensaje)
-            toast.warn("No se encontraron registros que satisfagan el criterio de búsqueda", {
-              position: toast.POSITION.BOTTOM_RIGHT
-            })
-            //dispatch(verParametros(objetoVacio))
-        }
-      }
-    })
+      })
+    }else{
+      dispatch(moverPaginaParametros(1));
+    }
   }else{
     //con json-server
     let txtBuscar = getState().parametroReducer.textoBuscar
@@ -2673,27 +2693,31 @@ const updateTextQueryFindRequest = (field,value) => ({
 //Realizar la búsqueda
 export const findTextQuery = () => (dispatch,getState) => {
   let txtBuscar = getState().queryReducer.textoBuscar
-  APIInvoker.invokeGET('/queryescenario?texto='+txtBuscar, response => {
-    if(Array.isArray(response) == true){
-      if(response[0].id!=undefined){
-        dispatch(verQuerys(response))
+  if(txtBuscar!=''){
+    APIInvoker.invokeGET('/queryescenario?texto='+txtBuscar, response => {
+      if(Array.isArray(response) == true){
+        if(response[0].id!=undefined){
+          dispatch(verQuerys(response))
+        }else{
+          toast.warn("No se encuentran querys que cumplan con el criterio de búsqueda", {
+            position: toast.POSITION.BOTTOM_RIGHT
+          })
+          console.log("Error : "+response[0].codigo+" Mensaje: "+response[0].mensaje+": "+response[0].descripcion)
+        }
       }else{
-        toast.warn("No se encuentran querys que cumplan con el criterio de búsqueda", {
-          position: toast.POSITION.BOTTOM_RIGHT
-        })
-        console.log("Error : "+response[0].codigo+" Mensaje: "+response[0].mensaje+": "+response[0].descripcion)
+        if(response.id!=undefined){
+          dispatch(verQuerys(response))
+        }else{
+          console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
+          toast.warn("No se encuentran querys que cumplan con el criterio de búsqueda", {
+            position: toast.POSITION.BOTTOM_RIGHT
+          })
+        }
       }
-    }else{
-      if(response.id!=undefined){
-        dispatch(verQuerys(response))
-      }else{
-        console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
-        toast.warn("No se encuentran querys que cumplan con el criterio de búsqueda", {
-          position: toast.POSITION.BOTTOM_RIGHT
-        })
-      }
-    }
-  })
+    })
+  }else{
+    dispatch(moverPaginaQuerys(1));
+  }
 }
 
 //Recalcular el paginador de querys

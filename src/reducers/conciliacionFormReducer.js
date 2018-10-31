@@ -8,7 +8,6 @@ import update from 'react-addons-update'
 const initialState = {
   id : 0,
   nombre : '',
-  idPaquete :'',
   webservice : '',
   emailasignado : '',
   descripcion : '',
@@ -29,8 +28,7 @@ export const conciliacionFormReducer = (state = initialState,action) =>{
           return update(state,{
               id : {$set: action.conciliacion[0].id},
               nombre : {$set: action.conciliacion[0].nombre},
-              idPaquete : {$set: action.conciliacion[0].transformaciones[0].id},
-              webservice : {$set: action.conciliacion[0].transformaciones[0].paqueteWs},
+              webservice : {$set: action.conciliacion[0].paqueteWs},
               descripcion : {$set: action.conciliacion[0].descripcion},
               emailasignado : {$set: action.conciliacion[0].usuarioAsignado},
               idPolitica : {$set: action.conciliacion[0].idPolitica},
@@ -40,6 +38,7 @@ export const conciliacionFormReducer = (state = initialState,action) =>{
           return update(state,{
               id : {$set: action.conciliacion[0].id},
               nombre : {$set: action.conciliacion[0].nombre},
+              webservice : {$set: action.conciliacion[0].paqueteWs},
               descripcion : {$set: action.conciliacion[0].descripcion},
               emailasignado : {$set: action.conciliacion[0].usuarioAsignado},
               idPolitica : {$set: action.conciliacion[0].idPolitica},
@@ -50,7 +49,6 @@ export const conciliacionFormReducer = (state = initialState,action) =>{
         return update(state,{
           id : {$set: 0},
           nombre : {$set: ''},
-          idPaquete : {$set: ''},
           webservice : {$set: ''},
           descripcion : {$set: ''},
           emailasignado : {$set: ''},

@@ -39,10 +39,10 @@ class IConciliacionList extends React.Component{
                   <thead>
                     <tr>
                         <th>
-                          NOMBRE
+                          CODIGO
                         </th>
                         <th>
-                          DESCRIPCION
+                          NOMBRE
                         </th>
                         <th>
                           POLITICA
