@@ -33,8 +33,7 @@ export const indicadorFormReducer = (state = initialState,action) =>{
           formula : {$set: action.indicador[0].textoFormula},
           idEscenario : {$set: action.indicador[0].idEscenario},
           nombreEscenario : {$set: action.indicador[0].nombreEscenario},
-          escenario : {$set: JSON.parse('{"id":0,"nombre":"Ningun Escenario"}')},
-          parametros : {$set : []}
+          escenario : {$set: JSON.parse('{"id":0,"nombre":"Ningun Escenario"}')}
         })
     case LIMPIAR_FORM_INDICADOR:
         return update(state,{

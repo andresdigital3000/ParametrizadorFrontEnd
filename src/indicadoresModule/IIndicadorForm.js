@@ -17,8 +17,8 @@ class IIndicadorForm extends React.Component{
   }
 
   componentDidMount(){
-    console.log("PROPS en EditarIndicadores ==>>")
-    console.log(this.props)
+    //console.log("PROPS en EditarIndicadores ==>>")
+    //console.log(this.props)
     if(this.props.registro!=undefined){
       this.props.cargarIndicador(this.props.registro.idindicador)
     }else{
@@ -35,7 +35,7 @@ class IIndicadorForm extends React.Component{
   cambioEscenarios(e){
     this.props.updEscenario(e.target.value)
     this.props.cargarComboParametros(e.target.value)
-    this.props.refreshListIndicador()
+    //this.props.refreshListIndicador()
   }
 
   //Accion a realizar cuando se cambie el combo de resultados

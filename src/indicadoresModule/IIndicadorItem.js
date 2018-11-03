@@ -12,8 +12,8 @@ class IIndicadorItem extends React.Component{
   }
 
   componentWillMount(){
-    console.log("PROPS IIndicadorItem...")
-    console.log(this.props)
+    //console.log("PROPS IIndicadorItem...")
+    //console.log(this.props)
   }
 
   render(){
@@ -33,7 +33,7 @@ class IIndicadorItem extends React.Component{
                     </td>
                     <td>
                       <If condition={currentValue.idEscenario!=0}>
-                          <Link to={"/escenarios/"+currentValue.idEscenario}>{currentValue.nombreEscenario}</Link>
+                          <Link to={"/escenarios/list/"+currentValue.idEscenario}>{currentValue.nombreEscenario}</Link>
                       </If>
                       <If condition={currentValue.idEscenario==0}>
                           No tiene

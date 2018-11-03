@@ -45,11 +45,6 @@ class AdminThemplete extends React.Component{
     this.props.relogin()
   }
 
-  componentDidMount(){
-    console.log("AdminThemplate PROPS==>")
-    console.log(this.props)
-  }
-
   mostrarModal() {
     this.props.mostrarModal()
   }
@@ -111,7 +106,12 @@ class AdminThemplete extends React.Component{
                 <If condition={this.props.location.pathname.substr(1,10) == 'escenarios'}>
                   <Choose>
                     <When condition={this.props.params.idescenario}>
-                      <IEscenarioForm registro={this.props.params}/>
+                      <If condition={this.props.location.pathname.substr(1,15) == 'escenarios/list'}>
+                          <IEscenario escenario={this.props.params.idescenario}/>
+                      </If>
+                      <If condition={this.props.location.pathname.length == 10}>
+                          <IEscenarioForm registro={this.props.params}/>
+                      </If>
                     </When>
                     <When condition={this.props.params.idescenariodelete}>
                       <IEscenarioDelete registro={this.props.params}/>

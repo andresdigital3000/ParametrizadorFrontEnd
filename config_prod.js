@@ -1,7 +1,7 @@
 module.exports ={
   debugMode: false,
   usarJsonServer : false,
-  //Api backend
+i  //Api backend
   server:{
     port:"",
     host:"http://localhost:8080/ParametrizadorBackend/api"

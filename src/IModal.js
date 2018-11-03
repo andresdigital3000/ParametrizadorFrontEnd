@@ -28,7 +28,7 @@ class IModal extends React.Component{
                 <h5 className="modal-title" id="modalMsg">Transacción exitosa</h5>
                 <button type="button" className="close" data-dismiss="modal" aria-label="Cerrar" onClick={this.ocultarModal.bind(this)}>
                   <span aria-hidden="true">&times;</span>
-                </button>
+                </button> 
               </div>
               <div className="modal-body">
                 <p>

@@ -1040,45 +1040,56 @@ const actualizarPaginadorEscenarios = (array_paginador) =>({
 })
 
 //Actualizar el listado de escenario
-export const refreshListEscenario = () =>(dispatch,getState) => {
+export const refreshListEscenario = (resp) =>(dispatch,getState) => {
   //console.log("EJECUTA REFRESH ESCENARIO")
   let objetoVacio = new Object()
-  let conciliacionActual = getState().escenarioReducer.conciliacion.id
-  if(conciliacionActual!=0){
-    APIInvoker.invokeGET('/conciliaciones/'+conciliacionActual, response => {
+  if(resp!=undefined){
+    APIInvoker.invokeGET('/escenarios/'+resp, response => {
       if(response.id!=undefined){
-        //console.log("Detecta conciliacionActual ==>>")
-        //console.log(response.escenarios)
-        dispatch(antesVerEscenarios(response.escenarios))
+        dispatch(verEscenarios([response]))
       }else{
         console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
         dispatch(antesVerEscenarios(objetoVacio))
       }
     })
   }else{
-    //si no existe resp
-    let regInicial = 0
-    let pagActual = getState().escenarioReducer.paginaActual
-    if(getState().escenarioReducer.paginador.length > 0){
-      regInicial = getState().escenarioReducer.paginador[pagActual-1].offset
-    }
-    let regPagina = getState().escenarioReducer.registrosPorPagina
-    APIInvoker.invokeGET('/escenarios?offset='+regInicial+'&limit='+regPagina, response => {
-      if(Array.isArray(response)){
-        if(response[0].id!=undefined){
-          dispatch(antesVerEscenarios(response))
+    let conciliacionActual = getState().escenarioReducer.conciliacion
+    if(conciliacionActual!=0){
+      APIInvoker.invokeGET('/conciliaciones/'+conciliacionActual, response => {
+        if(response.id!=undefined){
+          //console.log("Detecta conciliacionActual ==>>")
+          //console.log(response.escenarios)
+          dispatch(antesVerEscenarios(response.escenarios))
         }else{
           console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
           dispatch(antesVerEscenarios(objetoVacio))
         }
-      }else{
-        //console.log("****** ******Como es el response ::")
-        //console.log(response)
-        if(response.codigo==404){
-          dispatch(antesVerEscenarios(objetoVacio))
-        }
+      })
+    }else{
+      //si no existe resp
+      let regInicial = 0
+      let pagActual = getState().escenarioReducer.paginaActual
+      if(getState().escenarioReducer.paginador.length > 0){
+        regInicial = getState().escenarioReducer.paginador[pagActual-1].offset
       }
-    })
+      let regPagina = getState().escenarioReducer.registrosPorPagina
+      APIInvoker.invokeGET('/escenarios?offset='+regInicial+'&limit='+regPagina, response => {
+        if(Array.isArray(response)){
+          if(response[0].id!=undefined){
+            dispatch(antesVerEscenarios(response))
+          }else{
+            console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
+            dispatch(antesVerEscenarios(objetoVacio))
+          }
+        }else{
+          //console.log("****** ******Como es el response ::")
+          //console.log(response)
+          if(response.codigo==404){
+            dispatch(antesVerEscenarios(objetoVacio))
+          }
+        }
+      })
+    }
   }
 }
 
@@ -1472,9 +1483,6 @@ export const doEjecutarConciliacion = () => (dispatch,getState) => {
             if(xml.getElementsByTagName('OdiLoadPlanInstanceId')[0].value!=''){
               idInstance = xml.getElementsByTagName('OdiLoadPlanInstanceId')[0].value
               dispatch(mostrarModal("alert alert-success","Inicio de ejecución de proceso exitoso :"+idInstance))
-              //toast.success("Inicio de ejecución de proceso exitoso", {
-              //  position: toast.POSITION.BOTTOM_RIGHT,
-              //})
             }
             if(idInstance!=0){
               let ejecucion_salvar ={
@@ -1484,9 +1492,7 @@ export const doEjecutarConciliacion = () => (dispatch,getState) => {
               }
               APIInvoker.invokePOST('/ejecucionproceso',ejecucion_salvar,response2 =>{
                 if(response2.idPlanInstance!=undefined){
-                  toast.success("...y se almacenó la información de la ejecución", {
-                    position: toast.POSITION.BOTTOM_RIGHT
-                  })
+                  console.log("...y se almacenó la información de la ejecución")
                   dispatch(cargarComboConciliaciones())
                 }else{
                   toast.error("No fue posible almacenar la información de la ejecución", {
@@ -1818,9 +1824,10 @@ export const doEjecutarEscenario = () => (dispatch,getState) => {
               }
               APIInvoker.invokePOST('/ejecucionproceso',ejecucion_salvar,response2 =>{
                 if(response2.idPlanInstance!=undefined){
-                  toast.success("...y se almacenó la información de la ejecución", {
-                    position: toast.POSITION.BOTTOM_RIGHT
-                  })
+                  //toast.success("...y se almacenó la información de la ejecución", {
+                  //  position: toast.POSITION.BOTTOM_RIGHT
+                  //})
+                  console.log("...y se almacenó la información de la ejecución")
                   dispatch(cargarComboEscenarios())
                 }else{
                   toast.error("No fue posible almacenar la información de la ejecución", {
@@ -2236,7 +2243,11 @@ export const cargarIndicador =(idindicador) => (dispatch,getState) =>{
   APIInvoker.invokeGET('/indicadores/'+idindicador, response => {
     if(Array.isArray(response) == true){
       if(response[0].id!=undefined){
-        dispatch(cargarIndicadorEnForm(response))
+        //if(response[0].idEscenario!=undefined){
+          console.log("CARGAR PARAMETROS ==> de escenario"+response[0].idEscenario)
+          dispatch(cargarComboParametros(response[0].idEscenario))
+        //}
+        dispatch(cargarIndicadorEnForm(response[0]))
       }else{
         toast.error("No se pudo cargar el indicador en el formulario", {
           position: toast.POSITION.BOTTOM_RIGHT
@@ -2245,6 +2256,10 @@ export const cargarIndicador =(idindicador) => (dispatch,getState) =>{
       }
     }else{
       if(response.id!=undefined){
+        if(response.idEscenario!=undefined){
+          console.log("CARGAR PARAMETROS ==> de escenario"+response.idEscenario)
+          dispatch(cargarComboParametros(response.idEscenario))
+        }
         dispatch(cargarIndicadorEnForm([response]))
       }else{
         toast.error("No se pudo cargar el indicador en el formulario", {
@@ -2486,21 +2501,21 @@ export const refreshListParametro = (resp) =>(dispatch,getState) => {
       })
     }else{
       //Buscando un registro en especifico por id o por un response
-      APIInvoker.invokeGET('/parametros/'+resp, response => {
+      APIInvoker.invokeGET('/parametros/padre?tipo=escenario&codpadre='+resp, response => {
         if(Array.isArray(response) == true){
           //si el response contiene varios registros
           if(response[0].id!=undefined){
-            dispatch(antesVerParametros(response))
+            dispatch(verParametros(response))
           }else{
-            dispatch(antesVerParametros(objetoVacio))
+            dispatch(verParametros(objetoVacio))
             console.log("Error : "+response[0].codigo+" Mensaje: "+response[0].mensaje+": "+response[0].descripcion)
           }
         }else{
           //si el response es un solo registro
           if(response.id!=undefined){
-            dispatch(antesVerParametros([response]))
+            dispatch(verParametros([response]))
           }else{
-            dispatch(antesVerParametros(objetoVacio))
+            dispatch(verParametros(objetoVacio))
             console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
           }
         }

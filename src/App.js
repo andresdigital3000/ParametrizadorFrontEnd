@@ -70,6 +70,7 @@ render((
             <Route path="/conciliaciones/delete/:idconciliaciondelete" component={IConciliacionDelete}></Route>
             <Route path="/escenarios" component={IEscenario}></Route>
             <Route path="/escenarios/:idconciliacion" component={IEscenario}></Route>
+            <Route path="/escenarios/list/:idescenario" component={IEscenario}></Route>
             <Route path="/escenarios/edit/:idescenario" component={IEscenarioForm}></Route>
             <Route path="/escenarios/delete/:idescenariodelete" component={IEscenarioDelete}></Route>
             <Route path="/ejecucion" component={IEjecucion}></Route>

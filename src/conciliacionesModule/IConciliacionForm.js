@@ -60,19 +60,19 @@ class IConciliacionForm extends React.Component{
               </div>
             </header>
             <div className="form-group">
-              <label htmlFor='nombre'>* Nombre</label>
+              <label htmlFor='nombre'>* Código</label>
               <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un nombre de conciiación' autoComplete='off' maxLength='100'/>
               <small id="nombreHelp" className="form-text text-muted">Que sea descriptivo pero breve</small>
+            </div>
+            <div className="form-group">
+              <label htmlFor='descripcion'>* Nombre</label>
+              <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite una descripcion de la conciliación' maxLength='200'/>
+              <small id="descripcionHelp" className="form-text text-muted">Defina para la conciliación</small>
             </div>
             <div className="form-group">
               <label htmlFor='webservice'>* Paquete</label>
               <input id='webservice' type='text' className='form-control form-control-lg' value={this.props.state.webservice} onChange={this.handleInput.bind(this)} placeholder='Digite Web Service' autoComplete='off' maxLength='100'/>
               <small id="webserviceHelp" className="form-text text-muted">Paquete</small>
-            </div>
-            <div className="form-group">
-              <label htmlFor='descripcion'>Descripción</label>
-              <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite una descripcion de la conciliación' maxLength='200'/>
-              <small id="descripcionHelp" className="form-text text-muted">Defina para la conciliación</small>
             </div>
             <div className="form-group">
               <label htmlFor='emailasignado'>* Email Usuario Asignado</label>
@@ -96,7 +96,7 @@ class IConciliacionForm extends React.Component{
               <hr/>
               <Link to={"/conciliaciones"} onClick={this.limpiarConciliacion.bind(this)} className="btn btn-warning">Regresar</Link>&nbsp;&nbsp;&nbsp;
               {
-                this.props.state.nombre!="" && this.props.state.emailasignado!="" && this.props.state.webservice!="" ?
+                this.props.state.nombre!="" && this.props.state.emailasignado!="" && this.props.state.webservice!="" && this.props.state.descripcion!="" ?
                 <button onClick={this.props.saveConciliacion.bind(this)} className="btn btn-primary">Grabar</button> :
                 <button className="btn btn-primary" disabled>Formulario incompleto</button>
               }
@@ -115,19 +115,19 @@ class IConciliacionForm extends React.Component{
                   </div>
                   <div className="modal-body">
                     <div className="form-group">
-                      <label htmlFor='nombre'>* Nombre</label>
+                      <label htmlFor='nombre'>* Código</label>
                       <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un nombre de conciliación' autoComplete='off' maxLength='100'/>
                       <small id="nombreHelp" className="form-text text-muted">Que sea descriptivo</small>
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor='descripcion'>* Nombre</label>
+                      <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite una descripción para la conciliación'  maxLength='200'/>
+                      <small id="descripcionHelp" className="form-text text-muted">Defina para la política</small>
                     </div>
                     <div className="form-group">
                       <label htmlFor='webservice'>* Paquete</label>
                       <input id='webservice' type='text' className='form-control form-control-lg' value={this.props.state.webservice} onChange={this.handleInput.bind(this)} placeholder='Digite Web service' autoComplete='off' maxLength='100'/>
                       <small id="webserviceHelp" className="form-text text-muted">Paquete</small>
-                    </div>
-                    <div className="form-group">
-                      <label htmlFor='descripcion'>Descripcion</label>
-                      <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite una descripción para la conciliación'  maxLength='200'/>
-                      <small id="descripcionHelp" className="form-text text-muted">Defina para la política</small>
                     </div>
                     <div className="form-group">
                       <label htmlFor='emailasignado'>* Email Usuario Asignado</label>
@@ -152,7 +152,7 @@ class IConciliacionForm extends React.Component{
                     <hr/>
                     <button onClick={this.limpiarConciliacion.bind(this)} type="button" className="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                     {
-                      this.props.state.politica.id!="0" && this.props.state.emailasignado!="" && this.props.state.nombre!="" && this.props.state.webservice!="" ?
+                      this.props.state.politica.id!="0" && this.props.state.emailasignado!="" && this.props.state.descripcion!="" && this.props.state.nombre!="" && this.props.state.webservice!="" ?
                       <button onClick={this.grabarConciliacion.bind(this)} className="btn btn-primary">Grabar</button> :
                       <button className="btn btn-primary" disabled>Formulario incompleto</button>
                     }

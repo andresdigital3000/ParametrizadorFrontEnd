@@ -31,16 +31,16 @@ class IPoliticaList extends React.Component{
                   <thead>
                     <tr>
                         <th>
-                          CODIGO
+                          CÓDIGO
                         </th>
                         <th>
                           NOMBRE
                         </th>
                         <th>
-                          DESCRIPCION
+                          DESCRIPCIÓN
                         </th>
                         <th>
-                          CONCILIACION
+                          CONCILIACIÓN
                         </th>
                         <th>
                           ACCIONES

@@ -39,13 +39,13 @@ class IConciliacionList extends React.Component{
                   <thead>
                     <tr>
                         <th>
-                          CODIGO
+                          CÓDIGO
                         </th>
                         <th>
                           NOMBRE
                         </th>
                         <th>
-                          POLITICA
+                          POLÍTICA
                         </th>
                         <th>
                           TABLA RESULTADOS

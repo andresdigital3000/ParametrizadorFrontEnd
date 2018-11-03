@@ -21,6 +21,11 @@ class IEscenarioList extends React.Component{
     this.props.calculaPaginadorEscenarios()
   }
 
+  componentWillMount(){
+    //console.log("ESCENARIO LISTA PROPS =====>")
+    //console.log(this.props)
+  }
+
   render(){
     return(
       <div className="row">

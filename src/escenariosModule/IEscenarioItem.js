@@ -43,7 +43,7 @@ class IEscenarioItem extends React.Component{
                   </td>
                   <td>
                     <center>
-                      <Link to={"/uc"}><i className="fa fa-pencil-square-o"/></Link>
+                      <Link to={"/parametros/"+currentValue.id}><i className="fa fa-pencil-square-o"/></Link>
                     </center>
                   </td>
                   <td>

@@ -5,10 +5,23 @@ import IParametroList from './IParametroList'
 import IParametroFinder from './IParametroFinder'
 import IParametroPaginador from './IParametroPaginador'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
+import { connect } from 'react-redux'
+import { refreshListParametro } from '../actions/Actions';
 
 class IParametro extends React.Component{
   constructor(){
     super(...arguments)
+  }
+
+  componentWillMount(){
+    //console.log("*************Parametros props ===>")
+    //console.log(this.props)
+    if(this.props.idescenario != undefined){
+      console.log("*************ejecutar refresh list "+this.props.idescenario)
+      this.props.refreshListParametro(this.props.idescenario)
+    }else{
+      this.props.refreshListParametro()
+    }
   }
 
   render(){
@@ -56,4 +69,14 @@ class IParametro extends React.Component{
   }
 }
 
-export default IParametro
+const mapStateToProps = (state) =>{
+  return{
+    state: {
+      conciliacion: state.escenarioReducer.conciliacion
+    }
+  }
+}
+
+export default connect (mapStateToProps,{
+  refreshListParametro
+})(IParametro)

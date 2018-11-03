@@ -13,13 +13,13 @@ class IParametroList extends React.Component{
   }
 
   //Seccion de listar parametros
-  componentWillMount(){
+  /*componentWillMount(){
     if(this.props.registro == undefined){
       this.props.refreshListParametro()
     }else{
       this.props.refreshListParametro(this.props.registro)
     }
-  }
+  }*/
 
   render(){
     return(
@@ -41,7 +41,7 @@ class IParametroList extends React.Component{
                         </th>
                         <th>
                           TIPO
-                        </th>                        
+                        </th>
                         <th>
                           ACCIONES
                         </th>

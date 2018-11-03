@@ -14,9 +14,13 @@ class IEscenario extends React.Component{
   }
 
   componentWillMount(){
-    //console.log("Escenario props ===>")
+    //console.log("*************Escenario props ===>")
     //console.log(this.props)
-    if(this.props.conciliacion != undefined && this.props.conciliacion != 0){
+    if(this.props.escenario != undefined){
+      //console.log("ejecutar refresh list "+this.props.escenario)
+      this.props.refreshListEscenario(this.props.escenario)
+    }else if(this.props.conciliacion != undefined && this.props.conciliacion != 0){
+      //console.log("Se ejecuta updConciliacion con "+this.props.conciliacion)
       this.props.updConciliacion(this.props.conciliacion)
     }else if(this.props.registro != undefined && this.props.registro != 0){
       this.props.updConciliacion(this.props.registro)
@@ -82,7 +86,7 @@ class IEscenario extends React.Component{
 const mapStateToProps = (state) =>{
   return{
     state: {
-      conciliacion: JSON.stringify(state.escenarioReducer.conciliacion)
+      conciliacion: state.escenarioReducer.conciliacion
     }
   }
 }
