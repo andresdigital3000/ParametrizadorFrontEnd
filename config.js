@@ -7,8 +7,9 @@ module.exports ={
     host:"http://localhost:8080/ParametrizadorBackend/api"
   },
   //Servicio web para ejecución de Conciliaciones o Escenarios
+  //http://ultrabook:8080/WebServiceODIdService/WebServiceODIPortType
+  //http://localhost:83/odiMockup
   webService:{
-    url : "http://localhost:83/odiMockup",
     user : "test",
     pw : "test",
     workSpace : "",

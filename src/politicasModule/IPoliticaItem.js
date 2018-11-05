@@ -11,11 +11,6 @@ class IPoliticaItem extends React.Component{
     super(...arguments)
   }
 
-  componentWillMount(){
-    console.log("PROPS IPoliticaItem...")
-    console.log(this.props)
-  }
-
   render(){
     return(
           <tbody>

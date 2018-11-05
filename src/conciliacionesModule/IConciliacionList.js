@@ -48,9 +48,6 @@ class IConciliacionList extends React.Component{
                           POLÍTICA
                         </th>
                         <th>
-                          TABLA RESULTADOS
-                        </th>
-                        <th>
                           ESCENARIOS
                         </th>
                         <th>

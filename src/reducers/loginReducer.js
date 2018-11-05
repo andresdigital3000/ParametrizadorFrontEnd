@@ -2,7 +2,8 @@ import {
   LOGIN_SUCCESS,
   LOGIN_ERROR,
   SHOW_MODAL,
-  HIDE_MODAL
+  HIDE_MODAL,
+  UPD_LINK_RESULTADOS
 }  from '../actions/const'
 import update from 'react-addons-update'
 
@@ -11,7 +12,8 @@ const initialState = {
   profile: null,
   showmodal : false,
   tipomensaje : '',
-  mensaje : ''
+  mensaje : '',
+  urlResultados : '#'
 }
 
 export const loginReducer = (state = initialState,action) => {
@@ -25,6 +27,10 @@ export const loginReducer = (state = initialState,action) => {
         tipomensaje : '',
         mensaje : ''
       }
+    case UPD_LINK_RESULTADOS:
+        return update(state,{
+          urlResultados:{$set : action.value}
+        })
     case SHOW_MODAL:
       return update(state,{
         showmodal: {$set : true},

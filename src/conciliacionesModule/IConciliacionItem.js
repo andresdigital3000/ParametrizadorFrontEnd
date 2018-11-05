@@ -38,11 +38,6 @@ class IConciliacionItem extends React.Component{
                   </td>
                   <td>
                     <center>
-                      <Link to={"/uc"}><i className="fa fa-table"/></Link>
-                    </center>
-                  </td>
-                  <td>
-                    <center>
                       <Link to={"/escenarios/"+currentValue.id}><i className="fa fa-tasks"/></Link>
                     </center>
                   </td>

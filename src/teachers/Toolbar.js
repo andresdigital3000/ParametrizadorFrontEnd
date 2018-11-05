@@ -1,7 +1,7 @@
 import React from 'react'
 import { browserHistory,Link } from 'react-router'
 import { connect } from 'react-redux'
-import { logout } from '../actions/Actions'
+import { logout, getLinkResultados } from '../actions/Actions'
 
 
 class Toolbar extends React.Component{
@@ -16,11 +16,13 @@ class Toolbar extends React.Component{
     this.props.logout()
     window.location = '/login';
   }
-//Usando Estilos de Camilo Linea 25, unicamente es cambiar la palabra navbar que es el estilo original de bootstrap por navigation que es el estilo creado por camilo
-//<nav className="navigation navbar-expand-lg">
-//Linea 30 y 31
-//<div className="main--menu navigation-collapse" id="navbarSupportedContent"><ul className="navigation-nav mr-auto">
+
+  componentWillMount(){
+    this.props.getLinkResultados();
+  }
+
   render(){
+    let linkRes = this.props.urlresultados
     return(
       <nav className="navbar navigation navbar-expand-lg">
           <a className="logo" href="#">Claro</a>
@@ -50,7 +52,6 @@ class Toolbar extends React.Component{
                 </a>
                 <div className="dropdown-menu" aria-labelledby="navbarDropdown2">
                   <Link to="/ejecucion" className="dropdown-item">Conciliaciones</Link>
-                  <Link to="/ejecucione" className="dropdown-item">Escenarios</Link>
                 </div>
               </li>
               <li className="nav-item dropdown">
@@ -58,6 +59,9 @@ class Toolbar extends React.Component{
                   Consulta
                 </a>
                 <div className="dropdown-menu" aria-labelledby="navbarDropdown3">
+                  {
+                  //  React.createElement('a',{href:linkRes,className:'dropdown-item'},'Resultados')
+                  }
                   <Link to="/uc" className="dropdown-item">Resultados</Link>
                   <Link to="/indicadores" className="dropdown-item">Indicadores</Link>
                 </div>
@@ -76,10 +80,11 @@ class Toolbar extends React.Component{
 
 const mapStateToProps = (state) => {
     return {
-      profile: state.loginReducer.profile
+      profile: state.loginReducer.profile,
+      urlresultados: state.loginReducer.urlResultados
     }
 }
 
 export default connect(mapStateToProps, {
-  logout
+  logout, getLinkResultados
 })(Toolbar)

@@ -1439,7 +1439,12 @@ export const doEjecutarConciliacion = () => (dispatch,getState) => {
   if(getState().ejecucionReducer.conciliacion.ejecucionesProceso.length > 0){
     idPlanInstancia = getState().ejecucionReducer.conciliacion.ejecucionesProceso[numEjecuciones].idPlanInstance
   }
-
+  //tener en cuenta periodicidad
+  //APIInvoker.invokeGET('/parametros?findByAny=Periodicidad ws conciliacion', response => {
+  //  if(Array.isArray(response) == true){
+  //    dispatch(cargarConciliaciones(response))
+  //  }
+  //})
   //Si hay instancia recuperada de la ejecución
   if(idPlanInstancia==0){
     //Variables necesarias para llamar el webservice
@@ -1449,45 +1454,86 @@ export const doEjecutarConciliacion = () => (dispatch,getState) => {
     let repository = configuration.webService.repository
     let context = 1
     let loglevel = 6
-
-    //Construir petición json para Backend
-    let startEjecucion = {
-	      "odiUser":odiUser,
-	      "odiPassword":pwUser,
-	      "workRepository":repository,
-	      "loadPlanName":nomConciliacionEjecucion,
-        "contexto":context
-    }
-    let idInstance = 0
-    APIInvoker.invokePOST('/odiRest/startLoadPlan',startEjecucion, response => {
-      if(response.startedRunInformation.odiLoadPlanInstanceId!=undefined){
-        idInstance = response.startedRunInformation.odiLoadPlanInstanceId
-        dispatch(mostrarModal("alert alert-success","Inicio de ejecución de proceso exitoso :"+idInstance))
-      }
-      if(idInstance!=0){
-        let ejecucion_salvar ={
-          nombre : nomConciliacionEjecucion,
-          idPlanInstance : idInstance,
-          idConciliacion : idConciliacionEjecucion,
-        }
-        APIInvoker.invokePOST('/ejecucionproceso',ejecucion_salvar,response2 =>{
-          if(response2.idPlanInstance!=undefined){
-            console.log("...y se almacenó la información de la ejecución")
-            dispatch(cargarComboConciliaciones())
+    //Construir peticion SOAP
+    var sr = '<?xml version="1.0" encoding="utf-8"?>'+
+              '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:odi="xmlns.oracle.com/odi/OdiInvoke/">'+
+               '<soapenv:Header/>'+
+               '<soapenv:Body>'+
+                  '<odi:OdiStartLoadPlanRequest>'+
+                     '<!--You may enter the following 2 items in any order-->'+
+                     '<Credentials>'+
+                        '<!--You may enter the following 3 items in any order-->'+
+                        '<!--Optional:-->'+
+                        '<OdiUser>'+odiUser+'</OdiUser>'+
+                        '<!--Optional:-->'+
+                        '<OdiPassword>'+pwUser+'</OdiPassword>'+
+                        '<WorkRepository>'+repository+'</WorkRepository>'+
+                     '</Credentials>'+
+                     '<StartLoadPlanRequest>'+
+                        '<LoadPlanName>'+nomConciliacionEjecucion+'</LoadPlanName>'+
+                        '<Context>'+context+'</Context>'+
+                        '<!--Optional:-->'+
+                        '<Keywords></Keywords>'+
+                        '<!--Optional:-->'+
+                        '<LogLevel>'+loglevel+'</LogLevel>'+
+                        '<!--Zero or more repetitions:-->'+
+                        '<LoadPlanStartupParameters>'+
+                           '<!--You may enter the following 2 items in any order-->'+
+                           '<Name></Name>'+
+                           '<Value></Value>'+
+                        '</LoadPlanStartupParameters>'+
+                     '</StartLoadPlanRequest>'+
+                  '</odi:OdiStartLoadPlanRequest>'+
+               '</soapenv:Body>'+
+            '</soapenv:Envelope>';
+    if(xmlhttp){
+      xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4) {
+          if(xmlhttp.status == 200) {
+            var XMLParser = require('react-xml-parser');
+            var xml = new XMLParser().parseFromString(xmlhttp.response);
+            let idInstance = 0
+            if(xml.getElementsByTagName('OdiLoadPlanInstanceId')[0].value!=''){
+              idInstance = xml.getElementsByTagName('OdiLoadPlanInstanceId')[0].value
+              dispatch(mostrarModal("alert alert-success","Inicio de ejecución de proceso exitoso :"+idInstance))
+            }
+            if(idInstance!=0){
+              let ejecucion_salvar ={
+                nombre : nomConciliacionEjecucion,
+                idPlanInstance : idInstance,
+                idConciliacion : idConciliacionEjecucion,
+              }
+              APIInvoker.invokePOST('/ejecucionproceso',ejecucion_salvar,response2 =>{
+                if(response2.idPlanInstance!=undefined){
+                  console.log("...y se almacenó la información de la ejecución")
+                  dispatch(cargarComboConciliaciones())
+                }else{
+                  toast.error("No fue posible almacenar la información de la ejecución", {
+                    position: toast.POSITION.BOTTOM_RIGHT
+                  })
+                }
+              },error =>{
+                console.log('No almacenó la información de la ejecución')
+              })
+            }else{
+              toast.error("No se pudo obtener un id de ejecución desde ODI", {
+                position: toast.POSITION.BOTTOM_RIGHT
+              })
+            }
           }else{
-            toast.error("No fue posible almacenar la información de la ejecución", {
+            toast.error("No hay conexión con el servicio de ODI", {
               position: toast.POSITION.BOTTOM_RIGHT
             })
           }
-        },error =>{
-          console.log('No almacenó la información de la ejecución')
-        })
-      }else{
-        toast.error("No se pudo obtener un id de ejecución desde ODI", {
-          position: toast.POSITION.BOTTOM_RIGHT
-        })
+        }
       }
-    })
+      xmlhttp.open('POST',configuration.webService.url,true);
+      xmlhttp.setRequestHeader('Content-Type','text/xml');
+      //xmlhttp.setRequestHeader('Accept','text/xml');
+      xmlhttp.send(sr);
+    }else{
+      alert('no existe el objeto xmlhttp');
+    }
   }else{
     toast.error("Ya se encuentra en ejecución id "+idPlanInstancia, {
       position: toast.POSITION.BOTTOM_RIGHT,
@@ -1513,28 +1559,59 @@ export const doCancelarConciliacion = () => (dispatch,getState) => {
     let loglevel = 6
     let runcount = 0
     let stoplevel = 1
-
-    //Construir petición json para backend
-    let stopEjecucion = {
-      "odiUser":odiUser,
-	    "odiPassword":pwUser,
-	    "workRepository":repository,
-	    "loadPlanName":idPlanInstancia,
-      "contexto": context
-    }
-    let idInstance = 0
-    APIInvoker.invokePOST('/odiRest/stopLoadPlan',stopEjecucion, response => {
-      if(response.stoppedRunInformation.odiLoadPlanInstanceId!=undefined){
-        idInstance = response.stoppedRunInformation.odiLoadPlanInstanceId
-        if(idPlanInstancia==idInstance){
-          dispatch(mostrarModal("alert alert-success","Se detuvo la ejecución correctamente :"+idPlanInstancia))
-        }else{
-          toast.error("No se detuvo", {
-            position: toast.POSITION.BOTTOM_RIGHT,
-          })
+    //Construir peticion SOAP
+    var sr = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:odi="xmlns.oracle.com/odi/OdiInvoke/">'+
+               '<soapenv:Header/>'+
+               '<soapenv:Body>'+
+                  '<odi:OdiStopLoadPlanRequest>'+
+                  '   <!--You may enter the following 2 items in any order-->'+
+                  '   <Credentials>'+
+                  '      <!--You may enter the following 3 items in any order-->'+
+                  '      <!--Optional:-->'+
+                  '      <!--Optional:-->'+
+                  '      <OdiUser>'+odiUser+'</OdiUser>'+
+                  '      <OdiPassword>'+pwUser+'</OdiPassword>'+
+                  '      <WorkRepository>'+repository+'</WorkRepository>'+
+                  '   </Credentials>'+
+                  '   <OdiStopLoadPlanRequest>'+
+                  '      <LoadPlanInstanceId>'+idPlanInstancia+'</LoadPlanInstanceId>'+
+                  '      <LoadPlanInstanceRunCount>'+runcount+'</LoadPlanInstanceRunCount>'+
+                  '      <StopLevel>'+stoplevel+'</StopLevel>'+
+                  '   </OdiStopLoadPlanRequest>'+
+                  '</odi:OdiStopLoadPlanRequest>'+
+               '</soapenv:Body>'+
+            '</soapenv:Envelope>';
+    if(xmlhttp){
+      xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4) {
+          if(xmlhttp.status == 200) {
+            var XMLParser = require('react-xml-parser');
+            var xml = new XMLParser().parseFromString(xmlhttp.response);
+            console.log(getState().ejecucionReducer.conciliacion.id);
+            console.log(xml.getElementsByTagName('OdiLoadPlanInstanceId'));
+            if(xml.getElementsByTagName('OdiLoadPlanInstanceId')[0].value==idPlanInstancia){
+              dispatch(mostrarModal("alert alert-success","Se detuvo la ejecución correctamente :"+idPlanInstancia))
+              //toast.success("Se detuvo la ejecución correctamente", {
+              //  position: toast.POSITION.BOTTOM_RIGHT,
+              //})
+              dispatch(cargarComboConciliaciones())
+            }else{
+              toast.error("No se ha podido detener", {
+                position: toast.POSITION.BOTTOM_RIGHT,
+              })
+            }
+          }else{
+            toast.error("No hay conexión con el servicio de ODI", {
+              position: toast.POSITION.BOTTOM_RIGHT
+            })
+          }
         }
       }
-    })
+      xmlhttp.open('POST',configuration.webService.url,true);
+      xmlhttp.send(sr);
+    }else{
+      alert('no existe el objeto xmlhttp');
+    }
   }else{
     toast.error("No se ha ejecutado", {
       position: toast.POSITION.BOTTOM_RIGHT,
