@@ -24,7 +24,17 @@ export const conciliacionFormReducer = (state = initialState,action) =>{
     case CARGAR_CONCILIACION_FORM:
         console.log("conciliacion en reducer ==>")
         console.log(action.conciliacion[0])
-        //if(action.conciliacion[0].transformaciones.length!=0){
+        if(action.conciliacion[0].transformaciones.length!=0){
+          return update(state,{
+              id : {$set: action.conciliacion[0].id},
+              nombre : {$set: action.conciliacion[0].nombre},
+              webservice : {$set: action.conciliacion[0].transformaciones[0].paqueteWs},
+              descripcion : {$set: action.conciliacion[0].descripcion},
+              emailasignado : {$set: action.conciliacion[0].usuarioAsignado},
+              idPolitica : {$set: action.conciliacion[0].idPolitica},
+              nombrePolitica : {$set: action.conciliacion[0].nombrePolitica}
+            })
+        }else{
           return update(state,{
               id : {$set: action.conciliacion[0].id},
               nombre : {$set: action.conciliacion[0].nombre},
@@ -34,17 +44,7 @@ export const conciliacionFormReducer = (state = initialState,action) =>{
               idPolitica : {$set: action.conciliacion[0].idPolitica},
               nombrePolitica : {$set: action.conciliacion[0].nombrePolitica}
             })
-        /*}else{
-          return update(state,{
-              id : {$set: action.conciliacion[0].id},
-              nombre : {$set: action.conciliacion[0].nombre},
-              webservice : {$set: action.conciliacion[0].paquete},
-              descripcion : {$set: action.conciliacion[0].descripcion},
-              emailasignado : {$set: action.conciliacion[0].usuarioAsignado},
-              idPolitica : {$set: action.conciliacion[0].idPolitica},
-              nombrePolitica : {$set: action.conciliacion[0].nombrePolitica}
-            })
-        }*/
+        }
     case LIMPIAR_FORM_CONCILIACION:
         return update(state,{
           id : {$set: 0},

@@ -6,15 +6,17 @@ module.exports ={
     port:"",
     host:"http://localhost:8080/ParametrizadorBackend/api"
   },
-  //Servicio web para ejecución de Conciliaciones o Escenarios
-  //http://ultrabook:8080/WebServiceODIdService/WebServiceODIPortType
-  //http://localhost:83/odiMockup
+  //Configuración de constantes para enviar a WebService de Odi
   webService:{
-    user : "test",
-    pw : "test",
-    workSpace : "",
-    repository : "LOCAL"
+    odiUser : "EQK7054A",
+    odiPassword : "1234567",
+    workRepository : "WRDEV_ASSURANCE1",
+    contexto : "CNTX_DESARROLLO",
+    stopLevel : "IMMEDIATE",
+    runCount : 1,
+    debug : 1
   },
+
   //aplicacion front
   resources:{
     port: 82,

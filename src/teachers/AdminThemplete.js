@@ -1,4 +1,4 @@
-import 'babel-polyfill';
+import 'babel-polyfill'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Toolbar from './Toolbar'
@@ -108,6 +108,9 @@ class AdminThemplete extends React.Component{
                     <When condition={this.props.params.idescenario}>
                       <If condition={this.props.location.pathname.substr(1,15) == 'escenarios/list'}>
                           <IEscenario escenario={this.props.params.idescenario}/>
+                      </If>
+                      <If condition={this.props.location.pathname.substr(1,15) == 'escenarios/edit'}>
+                          <IEscenarioForm registro={this.props.params}/>
                       </If>
                       <If condition={this.props.location.pathname.length == 10}>
                           <IEscenarioForm registro={this.props.params}/>

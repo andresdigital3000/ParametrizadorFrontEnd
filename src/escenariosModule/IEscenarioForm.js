@@ -19,7 +19,7 @@ class IEscenarioForm extends React.Component{
   }
 
   componentDidMount(){
-    console.log("PROPS en foem ==>>")
+    console.log("PROPS en form ==>>")
     console.log(this.props)
     if(this.props.registro!=undefined){
       this.props.cargarEscenario(this.props.registro.idescenario)

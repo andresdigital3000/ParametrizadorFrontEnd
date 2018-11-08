@@ -68,7 +68,7 @@ class IQuery extends React.Component{
               </div>
               <div className="col-sm-8">
                 <label htmlFor='estado'>Estado</label>
-                <p><b>{this.props.state.estado}</b></p>
+                <p><b><If condition={this.props.state.estado.length > 0}>{this.props.state.estado[0].mensaje}</If>&nbsp;</b></p>
               </div>
             </div>
             <hr/>
@@ -114,7 +114,7 @@ const mapStateToProps = (state) =>{
       conciliacion : state.queryReducer.conciliacion,
       conciliaciones : state.queryReducer.conciliaciones,
       querys : state.queryReducer.querys,
-      estado : state.queryReducer.conciliacion.queryAprobaciones.mensaje
+      estado : state.queryReducer.conciliacion.queryAprobaciones
     }
   }
 }

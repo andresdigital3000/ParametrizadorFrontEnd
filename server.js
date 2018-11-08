@@ -34,6 +34,10 @@ function startServer(){
     res.send(body);
   });
 
+  app.post('/ejecucion',function(req,res,err){
+    res.status(102).send({message: "Espere un tris"})
+  });
+
   app.listen(82,function(){
     console.log('Ejemplo app escuchando en puerto 82!');
   });
