@@ -68,7 +68,18 @@ class IQuery extends React.Component{
               </div>
               <div className="col-sm-8">
                 <label htmlFor='estado'>Estado</label>
-                <p><b><If condition={this.props.state.estado.length > 0}>{this.props.state.estado[0].mensaje}</If>&nbsp;</b></p>
+                <p>
+                  <b>
+                    <If condition={this.props.state.estado.length > 0}>
+                        <If condition={this.props.state.estado[0].estadoAprobacion==1}>Aprobado</If>
+                        <If condition={this.props.state.estado[0].estadoAprobacion==0}>Rechazado</If>
+                        &nbsp;-&nbsp;{this.props.state.estado[0].mensaje}
+                    </If>
+                    <If condition={this.props.state.estado.length == 0}>
+                        Pendiente por aprobación
+                    </If>&nbsp;
+                  </b>
+                </p>
               </div>
             </div>
             <hr/>
@@ -94,7 +105,7 @@ class IQuery extends React.Component{
               </div>
               <div className="col-sm-1">
                 {
-                  this.props.state.conciliacion.id!="0" && this.props.state.querys.length>0 ?
+                  this.props.state.conciliacion.id!="0" && this.props.state.querys.length>0 && this.props.state.estado.length==0 ? 
                   <Link to="/querys/aprobar/form" className="btn btn-primary">Aprobar Conciliación</Link> :
                   <p>&nbsp;</p>
                 }

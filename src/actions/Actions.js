@@ -29,6 +29,7 @@ import {
   UPDATE_CONCILIACION_EN_ESCENARIOS,
   ACTUALIZA_PAGINADOR_ESCENARIOS,
   IR_PAGINA_ESCENARIOS,
+  CARGAR_CONCILIACIONES_ESCENARIO,
   CARGA_CONCILIACIONES,
   UPDATE_VALUE_COMBO_CONCILIACIONES,
   CARGA_CONCILIACIONES_RESULTADO,
@@ -601,8 +602,8 @@ const updateTextConciliacionFindRequest = (field,value) => ({
 
 //Realizar la búsqueda
 export const findTextConciliacion = () => (dispatch,getState) => {
+  let txtBuscar = getState().conciliacionReducer.textoBuscar
   if(txtBuscar!=''){
-    let txtBuscar = getState().conciliacionReducer.textoBuscar
     APIInvoker.invokeGET('/conciliaciones/findByAny?texto='+txtBuscar, response => {
       if(Array.isArray(response) == true){
         if(response[0].id!=undefined){
@@ -1311,6 +1312,19 @@ export const moverPaginaEscenarios = (pagina) =>(dispatch,getState) =>{
 const irAPaginaEscenarios = (pagina) =>({
   type : IR_PAGINA_ESCENARIOS,
   pagina : pagina
+})
+
+//Funcion que carga las opciones de Conciliaciones en el combo de la parte superior en querys
+export const cargarConciliacionesEscenario = () =>(dispatch,getState) =>{
+  APIInvoker.invokeGET('/conciliaciones',response => {
+    if(Array.isArray(response) == true){
+      dispatch(cargarConciliacionesenEscenario(response))
+    }
+  })
+}
+const cargarConciliacionesenEscenario = (arrayConciliaciones) => ({
+  type : CARGAR_CONCILIACIONES_ESCENARIO,
+  lista : arrayConciliaciones
 })
 
 

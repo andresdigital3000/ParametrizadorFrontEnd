@@ -3,6 +3,7 @@ import {
   CARGAR_ESCENARIOS,
   ACTUALIZA_PAGINADOR_ESCENARIOS,
   UPDATE_CONCILIACION_EN_ESCENARIOS,
+  CARGAR_CONCILIACIONES_ESCENARIO,
   IR_PAGINA_ESCENARIOS
 } from '../actions/const'
 import update from 'react-addons-update'
@@ -14,7 +15,8 @@ const initialState = {
   textoBuscar:"",
   escenarios:[],
   conciliacion : 0,
-  paginador: []
+  paginador: [],
+  conciliaciones : []
 }
 
 export const escenarioReducer = (state = initialState,action) =>{
@@ -41,6 +43,10 @@ export const escenarioReducer = (state = initialState,action) =>{
             return update(state,{
               conciliacion: {$set: action.value}
            })
+        case CARGAR_CONCILIACIONES_ESCENARIO:
+            return update(state,{
+               conciliaciones: {$set: action.lista}
+            })
       default:
         return state
   }

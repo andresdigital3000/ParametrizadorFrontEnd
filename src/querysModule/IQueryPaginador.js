@@ -24,7 +24,7 @@ class IQueryPaginador extends React.Component{
     let pgFin=9
     return(
         <nav aria-label="Paginar">
-          <If condition = {this.props.state.txtBuscar==''}>
+          <If condition = {this.props.state.txtBuscar.trim()=='' && this.props.state.conciliacionActual.id==0}>
             <ul className="pagination">
               <If condition = {this.props.state.paginador.length <= 10}>
                 <li className="page-item">
@@ -115,7 +115,8 @@ const mapStateToProps = (state) =>{
       paginador : state.queryReducer.paginador,
       paginaActual: state.queryReducer.paginaActual,
       registrosPorPagina: state.queryReducer.registrosPorPagina,
-      txtBuscar: state.queryReducer.textoBuscar
+      txtBuscar: state.queryReducer.textoBuscar,
+      conciliacionActual: state.queryReducer.conciliacion
     }
   }
 }
