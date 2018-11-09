@@ -1,19 +1,22 @@
 module.exports ={
   debugMode: false,
   usarJsonServer : false,
-i  //Api backend
+  //Api backend
   server:{
     port:"",
-    host:"http://localhost:8080/ParametrizadorBackend/api"
+    host:"http://192.168.0.182:7001/ParametrizadorBackend/api"
   },
-  //Servicio web para ejecución de Conciliaciones o Escenarios
+  //Configuración de constantes para enviar a WebService de Odi
   webService:{
-    url : "http://localhost:83/odiMockup",
-    user : "test",
-    pw : "test",
-    workSpace : "",
-    repository : "LOCAL"
+    odiUser : "EQK7054A",
+    odiPassword : "1234567",
+    workRepository : "WRDEV_ASSURANCE1",
+    contexto : "CNTX_DESARROLLO",
+    stopLevel : "IMMEDIATE",
+    runCount : 1,
+    debug : 0
   },
+
   //aplicacion front
   resources:{
     port: 82,

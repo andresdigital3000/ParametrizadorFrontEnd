@@ -2,7 +2,7 @@ var webpack = require('webpack');
 
 module.exports = {
   entry: [
-    'babel-polyfill',
+    'webpack-hot-middleware/client',
     __dirname + "/src/App.js",
   ],
   output: {
@@ -15,7 +15,7 @@ module.exports = {
   },
   module:{
     loaders:[{
-      test: /\.jsx?$|html/,
+      test: /\.jsx?$/,
       exclude: /node_modules/,
       loader: 'babel',
       query:{
@@ -27,6 +27,11 @@ module.exports = {
   plugins: [
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin()
+    new webpack.NoErrorsPlugin(),
+    new webpack.DefinePlugin({
+      'process.env':{
+        'NODE_ENV' :JSON.stringify('noproduction')
+      }
+    })
   ]
 }
