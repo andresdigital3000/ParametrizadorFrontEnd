@@ -48,7 +48,7 @@ class IEscenarioList extends React.Component{
                         QUERY
                       </th>
                       <th>
-                        PARAMETROS
+                        PARÁMETROS
                       </th>
                       <th>
                         ACCIONES

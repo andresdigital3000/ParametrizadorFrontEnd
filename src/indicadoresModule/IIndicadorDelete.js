@@ -64,7 +64,7 @@ class IIndicadorDelete extends React.Component{
                         <input id='descripcion' type='text' className='form-control form-control-lg' value={this.props.state.escenario} disabled />
                       </div>
                       <div className="form-group">
-                        <label htmlFor='objetivo'>Formula</label>
+                        <label htmlFor='objetivo'>Fórmula</label>
                         <input id='objetivo' type='text' className='form-control form-control-lg' value={this.props.state.formula} disabled/>
                       </div>
                   </When>

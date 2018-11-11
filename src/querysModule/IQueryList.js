@@ -43,7 +43,7 @@ class IQueryList extends React.Component{
                         ESCENARIO
                       </th>
                       <th>
-                        CONCILIACION
+                        CONCILIACIÓN
                       </th>
                       <th>
                         ACCIONES

@@ -85,7 +85,7 @@ class IIndicadorForm extends React.Component{
               <small id="nombreHelp" className="form-text text-muted">Que sea descriptivo</small>
             </div>
             <div className="form-group">
-              <label htmlFor='descripcion'>* Descripcion</label>
+              <label htmlFor='descripcion'>* Descripción</label>
               <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite la descripción del indicador' maxLength='200'/>
               <small id="descripcionHelp" className="form-text text-muted">Defina para éste indicador</small>
             </div>
@@ -147,7 +147,7 @@ class IIndicadorForm extends React.Component{
                       <small id="nombreHelp" className="form-text text-muted">Que sea descriptivo</small>
                     </div>
                     <div className="form-group">
-                      <label htmlFor='descripcion'>* Descripcion</label>
+                      <label htmlFor='descripcion'>* Descripción</label>
                       <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite la descripción del indicador' maxLength='200' />
                       <small id="descripcionHelp" className="form-text text-muted">Defina para éste indicador</small>
                     </div>
@@ -172,7 +172,7 @@ class IIndicadorForm extends React.Component{
                           );
                         })}
                       </select>
-                      <small id="nombreHelp" className="form-text text-muted">Parametros o variables, haga click para añadir al final de la fórmula</small>
+                      <small id="nombreHelp" className="form-text text-muted">Parámetros o variables, haga click para añadir al final de la fórmula</small>
                     </div>
                     <div className="form-group">
                       <label htmlFor='formula'>* Fórmula</label>

@@ -34,14 +34,14 @@ class IIndicadorList extends React.Component{
                           NOMBRE
                         </th>
                         <th>
-                          DESCRIPCION
+                          DESCRIPCIÓN
                         </th>
                         <th>
-                          FORMULA
+                          FÓRMULA
                         </th>
                         <th>
                           ESCENARIO
-                        </th>                        
+                        </th>
                         <th>
                           ACCIONES
                         </th>

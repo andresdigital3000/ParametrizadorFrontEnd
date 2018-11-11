@@ -58,12 +58,11 @@ class IEscenarioDelete extends React.Component{
                       </div>
                       <div className="form-group">
                         <label htmlFor='impacto'>Impacto</label>
-                        <If condition={this.props.state.impacto==0}>
-                        <input type='text' className='form-control form-control-lg' value="BAJO" disabled />
-                        </If>
-                        <If condition={this.props.state.impacto==1}>
-                        <input type='text' className='form-control form-control-lg' value="ALTO" disabled />
-                        </If>
+                        <input type='text' className='form-control form-control-lg' value={this.props.state.impacto} disabled />
+                      </div>
+                      <div className="form-group">
+                        <label htmlFor='conciliacion'>Conciliación</label>
+                        <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombreConciliacion} disabled/>
                       </div>
                   </When>
                   <Otherwise>
@@ -97,7 +96,8 @@ const mapStateToProps = (state) =>{
     state: {
       id : state.escenarioFormReducer.id,
       nombre : state.escenarioFormReducer.nombre,
-      impacto : state.escenarioFormReducer.impacto
+      impacto : state.escenarioFormReducer.impacto,
+      nombreConciliacion : state.escenarioFormReducer.nombreConciliacion
     }
   }
 }

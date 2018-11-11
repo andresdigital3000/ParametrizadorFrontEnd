@@ -52,15 +52,15 @@ class IPoliticaDelete extends React.Component{
                   <When condition={this.props.registro}>
                       <input id='id' ref='id' type='hidden' value={this.props.state.id}/>
                       <div className="form-group">
-                        <label htmlFor='nombre'>Nombre</label>
+                        <label htmlFor='nombre'>Código</label>
                         <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} disabled />
                       </div>
                       <div className="form-group">
-                        <label htmlFor='descripcion'>Descripción</label>
+                        <label htmlFor='descripcion'>Nombre</label>
                         <input id='descripcion' type='text' className='form-control form-control-lg' value={this.props.state.descripcion} disabled />
                       </div>
                       <div className="form-group">
-                        <label htmlFor='objetivo'>Objetivo</label>
+                        <label htmlFor='objetivo'>Descripción</label>
                         <input id='objetivo' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.objetivo} disabled/>
                       </div>
                   </When>
