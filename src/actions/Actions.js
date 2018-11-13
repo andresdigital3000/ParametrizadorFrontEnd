@@ -2267,7 +2267,7 @@ export const aprobarRenglonResultado = (idRenglon) => (dispatch,getState) => {
                   estado : "APROBADO"
                 }
                 APIInvoker.invokePUT('/resconciliacion',salvar_aprobado,response2 =>{
-                  if(response2.idPlanInstance!=undefined){
+                  if(response2.codConciliacion!=undefined){
                     dispatch(mostrarModal("alert alert-success","Se aprobó el resultado"))
                     dispatch(refreshListResultado())
                   }else{
@@ -2341,7 +2341,7 @@ export const rechazarRenglonResultado = (idRenglon) => (dispatch,getState) => {
                   estado : "RECHAZADO"
                 }
                 APIInvoker.invokePUT('/resconciliacion',salvar_aprobado,response2 =>{
-                  if(response2.idPlanInstance!=undefined){
+                  if(response2.codConciliacion!=undefined){
                     dispatch(mostrarModal("alert alert-success","Se rechazó el resultado"))
                     dispatch(refreshListResultado())
                   }else{
