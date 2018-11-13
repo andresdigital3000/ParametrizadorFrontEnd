@@ -12,7 +12,8 @@ const initialState = {
   impacto : 'BAJO',
   conciliacion : {"id":0},
   idConciliacion:'',
-  nombreConciliacion:''
+  nombreConciliacion:'',
+  codigo : ''
 }
 
 export const escenarioFormReducer = (state = initialState,action) =>{
@@ -28,7 +29,8 @@ export const escenarioFormReducer = (state = initialState,action) =>{
           impacto : {$set: action.escenario[0].impacto},
           conciliacion : {$set: action.escenario[0].idConciliacion},
           idConciliacion : {$set: action.escenario[0].idConciliacion},
-          nombreConciliacion : {$set: action.escenario[0].nombreConciliacion}
+          nombreConciliacion : {$set: action.escenario[0].nombreConciliacion},
+          codigo : {$set: action.escenario[0].codigo},
         })
     case LIMPIAR_FORM_ESCENARIO:
         return update(state,{
@@ -37,7 +39,8 @@ export const escenarioFormReducer = (state = initialState,action) =>{
           impacto : {$set: 'BAJO'},
           conciliacion: {$set: {"id":"0"}},
           idConciliacion : {$set: ''},
-          nombreConciliacion : {$set: ''}
+          nombreConciliacion : {$set: ''},
+          codigo : {$set: ''}
         })
     case UPDATE_CONCILIACION_EN_ESCENARIOS:
       return update(state,{

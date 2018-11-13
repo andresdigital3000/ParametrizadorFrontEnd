@@ -52,6 +52,8 @@ class Toolbar extends React.Component{
                 </a>
                 <div className="dropdown-menu" aria-labelledby="navbarDropdown2">
                   <Link to="/ejecucion" className="dropdown-item">Conciliaciones</Link>
+                  <Link to="/resultados" className="dropdown-item">Aprobación de resultados</Link>
+
                 </div>
               </li>
               <li className="nav-item dropdown">
@@ -60,9 +62,8 @@ class Toolbar extends React.Component{
                 </a>
                 <div className="dropdown-menu" aria-labelledby="navbarDropdown3">
                   {
-                  //  React.createElement('a',{href:linkRes,className:'dropdown-item'},'Resultados')
-                  }
-                  <Link to="/uc" className="dropdown-item">Resultados</Link>
+                    React.createElement('a',{href:linkRes,className:'dropdown-item'},'Resultados')
+                  }                  
                   <Link to="/indicadores" className="dropdown-item">Indicadores</Link>
                 </div>
               </li>

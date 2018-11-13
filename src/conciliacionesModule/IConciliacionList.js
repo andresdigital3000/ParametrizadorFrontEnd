@@ -51,6 +51,9 @@ class IConciliacionList extends React.Component{
                           ESCENARIOS
                         </th>
                         <th>
+                          REQUIERE APROBACIÓN
+                        </th>
+                        <th>
                             ACCIONES
                         </th>
                     </tr>

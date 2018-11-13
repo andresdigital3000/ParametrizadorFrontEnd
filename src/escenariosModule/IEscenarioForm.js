@@ -70,7 +70,6 @@ class IEscenarioForm extends React.Component{
                 </div>
               </div>
             </header>
-
             <div className="form-group">
               <label htmlFor='nombre'>* Nombre</label>
               <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un nombre de conciiación' autoComplete='off' maxLength='100'/>
@@ -79,11 +78,18 @@ class IEscenarioForm extends React.Component{
             <div className="form-group">
               <label htmlFor='impacto'>Impacto</label>
               <select id='impacto' className='form-control form-control-lg' value={this.props.state.impacto} onChange={this.handleInput.bind(this)}>
-                <option value='BAJO'>Bajo</option>
-                <option value='MEDIO'>Medio</option>
-                <option value='ALTO'>Alto</option>
+                {this.props.state.impactos.map(function(currentValue,index,array){
+                  return(
+                    <option key={index} value={currentValue}>{currentValue}</option>
+                  );
+                })}
               </select>
               <small id="impactoHelp" className="form-text text-muted">Defina impacto para el escenario</small>
+            </div>
+            <div className="form-group">
+              <label htmlFor='codigo'>* Código</label>
+              <input id='codigo' type='text' className='form-control form-control-lg' value={this.props.state.codigo} onChange={this.handleInput.bind(this)} placeholder='Digite el código' autoComplete='off' maxLength='20'/>
+              <small id="codigoHelp" className="form-text text-muted">Código del Escenario</small>
             </div>
             <div className="form-group">
               <label htmlFor='conciliacion'>* Conciliación</label>
@@ -101,7 +107,7 @@ class IEscenarioForm extends React.Component{
               <hr/>
               <Link to={"/escenarios"} onClick={this.props.limpiarFormEscenario.bind(this)} className="btn btn-warning">Regresar</Link>&nbsp;&nbsp;&nbsp;
               {
-                this.props.state.nombre!="" && this.props.state.idConciliacion!="0" ?
+                this.props.state.nombre!="" && this.props.state.idConciliacion!="0" && this.props.state.codigo!="" ?
                 <button onClick={this.props.saveEscenario.bind(this)} className="btn btn-primary">Grabar</button> :
                 <button className="btn btn-primary" disabled>Formulario incompleto</button>
               }
@@ -127,11 +133,18 @@ class IEscenarioForm extends React.Component{
                     <div className="form-group">
                       <label htmlFor='impacto'>Impacto</label>
                       <select id='impacto' className='form-control form-control-lg' value={this.props.state.impacto} onChange={this.handleInput.bind(this)}>
-                        <option value='BAJO'>Bajo</option>
-                        <option value='MEDIO'>Medio</option>
-                        <option value='ALTO'>Alto</option>
+                        {this.props.state.impactos.map(function(currentValue,index,array){
+                          return(
+                            <option key={index} value={currentValue}>{currentValue}</option>
+                          );
+                        })}
                       </select>
                       <small id="impactoHelp" className="form-text text-muted">Defina impacto para el escenario</small>
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor='codigo'>* Código</label>
+                      <input id='codigo' type='text' className='form-control form-control-lg' value={this.props.state.codigo} onChange={this.handleInput.bind(this)} placeholder='Digite el código' autoComplete='off' maxLength='20'/>
+                      <small id="codigoHelp" className="form-text text-muted">Código del Escenario</small>
                     </div>
                     <div className="form-group">
                       <label htmlFor='conciliacion'>* Conciliación</label>
@@ -151,7 +164,7 @@ class IEscenarioForm extends React.Component{
                     <hr/>
                     <button onClick={this.limpiarEscenario.bind(this)} type="button" className="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                     {
-                      this.props.state.idConciliacion!='0' && this.props.state.nombre!="" ?
+                      this.props.state.idConciliacion!='0' && this.props.state.nombre!="" && this.props.state.codigo!="" ?
                       <button onClick={this.grabarEscenario.bind(this)} className="btn btn-primary">Grabar</button> :
                       <button className="btn btn-primary" disabled>Formulario incompleto</button>
                     }
@@ -175,7 +188,9 @@ const mapStateToProps = (state) =>{
       conciliacion : state.escenarioReducer.conciliacion,
       conciliaciones: state.ejecucionReducer.conciliaciones,
       idConciliacion : state.escenarioFormReducer.idConciliacion,
-      nombreConciliacion : state.escenarioFormReducer.nombreConciliacion
+      nombreConciliacion : state.escenarioFormReducer.nombreConciliacion,
+      codigo : state.escenarioFormReducer.codigo,
+      impactos : state.escenarioReducer.impactos
     }
   }
 }

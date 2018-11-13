@@ -80,6 +80,11 @@ class IConciliacionForm extends React.Component{
               <small id="emailHelp" className="form-text text-muted">Defina usuario asignado para la conciliación</small>
             </div>
             <div className="form-group">
+              <label htmlFor='tablaDestino'> Destino</label>
+              <input id='tablaDestino' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.tablaDestino} onChange={this.handleInput.bind(this)} placeholder='Digite la tabla de destino' maxLength='50'/>
+              <small id="destinoHelp" className="form-text text-muted">Defina la tabla de destino</small>
+            </div>
+            <div className="form-group">
               <label htmlFor='politica'>* Política</label>
               <select id="politica" name="politica" className='form-control' value={this.props.state.politica.id} onChange={this.cambioPolitica.bind(this)}>
                 <option key={this.props.state.idPolitica} value={this.props.state.idPolitica}>{this.props.state.nombrePolitica}</option>
@@ -90,6 +95,14 @@ class IConciliacionForm extends React.Component{
                 })}
               </select>
               <small id="nombreHelp" className="form-text text-muted">Para crear conciliación</small>
+            </div>
+            <div className="form-group">
+              <label htmlFor='requiereAprobacion'>* Requiere Aprobación</label>
+              <select id="requiereAprobacion" name="requiereAprobacion" className='form-control' value={this.props.state.requiereAprobacion} onChange={this.handleInput.bind(this)}>
+                <option value="NO">NO</option>
+                <option value="SI">SI</option>
+              </select>
+              <small id="requiereAprobacionHelp" className="form-text text-muted">Seleccione según el caso</small>
             </div>
             <div className="form-group">
               <small>(*) Obligatorio</small>
@@ -135,6 +148,11 @@ class IConciliacionForm extends React.Component{
                       <small id="emailHelp" className="form-text text-muted">Defina usuario asignado para la conciliación</small>
                     </div>
                     <div className="form-group">
+                      <label htmlFor='tablaDestino'> Destino</label>
+                      <input id='tablaDestino' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.tablaDestino} onChange={this.handleInput.bind(this)} placeholder='Digite la tabla de destino' maxLength='50'/>
+                      <small id="destinoHelp" className="form-text text-muted">Defina la tabla de destino</small>
+                    </div>
+                    <div className="form-group">
                       <label htmlFor='politica'>* Política</label>
                       <select id="politica" name="politica" className='form-control' value={this.props.state.politica.id} onChange={this.cambioPolitica.bind(this)}>
                         <option value='0'>Seleccione una</option>
@@ -145,6 +163,14 @@ class IConciliacionForm extends React.Component{
                         })}
                       </select>
                       <small id="nombreHelp" className="form-text text-muted">Para crear conciliación</small>
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor='requiereAprobacion'>* Requiere Aprobación</label>
+                      <select id="requiereAprobacion" name="requiereAprobacion" className='form-control' value={this.props.state.requiereAprobacion} onChange={this.handleInput.bind(this)}>
+                        <option value="NO">NO</option>
+                        <option value="SI">SI</option>
+                      </select>
+                      <small id="requiereAprobacionHelp" className="form-text text-muted">Seleccione según el caso</small>
                     </div>
                   </div>
                   <div className="modal-footer">
@@ -175,10 +201,12 @@ const mapStateToProps = (state) =>{
       webservice : state.conciliacionFormReducer.webservice,
       descripcion : state.conciliacionFormReducer.descripcion,
       emailasignado : state.conciliacionFormReducer.emailasignado,
+      requiereAprobacion : state.conciliacionFormReducer.requiereAprobacion,
       politica : state.conciliacionReducer.politica,
       politicas: state.conciliacionReducer.politicas,
       idPolitica :  state.conciliacionFormReducer.idPolitica,
-      nombrePolitica :  state.conciliacionFormReducer.nombrePolitica
+      nombrePolitica :  state.conciliacionFormReducer.nombrePolitica,
+      tablaDestino : state.conciliacionFormReducer.tablaDestino
     }
   }
 }

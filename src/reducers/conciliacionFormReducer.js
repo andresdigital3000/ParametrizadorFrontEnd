@@ -11,8 +11,10 @@ const initialState = {
   webservice : '',
   emailasignado : '',
   descripcion : '',
+  requiereAprobacion : 'NO',
   idPolitica : '',
-  nombrePolitica : ''
+  nombrePolitica : '',
+  tablaDestino : ''
 }
 
 export const conciliacionFormReducer = (state = initialState,action) =>{
@@ -31,8 +33,10 @@ export const conciliacionFormReducer = (state = initialState,action) =>{
               webservice : {$set: action.conciliacion[0].transformaciones[0].paqueteWs},
               descripcion : {$set: action.conciliacion[0].descripcion},
               emailasignado : {$set: action.conciliacion[0].usuarioAsignado},
+              requiereAprobacion : {$set: action.conciliacion[0].requiereAprobacion},
               idPolitica : {$set: action.conciliacion[0].idPolitica},
-              nombrePolitica : {$set: action.conciliacion[0].nombrePolitica}
+              nombrePolitica : {$set: action.conciliacion[0].nombrePolitica},
+              tablaDestino : {$set: action.conciliacion[0].tablaDestino}
             })
         }else{
           return update(state,{
@@ -41,8 +45,10 @@ export const conciliacionFormReducer = (state = initialState,action) =>{
               webservice : {$set: action.conciliacion[0].paquete},
               descripcion : {$set: action.conciliacion[0].descripcion},
               emailasignado : {$set: action.conciliacion[0].usuarioAsignado},
+              requiereAprobacion : {$set: action.conciliacion[0].requiereAprobacion},
               idPolitica : {$set: action.conciliacion[0].idPolitica},
-              nombrePolitica : {$set: action.conciliacion[0].nombrePolitica}
+              nombrePolitica : {$set: action.conciliacion[0].nombrePolitica},
+              tablaDestino : {$set: action.conciliacion[0].tablaDestino}
             })
         }
     case LIMPIAR_FORM_CONCILIACION:
@@ -52,8 +58,10 @@ export const conciliacionFormReducer = (state = initialState,action) =>{
           webservice : {$set: ''},
           descripcion : {$set: ''},
           emailasignado : {$set: ''},
+          requiereAprobacion : {$set : 'NO'},
           idPolitica : {$set: ''},
-          nombrePolitica : {$set: ''}
+          nombrePolitica : {$set: ''},
+          tablaDestino : {$set: ''}
         })
     default:
         return state

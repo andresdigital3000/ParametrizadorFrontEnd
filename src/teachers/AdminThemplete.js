@@ -14,7 +14,7 @@ import IEscenarioDelete from '../escenariosModule/IEscenarioDelete'
 import IEjecucion from '../ejecucionModule/IEjecucion'
 import IEjecucionE from '../ejecucionModule/IEjecucionE'
 import IProgramar from '../ejecucionModule/IProgramar'
-import IResultados from '../resultadosModule/IResultados'
+import IResultado from '../resultadosModule/IResultado'
 import IIndicador from '../indicadoresModule/IIndicador'
 import IIndicadorForm from '../indicadoresModule/IIndicadorForm'
 import IIndicadorDelete from '../indicadoresModule/IIndicadorDelete'
@@ -141,8 +141,8 @@ class AdminThemplete extends React.Component{
                 <If condition={this.props.location.pathname.substr(1,19) == 'ejecucion/programar'}>
                     <IProgramar/>
                 </If>
-                <If condition={this.props.location.pathname.substr(1,10) == 'resultados'}>
-                    <IResultados/>
+                <If condition={this.props.location.pathname.substr(1,9) == 'resultado'}>
+                    <IResultado/>
                 </If>
                 <If condition={this.props.location.pathname.substr(1,11) == 'indicadores'}>
                   <Choose>

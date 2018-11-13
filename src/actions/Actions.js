@@ -54,6 +54,7 @@ import {
   IR_PAGINA_PARAMETROS,
   UPDATE_ESCENARIO_EN_PARAMETROS,
   CARGA_ESCENARIOS_EN_PARAMETROS,
+  CARGAR_COMBO_IMPACTOS,
   LIMPIAR_CONCILIACION_SELECCIONADA,
   CARGAR_QUERYS,
   UPDATE_QUERYS_FORM_REQUEST,
@@ -70,7 +71,15 @@ import {
   UPDATE_VALUE_COMBO_ESCENARIOS_EJ,
   UPDATE_EJECUTAR_ESCENARIO_FORM_REQUEST,
   UPDATE_QUERYS_APROB_FORM_REQUEST,
-  UPD_LINK_RESULTADOS
+  UPD_LINK_RESULTADOS,
+  CARGAR_RESULTADOS,
+  UPDATE_RESULTADOS_FORM_REQUEST,
+  CARGAR_RESULTADOS_FORM,
+  LIMPIAR_FORM_RESULTADO,
+  UPDATE_CONCILIACION_EN_RESULTADOS,
+  ACTUALIZA_PAGINADOR_RESULTADOS,
+  IR_PAGINA_RESULTADOS,
+  CARGAR_CONCILIACIONES_RESULTADO
 } from './const'
 
 import React from 'react'
@@ -387,14 +396,14 @@ export const updateFormPoliticas = (field,value) => (dispatch,getState) =>{
         let long_value = value.length;
         if(long_value==long_parametro+1){
           if(long_parametro >= long_value){
-            if(value.substr(0,long_value)!=response[0].valor.substr(0,long_value)){
-              toast.error("El nombre de la política debe tener el prefijo '"+response[0].valor+"'", {
+            if(value.substr(0,long_value).toUpperCase()!=response[0].valor.substr(0,long_value).toUpperCase()){
+              toast.error("El nombre de la política debe tener el prefijo '"+response[0].valor.toUpperCase()+"'", {
                 position: toast.POSITION.BOTTOM_RIGHT
               })
             }
           }else{
-            if(value.substr(0,long_parametro)!=response[0].valor.substr(0,long_parametro)){
-              toast.error("El nombre de la política debe tener el prefijo '"+response[0].valor+"'", {
+            if(value.substr(0,long_parametro).toUpperCase()!=response[0].valor.substr(0,long_parametro).toUpperCase()){
+              toast.error("El nombre de la política debe tener el prefijo '"+response[0].valor.toUpperCase()+"'", {
                 position: toast.POSITION.BOTTOM_RIGHT
               })
             }
@@ -428,7 +437,7 @@ export const savePolitica = () => (dispatch,getState)=>{
   APIInvoker.invokeGET('/parametros/findByAny?texto=Prefijo para politicas', responseval => {
     if(responseval[0].valor!=undefined){
       let long_parametro = responseval[0].valor.length;
-      if(politica_salvar.nombre.substr(0,long_parametro)==responseval[0].valor){
+      if(politica_salvar.nombre.substr(0,long_parametro).toUpperCase()==responseval[0].valor.toUpperCase()){
         if(id_politica == 0 || id_politica == undefined){
           APIInvoker.invokePOST('/politicas',politica_salvar,response =>{
             if(response.id!=undefined){
@@ -480,7 +489,7 @@ export const savePolitica = () => (dispatch,getState)=>{
           })
         }
       }else{
-        toast.error("El nombre de la politica debe tener el prefijo "+responseval[0].valor, {
+        toast.error("El nombre de la politica debe tener el prefijo "+responseval[0].valor.toUpperCase(), {
           position: toast.POSITION.BOTTOM_RIGHT
         })
       }
@@ -779,14 +788,14 @@ export const updateFormConciliaciones = (field,value) => (dispatch,getState) =>{
         let long_value = value.length;
         if(long_value==long_parametro+1){
           if(long_parametro >= long_value){
-            if(value.substr(0,long_value)!=response[0].valor.substr(0,long_value)){
-              toast.error("El nombre de la conciliación debe tener el prefijo '"+response[0].valor+"'", {
+            if(value.substr(0,long_value).toUpperCase()!=response[0].valor.substr(0,long_value).toUpperCase()){
+              toast.error("El nombre de la conciliación debe tener el prefijo '"+response[0].valor.toUpperCase()+"'", {
                 position: toast.POSITION.BOTTOM_RIGHT
               })
             }
           }else{
-            if(value.substr(0,long_parametro)!=response[0].valor.substr(0,long_parametro)){
-              toast.error("El nombre de la conciliación debe tener el prefijo '"+response[0].valor+"'", {
+            if(value.substr(0,long_parametro).toUpperCase()!=response[0].valor.substr(0,long_parametro).toUpperCase()){
+              toast.error("El nombre de la conciliación debe tener el prefijo '"+response[0].valor.toUpperCase()+"'", {
                 position: toast.POSITION.BOTTOM_RIGHT
               })
             }
@@ -813,7 +822,7 @@ export const saveConciliacion = () => (dispatch,getState)=>{
     APIInvoker.invokeGET('/parametros/findByAny?texto=Prefijo para conciliaciones', responseval => {
       if(responseval[0].valor!=undefined){
         let long_parametro = responseval[0].valor.length;
-        if(getState().conciliacionFormReducer.nombre.substr(0,long_parametro)==responseval[0].valor){
+        if(getState().conciliacionFormReducer.nombre.substr(0,long_parametro).toUpperCase()==responseval[0].valor.toUpperCase()){
           if(id_conciliacion == 0 || id_conciliacion == undefined){
             //Si es un registro nuevo
             let conciliacion_salvar = {
@@ -821,9 +830,11 @@ export const saveConciliacion = () => (dispatch,getState)=>{
               nombre : getState().conciliacionFormReducer.nombre,
               descripcion : getState().conciliacionFormReducer.descripcion,
               usuarioAsignado : getState().conciliacionFormReducer.emailasignado,
+              requiereAprobacion : getState().conciliacionFormReducer.requiereAprobacion,
               idPolitica : getState().conciliacionReducer.politica.id,
               usuario: getState().loginReducer.profile.userName,
-              paquete: getState().conciliacionFormReducer.webservice
+              paquete: getState().conciliacionFormReducer.webservice,
+              tablaDestino : getState().conciliacionFormReducer.tablaDestino
             }
             let id_grabado=0
             APIInvoker.invokePOST('/conciliaciones',conciliacion_salvar,response =>{
@@ -837,6 +848,10 @@ export const saveConciliacion = () => (dispatch,getState)=>{
                 console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
                 if(response.mensaje=="CT_UQ_TBL_GAI_CONCILIACION_NOMBRE_CONCILIACION"){
                   toast.error("Ya existe otra conciliación con el mismo nombre", {
+                    position: toast.POSITION.BOTTOM_RIGHT
+                  })
+                }else if(response.descripcion=="El paquete ya existe"){
+                  toast.error("El paquete ya se usó con otra conciliación", {
                     position: toast.POSITION.BOTTOM_RIGHT
                   })
                 }else{
@@ -865,9 +880,11 @@ export const saveConciliacion = () => (dispatch,getState)=>{
               nombre : getState().conciliacionFormReducer.nombre,
               descripcion : getState().conciliacionFormReducer.descripcion,
               usuarioAsignado : getState().conciliacionFormReducer.emailasignado,
+              requiereAprobacion : getState().conciliacionFormReducer.requiereAprobacion,
               idPolitica : idPoliticaGrabar,
               nombrePolitica : nombrePoliticaGrabar,
-              paquete: getState().conciliacionFormReducer.webservice
+              paquete: getState().conciliacionFormReducer.webservice,
+              tablaDestino : getState().conciliacionFormReducer.tablaDestino
             }
             APIInvoker.invokePUT('/conciliaciones',conciliacion_salvar,response =>{
               if(response.id!=undefined){
@@ -882,7 +899,7 @@ export const saveConciliacion = () => (dispatch,getState)=>{
             })
           }
         }else{
-          toast.error("El nombre de la conciliación debe tener el prefijo "+responseval[0].valor, {
+          toast.error("El nombre de la conciliación debe tener el prefijo "+responseval[0].valor.toUpperCase(), {
             position: toast.POSITION.BOTTOM_RIGHT
           })
         }
@@ -1146,14 +1163,14 @@ export const updateFormEscenarios = (field,value) => (dispatch,getState) =>{
         let long_value = value.length;
         if(long_value==long_parametro+1){
           if(long_parametro >= long_value){
-            if(value.substr(0,long_value)!=response[0].valor.substr(0,long_value)){
-              toast.error("El nombre del escenario debe tener el prefijo '"+response[0].valor+"'", {
+            if(value.substr(0,long_value).toUpperCase()!=response[0].valor.substr(0,long_value).toUpperCase()){
+              toast.error("El nombre del escenario debe tener el prefijo '"+response[0].valor.toUpperCase()+"'", {
                 position: toast.POSITION.BOTTOM_RIGHT
               })
             }
           }else{
-            if(value.substr(0,long_parametro)!=response[0].valor.substr(0,long_parametro)){
-              toast.error("El nombre del escenario debe tener el prefijo '"+response[0].valor+"'", {
+            if(value.substr(0,long_parametro).toUpperCase()!=response[0].valor.substr(0,long_parametro).toUpperCase()){
+              toast.error("El nombre del escenario debe tener el prefijo '"+response[0].valor.toUpperCase()+"'", {
                 position: toast.POSITION.BOTTOM_RIGHT
               })
             }
@@ -1176,14 +1193,15 @@ export const saveEscenario = () => (dispatch,getState)=>{
   APIInvoker.invokeGET('/parametros/findByAny?texto=Prefijo para escenarios', responseval => {
     if(responseval[0].valor!=undefined){
       let long_parametro = responseval[0].valor.length;
-      if(getState().escenarioFormReducer.nombre.substr(0,long_parametro)==responseval[0].valor){
+      if(getState().escenarioFormReducer.nombre.substr(0,long_parametro).toUpperCase()==responseval[0].valor.toUpperCase()){
           if(id_escenario == 0 || id_escenario == undefined){
             //Si es un escenario nuevo
             let escenario_salvar = {
               nombre : getState().escenarioFormReducer.nombre,
               impacto : getState().escenarioFormReducer.impacto,
               usuario : getState().loginReducer.profile.userName,
-              idConciliacion : getState().escenarioFormReducer.idConciliacion
+              idConciliacion : getState().escenarioFormReducer.idConciliacion,
+              codigo : getState().escenarioFormReducer.codigo
             }
             //, nombreConciliacion : getState().escenarioFormReducer.nombreConciliacion
             APIInvoker.invokePOST('/escenarios',escenario_salvar,response =>{
@@ -1224,7 +1242,8 @@ export const saveEscenario = () => (dispatch,getState)=>{
               impacto : getState().escenarioFormReducer.impacto,
               usuario : getState().loginReducer.profile.userName,
               idConciliacion : idConciliacionGrabar,
-              nombreConciliacion : nombreConciliacionGrabar
+              nombreConciliacion : nombreConciliacionGrabar,
+              codigo : getState().escenarioFormReducer.codigo
             }
             APIInvoker.invokePUT('/escenarios',escenario_salvar,response =>{
               if(response.id!=undefined){
@@ -1246,7 +1265,7 @@ export const saveEscenario = () => (dispatch,getState)=>{
             })
           }
         }else{
-          toast.error("El nombre del escenario debe tener el prefijo "+responseval[0].valor, {
+          toast.error("El nombre del escenario debe tener el prefijo "+responseval[0].valor.toUpperCase(), {
             position: toast.POSITION.BOTTOM_RIGHT
           })
         }
@@ -1300,6 +1319,22 @@ export const borrarEscenario = () => (dispatch,getState) =>{
   })
   dispatch(limpiarFormEscenario(),browserHistory.push('/escenarios'))
 }
+
+//Cargar el combo de impactos en escenarios
+export const cargarImpactos = () =>(dispatch,getState)=>{
+  APIInvoker.invokeGET('/parametros/findByAny?texto=Impacto', response => {
+    let array_opciones = new Array()
+    if(response[0].valor!=undefined){
+      array_opciones = response[0].valor.split(';');
+      dispatch(cargarImpactosCombo(array_opciones))
+    }
+  })
+}
+//Enviando al reducer
+const cargarImpactosCombo = (array_opciones) =>({
+  type : CARGAR_COMBO_IMPACTOS,
+  lista : array_opciones
+})
 
 //Funcion de cambio de pagina
 export const moverPaginaEscenarios = (pagina) =>(dispatch,getState) =>{
@@ -2062,34 +2097,287 @@ const updateFormEjecutarEscenariosRequest = (field,value) => ({
 
 /*
 *  A C C I O N E S  D E  R E S U L T A D O S
-*  para realizar todas las acciones necesarias modulo de resultados
+*  para realizar todas las acciones necesarias del crud de resultados
 */
 
-//Funcion que carga el combo de conciliaciones
-export const cargarComboConciliacionesResultados = () =>(dispatch,getState) =>{
-  APIInvoker.invokeGET('/conciliaciones', response => {
-    if(Array.isArray(response) == true){
-      dispatch(cargarConciliacionesResultados(response))
-    }
-  })
+//Actualizar tecla por tecla el campo de texto del buscador
+export const updateTextFindResultado = (field,value) => (dispatch,getState) =>{
+  dispatch(updateTextResultadoFindRequest(field,value))
 }
-//Envia resultado para llenar el combo a Reducer
-const cargarConciliacionesResultados = (arrayConciliaciones) => ({
-  type : CARGA_CONCILIACIONES_RESULTADO,
-  lista : arrayConciliaciones
-})
-
-export const updateResultados = (field,value) => (dispatch,getState) =>{
-  dispatch(updateComboConciliacionesResultados(field,value))
-}
-
 //Enviar el texto del buscador al reducer store
-const updateComboConciliacionesResultados = (field,value) => ({
-  type : UPDATE_VALUE_COMBO_CONCILIACIONES_RESULTADO,
+const updateTextResultadoFindRequest = (field,value) => ({
+  type : UPDATE_FINDER,
   field : field,
   value: value
 })
+//Realizar la búsqueda
+export const findTextResultado = () => (dispatch,getState) => {
+  let txtBuscar = getState().resultadoReducer.textoBuscar
+  if(txtBuscar!=''){
+    APIInvoker.invokeGET('/resconciliacion/findByAny?texto='+txtBuscar, response => {
+      if(Array.isArray(response) == true){
+        if(response[0].id!=undefined){
+          dispatch(verResultados(response))
+        }else{
+          toast.warn("No se encuentran resultados que cumplan con el criterio de búsqueda", {
+            position: toast.POSITION.BOTTOM_RIGHT
+          })
+          console.log("Error : "+response[0].codigo+" Mensaje: "+response[0].mensaje+": "+response[0].descripcion)
+        }
+      }else{
+        if(response.id!=undefined){
+          dispatch(verResultados(response))
+        }else{
+          console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
+          toast.warn("No se encuentran resultados que cumplan con el criterio de búsqueda", {
+            position: toast.POSITION.BOTTOM_RIGHT
+          })
+        }
+      }
+    })
+  }else{
+    dispatch(moverPaginaResultados(1));
+  }
+}
 
+//Recalcular el paginador de resultados
+export const calculaPaginadorResultados = () => (dispatch,getState) => {
+  let numregs=0
+  //Obtener el numero total de registros antes de filtrar
+  APIInvoker.invokeGET('/resconciliacion/count',response =>{
+    if(!isNaN(response)){
+      numregs=response
+      //Recalcula el paginador
+      let totRegistros = numregs
+      let regPagina = getState().resultadoReducer.registrosPorPagina
+      let totPaginas = Math.ceil(totRegistros / regPagina)
+      let array_paginador = new Array()
+      let offset = 0
+      let regfin = 0
+      for(let i=1;i<=totPaginas;i++){
+        regfin=offset+regPagina-1
+        array_paginador.push({"id":i,"offset":offset})
+        offset=regfin+1
+      }
+      let update_paginador={
+        totalRegistros :  numregs,
+        registrosPorPagina : regPagina,
+        paginador: array_paginador
+      }
+      dispatch(actualizarPaginadorResultados(update_paginador))
+    }else{
+      console.log("Conteo de Registros de resultados no válido")
+    }
+  })
+}
+
+//Envia las variables al store
+const actualizarPaginadorResultados = (array_paginador) =>({
+  type : ACTUALIZA_PAGINADOR_RESULTADOS,
+  lista : array_paginador
+})
+
+//Actualizar el listado de resultado
+export const refreshListResultado = () =>(dispatch,getState) => {
+  let objetoVacio = new Object()
+  APIInvoker.invokeGET('/resconciliacion?estado=POR APROBAR', response => {
+    if(Array.isArray(response) == true){
+      if(response[0].id!=undefined){
+        dispatch(verResultados(response))
+      }else{
+        console.log("Error : "+response[0].codigo+" Mensaje: "+response[0].mensaje+": "+response[0].descripcion)
+        dispatch(antesVerResultados(objetoVacio))
+      }
+    }else{
+      console.log("Error : "+response.codigo+" Mensaje: "+response.mensaje+": "+response.descripcion)
+      dispatch(antesVerResultados(objetoVacio))
+    }
+  })
+}
+
+const antesVerResultados = (resp) => (dispatch,getState) =>{
+  dispatch(calculaPaginadorResultados()),
+  dispatch(verResultados(resp))
+}
+//Enviar la accion de ver resultados al Reducer STORE
+const verResultados = (res) =>({
+  type : CARGAR_RESULTADOS,
+  lista : res
+})
+
+//Funcion de cambio de pagina
+export const moverPaginaResultados = (pagina) =>(dispatch,getState) =>{
+  let NumPagsTotales = getState().resultadoReducer.paginador.length
+  if(pagina > 0 && pagina <= NumPagsTotales){
+    dispatch(irAPaginaResultados(pagina))
+    dispatch(refreshListResultado())
+  }
+}
+const irAPaginaResultados = (pagina) =>({
+  type : IR_PAGINA_RESULTADOS,
+  pagina : pagina
+})
+
+//Funcion que carga las opciones de Conciliaciones en el combo de la parte superior en querys
+export const cargarConciliacionesResultado = () =>(dispatch,getState) =>{
+  APIInvoker.invokeGET('/conciliaciones',response => {
+    if(Array.isArray(response) == true){
+      dispatch(cargarConciliacionesenResultado(response))
+    }
+  })
+}
+const cargarConciliacionesenResultado = (arrayConciliaciones) => ({
+  type : CARGAR_CONCILIACIONES_RESULTADO,
+  lista : arrayConciliaciones
+})
+
+export const aprobarRenglonResultado = (idRenglon) => (dispatch,getState) => {
+  //Paquete asociado al aprobar
+  let paqueteAsociado=0
+  APIInvoker.invokeGET('/parametros/findByAny?texto=Paquete aprobado', response => {
+    if(response[0].valor!=undefined){
+      let paqueteAsociado = response[0].valor
+      //Construir petición json para Backend
+      let startEjecucion = {
+          "odiUser":configuration.webService.odiUser,
+          "odiPassword":configuration.webService.odiPassword,
+          "workRepository":configuration.webService.workRepository,
+          "loadPlanName":paqueteAsociado,
+          "contexto":configuration.webService.contexto
+      }
+      if(paqueteAsociado!=0){
+        if(configuration.webService.debug==1){
+          console.log("REQUEST START LOAD PLAN ===>")
+          console.log(startEjecucion)
+        }
+        APIInvoker.invokePOST('/odiRest/startLoadPlan',startEjecucion, response => {
+            if(configuration.webService.debug==1){
+              console.log("RESPUESTA START REST ==>")
+              console.log(response)
+            }
+            if(response.StartedRunInformation!=undefined){
+              let idInstance=0
+              if(response.StartedRunInformation.OdiLoadPlanInstanceId!=undefined){
+                idInstance = response.StartedRunInformation.OdiLoadPlanInstanceId
+                console.log("Se recibió del WebService el idInstance : "+idInstance)
+              }
+              if(idInstance!=0){
+                let salvar_aprobado ={
+                  id : idRenglon,
+                  estado : "APROBADO"
+                }
+                APIInvoker.invokePUT('/resconciliacion',salvar_aprobado,response2 =>{
+                  if(response2.idPlanInstance!=undefined){
+                    dispatch(mostrarModal("alert alert-success","Se aprobó el resultado"))
+                    dispatch(refreshListResultado())
+                  }else{
+                    toast.error("No fue posible insertar el estado aprobado al resultado", {
+                      position: toast.POSITION.BOTTOM_RIGHT
+                    })
+                  }
+                },error =>{
+                  console.log('No fue posible insertar el estado aprobado al resultado, error invocando /resconciliacion')
+                })
+              }else{
+                toast.error("No se pudo obtener un id de ejecución desde ODI", {
+                  position: toast.POSITION.BOTTOM_RIGHT
+                })
+              }
+            }else{
+              if(response.codigo!=undefined){
+                toast.error("Error ODI: "+response.descripcion, {
+                  position: toast.POSITION.BOTTOM_RIGHT
+                })
+              }else{
+                toast.error("Error General", {
+                  position: toast.POSITION.BOTTOM_RIGHT
+                })
+                console.log(response)
+              }
+            }
+        })
+      }
+    }else{
+      toast.error("Debe parametrizar el paquete a ejecutar al aprobar", {
+        position: toast.POSITION.BOTTOM_RIGHT
+      })
+    }
+  })
+}
+
+export const rechazarRenglonResultado = (idRenglon) => (dispatch,getState) => {
+  //Paquete asociado al aprobar
+  let paqueteAsociado=0
+  APIInvoker.invokeGET('/parametros/findByAny?texto=Paquete no aprobado', response => {
+    if(response[0].valor!=undefined){
+      let paqueteAsociado = response[0].valor
+      //Construir petición json para Backend
+      let startEjecucion = {
+          "odiUser":configuration.webService.odiUser,
+          "odiPassword":configuration.webService.odiPassword,
+          "workRepository":configuration.webService.workRepository,
+          "loadPlanName":paqueteAsociado,
+          "contexto":configuration.webService.contexto
+      }
+      if(paqueteAsociado!=0){
+        if(configuration.webService.debug==1){
+          console.log("REQUEST START LOAD PLAN ===>")
+          console.log(startEjecucion)
+        }
+        APIInvoker.invokePOST('/odiRest/startLoadPlan',startEjecucion, response => {
+            if(configuration.webService.debug==1){
+              console.log("RESPUESTA START REST ==>")
+              console.log(response)
+            }
+            if(response.StartedRunInformation!=undefined){
+              let idInstance=0
+              if(response.StartedRunInformation.OdiLoadPlanInstanceId!=undefined){
+                idInstance = response.StartedRunInformation.OdiLoadPlanInstanceId
+                console.log("Se recibió del WebService el idInstance : "+idInstance)
+              }
+              if(idInstance!=0){
+                let salvar_aprobado ={
+                  id : idRenglon,
+                  estado : "RECHAZADO"
+                }
+                APIInvoker.invokePUT('/resconciliacion',salvar_aprobado,response2 =>{
+                  if(response2.idPlanInstance!=undefined){
+                    dispatch(mostrarModal("alert alert-success","Se rechazó el resultado"))
+                    dispatch(refreshListResultado())
+                  }else{
+                    toast.error("No fue posible insertar el estado rechazado al resultado", {
+                      position: toast.POSITION.BOTTOM_RIGHT
+                    })
+                  }
+                },error =>{
+                  console.log('No fue posible insertar el estado rechazado al resultado, error invocando /resconciliacion')
+                })
+              }else{
+                toast.error("No se pudo obtener un id de ejecución desde ODI", {
+                  position: toast.POSITION.BOTTOM_RIGHT
+                })
+              }
+            }else{
+              if(response.codigo!=undefined){
+                toast.error("Error ODI: "+response.descripcion, {
+                  position: toast.POSITION.BOTTOM_RIGHT
+                })
+              }else{
+                toast.error("Error General", {
+                  position: toast.POSITION.BOTTOM_RIGHT
+                })
+                console.log(response)
+              }
+            }
+        })
+      }
+    }else{
+      toast.error("Debe parametrizar el paquete a ejecutar al aprobar", {
+        position: toast.POSITION.BOTTOM_RIGHT
+      })
+    }
+  })
+}
 
 /*
   *  A C C I O N E S  D E  I N D I C A D O R E S

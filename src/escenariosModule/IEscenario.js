@@ -6,7 +6,7 @@ import IEscenarioFinder from './IEscenarioFinder'
 import IEscenarioPaginador from './IEscenarioPaginador'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { connect } from 'react-redux'
-import { updConciliacion,refreshListEscenario,cargarComboConciliaciones,calculaPaginadorEscenarios, cambioConciliacionesEscenario, cargarConciliacionesEscenario } from '../actions/Actions';
+import { updConciliacion,refreshListEscenario,cargarComboConciliaciones,calculaPaginadorEscenarios, cambioConciliacionesEscenario, cargarConciliacionesEscenario, cargarImpactos } from '../actions/Actions';
 
 class IEscenario extends React.Component{
   constructor(){
@@ -16,6 +16,7 @@ class IEscenario extends React.Component{
   componentWillMount(){
     //console.log("*************Escenario props ===>")
     //console.log(this.props)
+    this.props.cargarImpactos()
     this.props.cargarConciliacionesEscenario()
     if(this.props.escenario != undefined){
       //console.log("ejecutar refresh list "+this.props.escenario)
@@ -40,20 +41,6 @@ class IEscenario extends React.Component{
         <div className="container">
           <header className="head-table">
             <div className="row">
-              <div className="col-sm-4">
-                <label htmlFor='conciliacion'>Conciliación</label>
-                <select id="conciliacion" name="conciliacion" className='form-control' value={this.props.state.conciliacion.id} onChange={this.cambioConciliacionesEscenario.bind(this)}>
-                  <option key="0" value="0">Todas</option>
-                  {this.props.state.conciliaciones.map(function(currentValue,index,array){
-                    return(
-                      <option key={currentValue.id} value={currentValue.id}>{currentValue.nombre}</option>
-                    );
-                  })}
-                </select>
-              </div>
-            </div>
-            <hr/>
-            <div className="row">
                 <br/>
             </div>
             <div className="row">
@@ -71,6 +58,19 @@ class IEscenario extends React.Component{
                   <If condition={this.props.registro==undefined}>
                       <IEscenarioFinder ref="buscador"/>
                   </If>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-sm-4">
+                <label htmlFor='conciliacion'>Conciliación</label>
+                <select id="conciliacion" name="conciliacion" className='form-control' value={this.props.state.conciliacion.id} onChange={this.cambioConciliacionesEscenario.bind(this)}>
+                  <option key="0" value="0">Todas</option>
+                  {this.props.state.conciliaciones.map(function(currentValue,index,array){
+                    return(
+                      <option key={currentValue.id} value={currentValue.id}>{currentValue.nombre}</option>
+                    );
+                  })}
+                </select>
               </div>
             </div>
             <hr/>
@@ -113,5 +113,5 @@ const mapStateToProps = (state) =>{
 }
 
 export default connect (mapStateToProps,{
-  updConciliacion, refreshListEscenario, cargarComboConciliaciones, calculaPaginadorEscenarios, cambioConciliacionesEscenario, cargarConciliacionesEscenario
+  updConciliacion, refreshListEscenario, cargarComboConciliaciones, calculaPaginadorEscenarios, cambioConciliacionesEscenario, cargarConciliacionesEscenario, cargarImpactos
 })(IEscenario)

@@ -4,7 +4,8 @@ import {
   ACTUALIZA_PAGINADOR_ESCENARIOS,
   UPDATE_CONCILIACION_EN_ESCENARIOS,
   CARGAR_CONCILIACIONES_ESCENARIO,
-  IR_PAGINA_ESCENARIOS
+  IR_PAGINA_ESCENARIOS,
+  CARGAR_COMBO_IMPACTOS
 } from '../actions/const'
 import update from 'react-addons-update'
 
@@ -16,7 +17,8 @@ const initialState = {
   escenarios:[],
   conciliacion : 0,
   paginador: [],
-  conciliaciones : []
+  conciliaciones : [],
+  impactos : []
 }
 
 export const escenarioReducer = (state = initialState,action) =>{
@@ -46,6 +48,10 @@ export const escenarioReducer = (state = initialState,action) =>{
         case CARGAR_CONCILIACIONES_ESCENARIO:
             return update(state,{
                conciliaciones: {$set: action.lista}
+            })
+        case CARGAR_COMBO_IMPACTOS:
+            return update(state,{
+               impactos: {$set: action.lista}
             })
       default:
         return state

@@ -42,6 +42,9 @@ class IConciliacionItem extends React.Component{
                     </center>
                   </td>
                   <td>
+                    {currentValue.requiereAprobacion}
+                  </td>
+                  <td>
                     <div className="button-wrap">
                       <Link to={"/conciliaciones/edit/"+currentValue.id} className="btn btn-info"><i className="fa fa-list"/></Link>
                     </div>

@@ -23,7 +23,7 @@ import IEscenarioDelete from './escenariosModule/IEscenarioDelete'
 import IEjecucion from './ejecucionModule/IEjecucion'
 import IEjecucionE from './ejecucionModule/IEjecucionE'
 import IProgramar from './ejecucionModule/IProgramar'
-import IResultados from './resultadosModule/IResultados'
+import IResultado from './resultadosModule/IResultado'
 import IIndicador from './indicadoresModule/IIndicador'
 import IIndicadorList from './indicadoresModule/IIndicadorList'
 import IIndicadorForm from './indicadoresModule/IIndicadorForm'
@@ -75,7 +75,7 @@ render((
             <Route path="/ejecucion" component={IEjecucion}></Route>
             <Route path="/ejecucione" component={IEjecucionE}></Route>
             <Route path="/ejecucion/programar" component={IProgramar}></Route>
-            <Route path="/resultados" component={IResultados}></Route>
+            <Route path="/resultados" component={IResultado}></Route>
             <Route path="/indicadores" component={IIndicador}></Route>
             <Route path="/indicadores/:idindicador" component={IIndicador}></Route>
             <Route path="/indicadores/edit/:idindicador" component={IIndicadorForm}></Route>
