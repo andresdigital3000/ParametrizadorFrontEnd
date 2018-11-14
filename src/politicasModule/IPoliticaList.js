@@ -25,7 +25,7 @@ class IPoliticaList extends React.Component{
     return(
         <div className="row">
           <If condition={Object.entries(this.props.state.politicas).length > 0}>
-            <div className="table-container">
+            <div className="table-container politic-table">
               <div className="table-responsive">
                 <table className="table table-hover">
                   <thead>

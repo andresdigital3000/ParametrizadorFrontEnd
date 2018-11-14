@@ -25,7 +25,7 @@ class IParametroList extends React.Component{
     return(
         <div className="row">
           <If condition={Object.entries(this.props.state.parametros).length > 0}>
-            <div className="table-container">
+            <div className="table-container parameters-table">
               <div className="table-responsive">
                 <table className="table table-hover">
                   <thead>

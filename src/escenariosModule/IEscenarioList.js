@@ -30,7 +30,7 @@ class IEscenarioList extends React.Component{
     return(
       <div className="row">
         <If condition={Object.entries(this.props.state.escenarios).length > 0}>
-          <div className="table-container">
+          <div className="table-container scenary-table">
             <div className="table-responsive">
               <table className="table table-hover">
                 <thead>

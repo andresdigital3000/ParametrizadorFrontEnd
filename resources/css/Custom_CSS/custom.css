@@ -469,14 +469,28 @@ body .modal-dialog .modal-content .modal-body {
     background-color: white;
     table-layout:fixed;
   }
+  .table-container .table th {
+      font-size: .8rem;
+      overflow: hidden;
+      vertical-align: middle;
+  }
   .table-container .table td {
-    max-width: 50px;
+    max-width: 80px;
     word-wrap: break-word;
     text-align: center;
+    font-size: .9rem;
   }
 
   .table-container .table td:nth-child(2) {
     text-align: left;
+  }
+
+  .table-container.politic-table  .table td:nth-child(3), .table-container.parameters-table  .table td:nth-child(3) {
+    text-align: justify;
+  }
+
+  .table-container.scenary-table  .table td:nth-child(2){
+    text-align: center;
   }
 
 
