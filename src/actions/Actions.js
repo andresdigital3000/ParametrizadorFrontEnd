@@ -1773,9 +1773,45 @@ export const salvarProgramacion = () => (dispatch,getState) => {
   let minuto = getState().ejecucionReducer.minuto
   let fecha = getState().ejecucionReducer.fecha
   let paraconciliacion = getState().ejecucionReducer.conciliacion.nombre
-  toast.warn("Grabar hora:minuto="+hora+":"+minuto+" de la fecha="+fecha+", No hay servicio de backend", {
-    position: toast.POSITION.BOTTOM_RIGHT,
+
+  let fechaProgramada = new Date(getState().ejecucionReducer.fecha);
+  fechaProgramada = new Date(fechaProgramada.setDate(fechaProgramada.getDate() + 1));  
+  fechaProgramada.setHours(hora);
+  fechaProgramada.setMinutes(minuto);
+
+  let idTransformacion =  getState().ejecucionReducer.conciliacion.transformaciones[getState().ejecucionReducer.conciliacion.transformaciones.length-1].id;
+  let progConciliacion = {
+    id :idTransformacion,
+    fechaAgendamiento : fechaProgramada
+  }
+
+  APIInvoker.invokePOST('/conciliaciones/progEjecucion',progConciliacion,response =>{
+    console.log('RESPONSE:', response);
+    if(response.id!=undefined){
+   //   id_grabado = response.id
+      $('#modalAdd').modal('hide');
+      dispatch(mostrarModal("alert alert-success","Se grabó la conciliación "+paraconciliacion))
+      dispatch(antesLimpiarFormConciliacion())
+      dispatch(limpiarFormConciliacion())
+    }else{
+      console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
+      /*if(response.mensaje=="CT_UQ_TBL_GAI_CONCILIACION_NOMBRE_CONCILIACION"){
+        toast.error("Ya existe otra conciliación con el mismo nombre", {
+          position: toast.POSITION.BOTTOM_RIGHT
+        })
+      }else{
+        toast.error("Error general al adicionar conciliación", {
+          position: toast.POSITION.BOTTOM_RIGHT
+        })
+      }*/
+    }
+  },error =>{
+    console.log('No se ha podido crear la conciliacion')
   })
+
+ /* toast.warn("Grabar hora:minuto="+hora+":"+minuto+" de la fecha="+fecha+", No hay servicio de backend", {
+    position: toast.POSITION.BOTTOM_RIGHT,
+  })*/
 }
 
 /**

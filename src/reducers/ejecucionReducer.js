@@ -17,8 +17,8 @@ const initialState = {
   escenario : '',
   frecuencia : 0,
   tipoFrecuencia : '',
-  hora : '00',
-  minuto : '00',
+  hora : '0',
+  minuto : '0',
   fecha : ''
 }
 
@@ -33,8 +33,16 @@ export const ejecucionReducer = (state = initialState,action) =>{
           conciliacion : {$set: action.lista}
         })
     case UPDATE_VALUE_COMBO_CONCILIACIONES:
+       let conciliac = JSON.parse(action.value)
+       let fechaAg = new Date();
+       if (conciliac.transformaciones != undefined){
+        fechaAg = new Date(conciliac.transformaciones[conciliac.transformaciones.length - 1].fechaAgendamiento)
+       }
         return update(state,{
-          [action.field] : {$set: JSON.parse(action.value)}
+          [action.field] : {$set: JSON.parse(action.value)},
+          fecha : {$set: fechaAg.toISOString().split('T')[0]},
+          hora : {$set: fechaAg.getHours()},
+          minuto: {$set: fechaAg.getMinutes()}
         })
     case UPDATE_EJECUTAR_CONCILIACIONES_FORM_REQUEST:
         return update(state,{

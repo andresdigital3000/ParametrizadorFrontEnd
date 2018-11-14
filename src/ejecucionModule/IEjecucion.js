@@ -57,7 +57,7 @@ class IEjecucion extends React.Component{
               &nbsp;&nbsp;&nbsp;&nbsp;
               {
                 this.props.state.conciliacion.id!=0 && this.props.state.conciliacion!='' && this.props.state.conciliacion!={"id":0,"nombre":"Ninguna"} ?
-                <Link to="/uc" className='btn btn-primary'>Programar Ejecución</Link> :
+                <Link to="/ejecucion/programar" className='btn btn-primary'>Programar Ejecución</Link> :
                 <button className='btn btn-primary' disabled>Programar Ejecución</button>
               }
             </div>

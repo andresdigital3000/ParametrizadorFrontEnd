@@ -4,7 +4,7 @@ module.exports ={
   //Api backend
   server:{
     port:"",
-    host:"http://localhost:8080/ParametrizadorBackend/api"
+    host:"http://localhost:7001/ParametrizadorBackend/api"
   },
   //Configuración de constantes para enviar a WebService de Odi
   webService:{
