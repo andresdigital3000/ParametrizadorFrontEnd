@@ -33,7 +33,19 @@ class IProgramar extends React.Component{
               </div>
             </header>
             <div className="form-group">
-              <label htmlFor='fechainicia'>Hora : Minuto</label><br/>
+              
+              <div className='row'>
+                <div className='col-sm-5'>
+                <label htmlFor='fechainicia'>Hora</label><br/>
+                </div>
+                <div className='col-sm-2'>
+                &nbsp;:&nbsp;
+                </div>
+                <div className='col-sm-5'>
+                <label htmlFor='fechainicia'>Minuto</label><br/>
+                </div>
+                <div className='col-sm-3'></div>
+              </div>
               <div className='row'>
                 <div className='col-sm-5'>
                   <select className='form-control' id='hora' value={this.props.state.hora} onChange={this.handleInput.bind(this)}>

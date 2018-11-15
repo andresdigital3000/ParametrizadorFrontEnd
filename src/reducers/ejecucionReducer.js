@@ -36,14 +36,17 @@ export const ejecucionReducer = (state = initialState,action) =>{
        let conciliac = JSON.parse(action.value)
        let fechaAg = new Date();
        if (conciliac.transformaciones != undefined){
-        fechaAg = new Date(conciliac.transformaciones[conciliac.transformaciones.length - 1].fechaAgendamiento)
+         if (conciliac.transformaciones[conciliac.transformaciones.length - 1].fechaAgendamiento != null){
+            fechaAg = new Date(conciliac.transformaciones[conciliac.transformaciones.length - 1].fechaAgendamiento)
+         } else fechaAg = null;
        }
-        return update(state,{
+        return update(state,
+          {
           [action.field] : {$set: JSON.parse(action.value)},
-          fecha : {$set: fechaAg.toISOString().split('T')[0]},
-          hora : {$set: fechaAg.getHours()},
-          minuto: {$set: fechaAg.getMinutes()}
-        })
+          fecha : {$set: fechaAg != undefined? fechaAg.toISOString().split('T')[0]: null},
+          hora : {$set: fechaAg != null? fechaAg.getHours():null},
+          minuto: {$set: fechaAg != null? fechaAg.getMinutes(): null}
+          })
     case UPDATE_EJECUTAR_CONCILIACIONES_FORM_REQUEST:
         return update(state,{
           [action.field] : {$set: action.value}
