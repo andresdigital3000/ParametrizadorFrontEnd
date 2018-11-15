@@ -1500,11 +1500,21 @@ export const doEjecutarConciliacion = () => (dispatch,getState) => {
 	      "odiPassword":configuration.webService.odiPassword,
 	      "workRepository":configuration.webService.workRepository,
 	      "loadPlanName":paqueteAsociado,
-        "contexto":configuration.webService.contexto
+        "contexto":configuration.webService.contexto,
+        "params":[
+          {
+            "nombre":"GLOBAL.V_CTL_PAQUETE",
+            "valor":"JP_NO_EXISTE"
+          },
+          {
+            "nombre":"GLOBAL.V_CTL_SESION",
+            "valor":"0"
+          }
+        ]
     }
     if(paqueteAsociado!=0){
       if(configuration.webService.debug==1){
-        console.log("REQUEST START LOAD PLAN ===>")
+        console.log("REQUEST1 START LOAD PLAN ===>")
         console.log(startEjecucion)
       }
       APIInvoker.invokePOST('/odiRest/startLoadPlan',startEjecucion, response => {
@@ -1589,11 +1599,21 @@ export const doEjecutarConciliacion = () => (dispatch,getState) => {
       	      "odiPassword":configuration.webService.odiPassword,
       	      "workRepository":configuration.webService.workRepository,
       	      "loadPlanName":paqueteAsociado,
-              "contexto":configuration.webService.contexto
+              "contexto":configuration.webService.contexto,
+              "params":[
+                {
+                  "nombre":"GLOBAL.V_CTL_PAQUETE",
+                  "valor":"JP_NO_EXISTE"
+                },
+                {
+                  "nombre":"GLOBAL.V_CTL_SESION",
+                  "valor":"0"
+                }
+              ]
           }
           if(paqueteAsociado!=0){
             if(configuration.webService.debug==1){
-              console.log("REQUEST START LOAD PLAN ===>")
+              console.log("REQUEST2 START LOAD PLAN ===>")
               console.log(startEjecucion)
             }
             APIInvoker.invokePOST('/odiRest/startLoadPlan',startEjecucion, response => {
@@ -1775,7 +1795,7 @@ export const salvarProgramacion = () => (dispatch,getState) => {
   let paraconciliacion = getState().ejecucionReducer.conciliacion.nombre
 
   let fechaProgramada = new Date(getState().ejecucionReducer.fecha);
-  fechaProgramada = new Date(fechaProgramada.setDate(fechaProgramada.getDate() + 1));  
+  fechaProgramada = new Date(fechaProgramada.setDate(fechaProgramada.getDate() + 1));
   fechaProgramada.setHours(hora);
   fechaProgramada.setMinutes(minuto);
 
@@ -2274,14 +2294,33 @@ export const aprobarRenglonResultado = (idRenglon) => (dispatch,getState) => {
     if(response[0].valor!=undefined){
       let paqueteAsociado = response[0].valor
       //Construir petición json para Backend
-      let startEjecucion = {
-          "odiUser":configuration.webService.odiUser,
-          "odiPassword":configuration.webService.odiPassword,
-          "workRepository":configuration.webService.workRepository,
-          "loadPlanName":paqueteAsociado,
-          "contexto":configuration.webService.contexto
-      }
+
+
       if(paqueteAsociado!=0){
+        APIInvoker.invokeGET('/resconciliacion/'+idRenglon, responseResConciliacion => {
+          let paramCodConciliacion = responseResConciliacion.codConciliacion
+          let paramIdEjecucion = responseResConciliacion.idEjecucion
+          let startEjecucion = {
+              "odiUser":configuration.webService.odiUser,
+              "odiPassword":configuration.webService.odiPassword,
+              "workRepository":configuration.webService.workRepository,
+              "loadPlanName":paqueteAsociado,
+              "contexto":configuration.webService.contexto,
+              "params":[
+                {
+                  "nombre":"PRY_GAI.V_0553_COD_CONCILIACION",
+                  "valor":paramCodConciliacion
+                },
+                {
+                  "nombre":"PRY_GAI.V_0553_SESION",
+                  "valor":paramIdEjecucion
+                },
+                {
+                  "nombre":"PRY_GAI.V_0553_ESTADO",
+                  "valor":"1"
+                }
+              ]
+          }
         if(configuration.webService.debug==1){
           console.log("REQUEST START LOAD PLAN ===>")
           console.log(startEjecucion)
@@ -2296,24 +2335,13 @@ export const aprobarRenglonResultado = (idRenglon) => (dispatch,getState) => {
               if(response.StartedRunInformation.OdiLoadPlanInstanceId!=undefined){
                 idInstance = response.StartedRunInformation.OdiLoadPlanInstanceId
                 console.log("Se recibió del WebService el idInstance : "+idInstance)
+                toast.success("Se envio la solicitud de aprobacion exitosamente")
               }
               if(idInstance!=0){
                 let salvar_aprobado ={
                   id : idRenglon,
                   estado : "APROBADO"
                 }
-                APIInvoker.invokePUT('/resconciliacion',salvar_aprobado,response2 =>{
-                  if(response2.codConciliacion!=undefined){
-                    dispatch(mostrarModal("alert alert-success","Se aprobó el resultado"))
-                    dispatch(refreshListResultado())
-                  }else{
-                    toast.error("No fue posible insertar el estado aprobado al resultado", {
-                      position: toast.POSITION.BOTTOM_RIGHT
-                    })
-                  }
-                },error =>{
-                  console.log('No fue posible insertar el estado aprobado al resultado, error invocando /resconciliacion')
-                })
               }else{
                 toast.error("No se pudo obtener un id de ejecución desde ODI", {
                   position: toast.POSITION.BOTTOM_RIGHT
@@ -2331,8 +2359,10 @@ export const aprobarRenglonResultado = (idRenglon) => (dispatch,getState) => {
                 console.log(response)
               }
             }
+          })
         })
       }
+
     }else{
       toast.error("Debe parametrizar el paquete a ejecutar al aprobar", {
         position: toast.POSITION.BOTTOM_RIGHT
@@ -2356,6 +2386,30 @@ export const rechazarRenglonResultado = (idRenglon) => (dispatch,getState) => {
           "contexto":configuration.webService.contexto
       }
       if(paqueteAsociado!=0){
+        APIInvoker.invokeGET('/resconciliacion/'+idRenglon, responseResConciliacion => {
+          let paramCodConciliacion = responseResConciliacion.codConciliacion
+          let paramIdEjecucion = responseResConciliacion.idEjecucion
+          let startEjecucion = {
+              "odiUser":configuration.webService.odiUser,
+              "odiPassword":configuration.webService.odiPassword,
+              "workRepository":configuration.webService.workRepository,
+              "loadPlanName":paqueteAsociado,
+              "contexto":configuration.webService.contexto,
+              "params":[
+                {
+                  "nombre":"PRY_GAI.V_0553_COD_CONCILIACION",
+                  "valor":paramCodConciliacion
+                },
+                {
+                  "nombre":"PRY_GAI.V_0553_SESION",
+                  "valor":paramIdEjecucion
+                },
+                {
+                  "nombre":"PRY_GAI.V_0553_ESTADO",
+                  "valor":"0"
+                }
+              ]
+          }
         if(configuration.webService.debug==1){
           console.log("REQUEST START LOAD PLAN ===>")
           console.log(startEjecucion)
@@ -2369,29 +2423,14 @@ export const rechazarRenglonResultado = (idRenglon) => (dispatch,getState) => {
               let idInstance=0
               if(response.StartedRunInformation.OdiLoadPlanInstanceId!=undefined){
                 idInstance = response.StartedRunInformation.OdiLoadPlanInstanceId
-                console.log("Se recibió del WebService el idInstance : "+idInstance)
+                console.log("Se recibió del WebService el idInstance : "+ idInstance)
+                toast.success("Se envio la solicitud de rechazo exitosamente")
               }
               if(idInstance!=0){
                 let salvar_aprobado ={
                   id : idRenglon,
                   estado : "RECHAZADO"
                 }
-                APIInvoker.invokePUT('/resconciliacion',salvar_aprobado,response2 =>{
-                  if(response2.codConciliacion!=undefined){
-                    dispatch(mostrarModal("alert alert-success","Se rechazó el resultado"))
-                    dispatch(refreshListResultado())
-                  }else{
-                    toast.error("No fue posible insertar el estado rechazado al resultado", {
-                      position: toast.POSITION.BOTTOM_RIGHT
-                    })
-                  }
-                },error =>{
-                  console.log('No fue posible insertar el estado rechazado al resultado, error invocando /resconciliacion')
-                })
-              }else{
-                toast.error("No se pudo obtener un id de ejecución desde ODI", {
-                  position: toast.POSITION.BOTTOM_RIGHT
-                })
               }
             }else{
               if(response.codigo!=undefined){
@@ -2405,6 +2444,7 @@ export const rechazarRenglonResultado = (idRenglon) => (dispatch,getState) => {
                 console.log(response)
               }
             }
+          })
         })
       }
     }else{
