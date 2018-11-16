@@ -835,13 +835,18 @@ export const saveConciliacion = () => (dispatch,getState)=>{
               }else{
                 console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
                 if(response.mensaje=="CT_UQ_TBL_GAI_CONCILIACION_NOMBRE_CONCILIACION"){
-                  toast.error("Ya existe otra conciliación con el mismo nombre", {
-                    position: toast.POSITION.BOTTOM_RIGHT
-                  })
-                }else{
-                  toast.error("Error general al adicionar conciliación", {
-                    position: toast.POSITION.BOTTOM_RIGHT
-                  })
+                   toast.error("Ya existe otra conciliación con el mismo nombre", {
+                   position: toast.POSITION.BOTTOM_RIGHT
+                 })
+               }else if(response.descripcion=="El paquete ya existe"){
+                   toast.error("El paquete ya se usó con otra conciliación", {
+                   position: toast.POSITION.BOTTOM_RIGHT
+                 })
+               }else{
+                 toast.error("Error general al adicionar conciliación", {
+                   position: toast.POSITION.BOTTOM_RIGHT
+                 })
+
                 }
               }
             },error =>{
