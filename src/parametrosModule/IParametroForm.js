@@ -114,7 +114,7 @@ class IParametroForm extends React.Component{
             </If>
             <div className="form-group">
               <label htmlFor='valor'>* Valor</label>
-              <textarea id='valor' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.valor} onChange={this.handleInput.bind(this)} placeholder='Qué valor posee el parámetro' maxLength='200'/>
+              <textarea id='valor' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.valor} onChange={this.handleInput.bind(this)} placeholder='Qué valor posee el parámetro' maxLength='1000'/>
               <small id="valorHelp" className="form-text text-muted">Dé un valor al parámetro</small>
             </div>
             <If condition={this.props.state.tipo!='SISTEMA'}>

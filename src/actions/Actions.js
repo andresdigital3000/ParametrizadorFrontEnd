@@ -2944,6 +2944,7 @@ export const refreshListParametro = (resp) =>(dispatch,getState) => {
       let regInicial = 0
       //Todos los registros de parametros
       let pagActual = getState().parametroReducer.paginaActual
+      //let tipo = getState().parametroReducer.
       if(getState().parametroReducer.paginador.length>0){
         regInicial = getState().parametroReducer.paginador[pagActual-1].offset
       }
