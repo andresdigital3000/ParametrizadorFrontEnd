@@ -8,7 +8,7 @@ import {
   ACTUALIZA_PAGINADOR_PARAMETROS,
   IR_PAGINA_PARAMETROS,
   UPDATE_ESCENARIO_EN_PARAMETROS,
-  CARGA_ESCENARIOS_EN_PARAMETROS
+  CARGA_CONCILIACIONES_EN_PARAMETROS
 } from '../actions/const'
 import update from 'react-addons-update'
 
@@ -48,7 +48,7 @@ export const parametroReducer = (state = initialState,action) =>{
       return update(state,{
         escenario: {$set: JSON.parse(action.value)}
       })
-    case CARGA_ESCENARIOS_EN_PARAMETROS:
+    case CARGA_CONCILIACIONES_EN_PARAMETROS:
       return update(state,{
         escenarios: {$set: action.lista}
       })

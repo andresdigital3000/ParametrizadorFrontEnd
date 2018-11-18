@@ -2,7 +2,7 @@ import {
   UPDATE_PARAMETROS_FORM_REQUEST,
   CARGAR_PARAMETRO_FORM,
   LIMPIAR_FORM_PARAMETRO,
-  CARGA_ESCENARIOS_EN_PARAMETROS
+  CARGA_CONCILIACIONES_EN_PARAMETROS
 } from '../actions/const'
 import update from 'react-addons-update'
 
@@ -39,7 +39,7 @@ export const parametroFormReducer = (state = initialState,action) =>{
           descripcion : {$set: ''},
           escenario : {$set : 0}
         })
-    case CARGA_ESCENARIOS_EN_PARAMETROS:
+    case CARGA_CONCILIACIONES_EN_PARAMETROS:
         return update(state,{
           escenarios: {$set: action.lista}
         })

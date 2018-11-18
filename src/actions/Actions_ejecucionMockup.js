@@ -52,7 +52,7 @@ import {
   CARGAR_PARAMETRO_FORM,
   IR_PAGINA_PARAMETROS,
   UPDATE_ESCENARIO_EN_PARAMETROS,
-  CARGA_ESCENARIOS_EN_PARAMETROS,
+  CARGA_CONCILIACIONES_EN_PARAMETROS,
   LIMPIAR_CONCILIACION_SELECCIONADA,
   CARGAR_QUERYS,
   UPDATE_QUERYS_FORM_REQUEST,
@@ -2689,16 +2689,17 @@ const irAPaginaParametros = (pagina) =>({
 })
 
 //Funcion que carga el combo de escenarios
-export const cargarEscenariosenParametros = () =>(dispatch,getState) =>{
-  APIInvoker.invokeGET('/escenarios', response => {
+export const cargarListadoEnParametros = () =>(dispatch,getState) =>{
+  let paramTipo = getState().parametroFormReducer.tipo
+  APIInvoker.invokeGET('/' + paramTipo, response => {
     if(Array.isArray(response) == true){
-      dispatch(cargarEscenPar(response))
+      dispatch(cargarListadoParametros(response))
     }
   })
 }
 //Envia resultado para llenar el combo a Reducer
-const cargarEscenPar = (arrayEscenarios) => ({
-  type : CARGA_ESCENARIOS_EN_PARAMETROS,
+const cargarListadoParametros = (arrayEscenarios) => ({
+  type : CARGA_CONCILIACIONES_EN_PARAMETROS,
   lista : arrayEscenarios
 })
 

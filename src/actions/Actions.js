@@ -53,7 +53,7 @@ import {
   CARGAR_PARAMETRO_FORM,
   IR_PAGINA_PARAMETROS,
   UPDATE_ESCENARIO_EN_PARAMETROS,
-  CARGA_ESCENARIOS_EN_PARAMETROS,
+  CARGA_CONCILIACIONES_EN_PARAMETROS,
   CARGAR_COMBO_IMPACTOS,
   LIMPIAR_CONCILIACION_SELECCIONADA,
   CARGAR_QUERYS,
@@ -2820,7 +2820,7 @@ const cargarEscenarios = (arrayEscenarios) => ({
 
 //Funcion que carga el combo de parametros
 export const cargarComboParametros = (idEscenario) =>(dispatch,getState) =>{
-  APIInvoker.invokeGET('/parametros/padre?tipo=escenario&codpadre='+idEscenario, response => {
+  APIInvoker.invokeGET('/parametros/padre?tipo=conciliaciones&codpadre='+idEscenario, response => {
     if(Array.isArray(response) == true){
       dispatch(cargarParametros(response))
     }
@@ -3018,7 +3018,7 @@ export const saveParametro = () => (dispatch,getState)=>{
   let id_parametro = getState().parametroFormReducer.id
   //Si es un registro nuevo
   let codPadre = 0
-  if(getState().parametroFormReducer.tipo=="ESCENARIO"){
+  if(getState().parametroFormReducer.tipo=="CONCILIACION"){
     codPadre = getState().parametroFormReducer.escenario
   }
   let parametro_salvar = {
@@ -3148,16 +3148,17 @@ const irAPaginaParametros = (pagina) =>({
 })
 
 //Funcion que carga el combo de escenarios
-export const cargarEscenariosenParametros = () =>(dispatch,getState) =>{
-  APIInvoker.invokeGET('/escenarios', response => {
+export const cargarListadoEnParametros = () =>(dispatch,getState) =>{
+  let paramTipo = "conciliaciones" //getState().parametroFormReducer.tipo
+  APIInvoker.invokeGET('/' + paramTipo, response => {
     if(Array.isArray(response) == true){
-      dispatch(cargarEscenPar(response))
+      dispatch(cargarListadoParametros(response))
     }
   })
 }
 //Envia resultado para llenar el combo a Reducer
-const cargarEscenPar = (arrayEscenarios) => ({
-  type : CARGA_ESCENARIOS_EN_PARAMETROS,
+const cargarListadoParametros = (arrayEscenarios) => ({
+  type : CARGA_CONCILIACIONES_EN_PARAMETROS,
   lista : arrayEscenarios
 })
 

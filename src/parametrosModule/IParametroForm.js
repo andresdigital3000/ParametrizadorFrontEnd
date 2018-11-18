@@ -4,7 +4,7 @@ import APIInvoker from '../utils/APIInvoker'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { Link } from 'react-router';
 import { connect } from 'react-redux'
-import { updateFormParametros, saveParametro, cargarParametro, limpiarFormParametro, refreshListParametro, cargarEscenariosenParametros } from '../actions/Actions';
+import { updateFormParametros, saveParametro, cargarParametro, limpiarFormParametro, refreshListParametro, cargarListadoEnParametros } from '../actions/Actions';
 
 //import Select from 'react-select';
 //import 'react-select/dist/react-select.css';
@@ -16,7 +16,7 @@ class IParametroForm extends React.Component{
 
   componentWillMount(){
     //Cargar combo de esecenarios
-    this.props.cargarEscenariosenParametros()
+    this.props.cargarListadoEnParametros()
   }
 
   componentDidMount(){
@@ -72,15 +72,15 @@ class IParametroForm extends React.Component{
                 <select id='tipo' value={this.props.state.tipo} className='form-control form-control-lg' onChange={this.handleInput.bind(this)}>
                   <option value=''>Seleccione uno</option>
                   <option value='GENERAL'>GENERAL</option>
-                  <option value='ESCENARIO'>ESCENARIO</option>
+                  <option value='CONCILIACION'>CONCILIACION</option>
                 </select>
                 <small id="tipoHelp" className="form-text text-muted">Clasifique el tipo de parámetro</small>
               </div>
               <div className="form-group">
                 {
                   this.props.state.tipo!='' && this.props.state.tipo!='GENERAL' ?
-                  <label htmlFor='escenario'>* Escenario</label> :
-                  <label htmlFor='escenario'>Escenario</label>
+                  <label htmlFor='escenario'>* Listado</label> :
+                  <label htmlFor='escenario'>Listado</label>
                 }
                 {
                   this.props.state.tipo!='' && this.props.state.tipo!='GENERAL' ?
@@ -135,14 +135,14 @@ class IParametroForm extends React.Component{
               (*) Obligatorio
               <hr/>
               <Link to={"/parametros"} onClick={this.props.limpiarFormParametro.bind(this)} className="btn btn-warning">Regresar</Link>&nbsp;&nbsp;&nbsp;
-              <If condition={this.props.state.tipo != 'ESCENARIO'}>
+              <If condition={this.props.state.tipo != 'CONCILIACION'}>
                 {
                   this.props.state.parametro!="" && this.props.state.valor!="" ?
                   <button onClick={this.grabarParametro.bind(this)} className="btn btn-primary">Grabar</button> :
                   <button className="btn btn-primary"  disabled>Formulario incompleto</button>
                 }
               </If>
-              <If condition={this.props.state.tipo == 'ESCENARIO'}>
+              <If condition={this.props.state.tipo == 'CONCILIACION'}>
                 {
                   this.props.state.escenario!=undefined && this.props.state.escenario!="" && this.props.state.escenario!=0 && this.props.state.parametro!="" && this.props.state.valor!="" ?
                   <button onClick={this.grabarParametro.bind(this)} className="btn btn-primary">Grabar</button> :
@@ -169,15 +169,15 @@ class IParametroForm extends React.Component{
                       <select id='tipo' name='tipo' className='form-control form-control-lg' onChange={this.handleInput.bind(this)}>
                         <option value=''>Seleccione uno</option>
                         <option value='GENERAL'>GENERAL</option>
-                        <option value='ESCENARIO'>ESCENARIO</option>
+                        <option value='CONCILIACION'>CONCILIACION</option>
                       </select>
                       <small id="tipoHelp" className="form-text text-muted">Clasifique el tipo de parámetro</small>
                     </div>
                     <div className="form-group">
                       {
                         this.props.state.tipo!='' && this.props.state.tipo!='GENERAL' ?
-                        <label htmlFor='escenario'>* Escenario</label> :
-                        <label htmlFor='escenario'>Escenario</label>
+                        <label htmlFor='escenario'>* Listado</label> :
+                        <label htmlFor='escenario'>Listado</label>
                       }
                       {
                         this.props.state.tipo!='' && this.props.state.tipo!='GENERAL' ?
@@ -213,14 +213,14 @@ class IParametroForm extends React.Component{
                       (*) Obligatorio
                       <hr/>
                       <button onClick={this.limpiarParametro.bind(this)} type="button" className="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                      <If condition={this.props.state.tipo != 'ESCENARIO'}>
+                      <If condition={this.props.state.tipo != 'CONCILIACION'}>
                         {
                           this.props.state.parametro!="" && this.props.state.valor!="" ?
                           <button onClick={this.grabarParametro.bind(this)} className="btn btn-primary">Grabar</button> :
                           <button className="btn btn-primary"  disabled>Formulario incompleto</button>
                         }
                       </If>
-                      <If condition={this.props.state.tipo == 'ESCENARIO'}>
+                      <If condition={this.props.state.tipo == 'CONCILIACION'}>
                         {
                           this.props.state.escenario!="" && this.props.state.escenario!=0 && this.props.state.parametro!="" && this.props.state.valor!="" ?
                           <button onClick={this.grabarParametro.bind(this)} className="btn btn-primary">Grabar</button> :
@@ -253,5 +253,5 @@ const mapStateToProps = (state) =>{
   }
 }
 export default connect (mapStateToProps,{
-  updateFormParametros, saveParametro, cargarParametro, limpiarFormParametro, refreshListParametro, cargarEscenariosenParametros
+  updateFormParametros, saveParametro, cargarParametro, limpiarFormParametro, refreshListParametro, cargarListadoEnParametros
 })(IParametroForm)
