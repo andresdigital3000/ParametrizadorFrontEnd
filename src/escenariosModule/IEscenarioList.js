@@ -36,6 +36,9 @@ class IEscenarioList extends React.Component{
                 <thead>
                   <tr>
                       <th>
+                        CODIGO
+                      </th>
+                      <th>
                         NOMBRE
                       </th>
                       <th>

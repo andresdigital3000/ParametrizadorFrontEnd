@@ -26,6 +26,9 @@ class IEscenarioItem extends React.Component{
                     {currentValue.nombre}
                   </td>
                   <td>
+                    {currentValue.descripcion}
+                  </td>
+                  <td>
                     {currentValue.impacto}
                   </td>
                   <td>
