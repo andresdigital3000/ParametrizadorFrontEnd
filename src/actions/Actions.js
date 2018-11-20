@@ -406,15 +406,15 @@ export const updateFormPoliticas = (field, value) => (dispatch, getState) => {
                 if (long_value == long_parametro + 1) {
                     if (long_parametro >= long_value) {
                         if (value.substr(0, long_value).toUpperCase() != response[0].valor.substr(0, long_value).toUpperCase()) {
-                            toast.error("El nombre de la política debe tener el prefijo - '" + response[0].valor.toUpperCase() + "'", {
-                                position: toast.POSITION.BOTTOM_RIGHT
-                            })
+                            //toast.error("El nombre de la política debe tener el prefijo - '" + response[0].valor.toUpperCase() + "'", {
+                            //    position: toast.POSITION.BOTTOM_RIGHT
+                            //})
                         }
                     } else {
                         if (value.substr(0, long_parametro).toUpperCase() != response[0].valor.substr(0, long_parametro).toUpperCase()) {
-                            toast.error("El nombre de la política debe tener el prefijo - '" + response[0].valor.toUpperCase() + "'", {
-                                position: toast.POSITION.BOTTOM_RIGHT
-                            })
+                            //toast.error("El nombre de la política debe tener el prefijo - '" + response[0].valor.toUpperCase() + "'", {
+                            //    position: toast.POSITION.BOTTOM_RIGHT
+                            //})
                         }
                     }
                 }
@@ -812,15 +812,15 @@ export const updateFormConciliaciones = (field, value) => (dispatch, getState) =
                 if (long_value == long_parametro + 1) {
                     if (long_parametro >= long_value) {
                         if (value.substr(0, long_value).toUpperCase() != response[0].valor.substr(0, long_value).toUpperCase()) {
-                            toast.error("El nombre de la conciliación debe tener el prefijo - '" + response[0].valor.toUpperCase() + "'", {
-                                position: toast.POSITION.BOTTOM_RIGHT
-                            })
+                            //toast.error("El nombre de la conciliación debe tener el prefijo - '" + response[0].valor.toUpperCase() + "'", {
+                            //    position: toast.POSITION.BOTTOM_RIGHT
+                            //})
                         }
                     } else {
                         if (value.substr(0, long_parametro).toUpperCase() != response[0].valor.substr(0, long_parametro).toUpperCase()) {
-                            toast.error("El nombre de la conciliación debe tener el prefijo - '" + response[0].valor.toUpperCase() + "'", {
-                                position: toast.POSITION.BOTTOM_RIGHT
-                            })
+                            //toast.error("El nombre de la conciliación debe tener el prefijo - '" + response[0].valor.toUpperCase() + "'", {
+                            //    position: toast.POSITION.BOTTOM_RIGHT
+                            //})
                         }
                     }
                 }
@@ -1191,16 +1191,15 @@ export const updateFormEscenarios = (field, value) => (dispatch, getState) => {
                 if (long_value == long_parametro + 1) {
                     if (long_parametro >= long_value) {
                         if (value.substr(0, long_value).toUpperCase() != response[0].valor.substr(0, long_value).toUpperCase()) {
-                            toast.error("El nombre del escenario debe tener el prefijo -'" + response[0].valor.toUpperCase() + "'", {
-                                position: toast.POSITION.BOTTOM_RIGHT
-
-                            })
+                            //toast.error("El nombre del escenario debe tener el prefijo -'" + response[0].valor.toUpperCase() + "'", {
+                            //    position: toast.POSITION.BOTTOM_RIGHT
+                            //})
                         }
                     } else {
                         if (value.substr(0, long_parametro).toUpperCase() != response[0].valor.substr(0, long_parametro).toUpperCase()) {
-                            toast.error("El nombre del escenario debe tener el prefijo -'" + response[0].valor.toUpperCase() + "'", {
-                                position: toast.POSITION.BOTTOM_RIGHT
-                            })
+                            //toast.error("El nombre del escenario debe tener el prefijo -'" + response[0].valor.toUpperCase() + "'", {
+                            //    position: toast.POSITION.BOTTOM_RIGHT
+                            //})
                         }
                     }
                 }
