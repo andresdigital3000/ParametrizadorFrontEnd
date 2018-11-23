@@ -24,7 +24,7 @@ class IIndicadorPaginador extends React.Component{
     let pgFin=9
     return(
         <nav aria-label="Paginar">
-          <If condition = {this.props.state.txtBuscar.trim()==''}>
+          <If condition = {this.props.state.txtBuscarIndicador.trim()==''}>
             <ul className="pagination">
               <If condition = {this.props.state.paginador.length <= 10}>
                 <li className="page-item">
@@ -115,7 +115,7 @@ const mapStateToProps = (state) =>{
       paginador : state.indicadorReducer.paginador,
       paginaActual: state.indicadorReducer.paginaActual,
       registrosPorPagina: state.indicadorReducer.registrosPorPagina,
-      txtBuscar: state.indicadorReducer.textoBuscar
+      txtBuscarIndicador: state.indicadorReducer.textoBuscarIndicador
     }
   }
 }

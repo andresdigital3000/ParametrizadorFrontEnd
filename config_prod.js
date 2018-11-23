@@ -17,11 +17,6 @@ module.exports ={
     debug : 0
   },
 
-  //aplicacion front
-  resources:{
-    port: 82,
-    server: "http://localhost"
-  },
   //seguridad emulada
   jwt:{
     secret: "#$%EGt2eT##$EG%Y$Y&U&/IETRH45W$%whth$Y$%YGRT"

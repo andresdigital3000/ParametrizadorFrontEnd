@@ -12,7 +12,7 @@ const initialState = {
   paginaActual:1,
   registrosPorPagina:7,
   totalRegistros:1,
-  textoBuscar:"",
+  textoBuscarConciliacion:"",
   conciliaciones:[],
   politica:{"id":0},
   politicas:[],

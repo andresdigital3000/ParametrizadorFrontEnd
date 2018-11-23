@@ -21,7 +21,6 @@ import IEscenarioList from './escenariosModule/IEscenarioList'
 import IEscenarioForm from './escenariosModule/IEscenarioForm'
 import IEscenarioDelete from './escenariosModule/IEscenarioDelete'
 import IEjecucion from './ejecucionModule/IEjecucion'
-import IEjecucionE from './ejecucionModule/IEjecucionE'
 import IProgramar from './ejecucionModule/IProgramar'
 import IResultado from './resultadosModule/IResultado'
 import IIndicador from './indicadoresModule/IIndicador'
@@ -73,7 +72,6 @@ render((
             <Route path="/escenarios/edit/:idescenario" component={IEscenarioForm}></Route>
             <Route path="/escenarios/delete/:idescenariodelete" component={IEscenarioDelete}></Route>
             <Route path="/ejecucion" component={IEjecucion}></Route>
-            <Route path="/ejecucione" component={IEjecucionE}></Route>
             <Route path="/ejecucion/programar" component={IProgramar}></Route>
             <Route path="/resultados" component={IResultado}></Route>
             <Route path="/indicadores" component={IIndicador}></Route>

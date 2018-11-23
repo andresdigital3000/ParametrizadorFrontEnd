@@ -1,10 +1,10 @@
 module.exports ={
-  debugMode: true,
+  debugMode: false,
   usarJsonServer : false,
   //Api backend
   server:{
     port:"",
-    host:"http://localhost:7001/ParametrizadorBackend/api"
+    host:"http://192.168.0.182:7001/ParametrizadorBackend/api"
   },
   //Configuración de constantes para enviar a WebService de Odi
   webService:{
@@ -14,14 +14,9 @@ module.exports ={
     contexto : "CNTX_DESARROLLO",
     stopLevel : "IMMEDIATE",
     runCount : 1,
-    debug : 1
+    debug : 0
   },
 
-  //aplicacion front
-  resources:{
-    port: 82,
-    server: "http://localhost"
-  },
   //seguridad emulada
   jwt:{
     secret: "#$%EGt2eT##$EG%Y$Y&U&/IETRH45W$%whth$Y$%YGRT"

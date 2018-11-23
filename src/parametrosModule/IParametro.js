@@ -14,10 +14,7 @@ class IParametro extends React.Component{
   }
 
   componentWillMount(){
-    //console.log("*************Parametros props ===>")
-    //console.log(this.props)
     if(this.props.idescenario != undefined){
-      console.log("*************ejecutar refresh list "+this.props.idescenario)
       this.props.refreshListParametro(this.props.idescenario)
     }else{
       this.props.refreshListParametro()
@@ -43,7 +40,7 @@ class IParametro extends React.Component{
                   </center>
                 </div>
                 <div className="col-sm-4">
-                  <IParametroFinder ref="buscador"/>
+                  <IParametroFinder/>
                 </div>
               </div>
               <hr/>

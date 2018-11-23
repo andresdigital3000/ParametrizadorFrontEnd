@@ -28,13 +28,17 @@ class IParametroFinder extends React.Component{
     }
   }
 
+  componentDidMount(){
+    this.props.findTextParametro()
+  }
+
   render(){
     return(
         <div className="input-group row">
-          <input type="text" value={this.props.textoBuscar}
+          <input type="text" value={this.props.state.textoBuscarParametro}
             placeholder="Digite un texto para buscar"
-            name="textoBuscar"
-            id="textoBuscar"
+            name="textoBuscarParametro"
+            id="textoBuscarParametro"
             onChange={this.handleInput.bind(this)}
             onKeyPress={this.onKeyPress.bind(this)}
             className='form-control form-control-sm'/>
@@ -49,7 +53,7 @@ class IParametroFinder extends React.Component{
 const mapStateToProps = (state) =>{
   return{
     state: {
-      textoBuscar: state.parametroReducer.textoBuscar,
+      textoBuscarParametro: state.parametroReducer.textoBuscarParametro
     }
   }
 }

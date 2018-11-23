@@ -35,13 +35,17 @@ class IConciliacionFinder extends React.Component{
     }
   }
 
+  componentDidMount(){
+    this.props.findTextConciliacion()
+  }
+
   render(){
     return(
       <div className="input-group row">
-        <input type="text" value={this.props.textoBuscar}
+        <input type="text" value={this.props.state.textoBuscarConciliacion}
           placeholder="Digite un texto para buscar"
-          name="textoBuscar"
-          id="textoBuscar"
+          name="textoBuscarConciliacion"
+          id="textoBuscarConciliacion"
           onChange={this.handleInput.bind(this)}
           onKeyPress={this.onKeyPress.bind(this)}
           className='form-control form-control-sm'/>
@@ -56,7 +60,7 @@ class IConciliacionFinder extends React.Component{
 const mapStateToProps = (state) =>{
   return{
     state: {
-      textoBuscar: state.conciliacionReducer.textoBuscar,
+      textoBuscarConciliacion: state.conciliacionReducer.textoBuscarConciliacion,
     }
   }
 }

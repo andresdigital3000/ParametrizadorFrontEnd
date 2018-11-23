@@ -28,13 +28,18 @@ class IPoliticaFinder extends React.Component{
     }
   }
 
+  //Volver a buscar despues de recargar
+  componentDidMount(){
+    this.props.findTextPolitica()
+  }
+
   render(){
     return(
         <div className="input-group row">
-          <input type="text" value={this.props.textoBuscar}
+          <input type="text" value={this.props.state.textoBuscarPoliticas}
             placeholder="Digite un texto para buscar"
-            name="textoBuscar"
-            id="textoBuscar"
+            name="textoBuscarPoliticas"
+            id="textoBuscarPoliticas"
             onChange={this.handleInput.bind(this)}
             onKeyPress={this.onKeyPress.bind(this)}
             className='form-control form-control-sm'/>
@@ -49,10 +54,11 @@ class IPoliticaFinder extends React.Component{
 const mapStateToProps = (state) =>{
   return{
     state: {
-      textoBuscar: state.politicaReducer.textoBuscar,
+      textoBuscarPoliticas: state.politicaReducer.textoBuscarPoliticas,
     }
   }
 }
 export default connect (mapStateToProps,{
   updateTextFindPolitica, findTextPolitica
 })(IPoliticaFinder)
+ 

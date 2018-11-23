@@ -30,7 +30,7 @@ class IPolitica extends React.Component{
                   </center>
                 </div>
                 <div className="col-sm-4">
-                  <IPoliticaFinder ref="buscador"/>
+                  <IPoliticaFinder/>
                 </div>
               </div>
               <hr/>

@@ -4,7 +4,7 @@ import APIInvoker from '../utils/APIInvoker'
 import IEscenarioItem from './IEscenarioItem'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { connect } from 'react-redux'
-import { updConciliacion, refreshListEscenario, cargarComboConciliaciones, calculaPaginadorEscenarios } from '../actions/Actions';
+import { updConciliacion, findTextEscenario, refreshListEscenario, cargarComboConciliaciones, calculaPaginadorEscenarios } from '../actions/Actions';
 
 
 class IEscenarioList extends React.Component{
@@ -16,17 +16,7 @@ class IEscenarioList extends React.Component{
     this.props.editarRegistro(e.target.name)
   }
 
-  componentDidMount(){
-    this.props.cargarComboConciliaciones()
-    this.props.calculaPaginadorEscenarios()
-  }
-
-  componentWillMount(){
-    //console.log("ESCENARIO LISTA PROPS =====>")
-    //console.log(this.props)
-  }
-
-  render(){
+   render(){
     return(
       <div className="row">
         <If condition={Object.entries(this.props.state.escenarios).length > 0}>
@@ -86,5 +76,5 @@ const mapStateToProps = (state) =>{
 }
 
 export default connect (mapStateToProps,{
-  updConciliacion, refreshListEscenario, cargarComboConciliaciones, calculaPaginadorEscenarios
+  updConciliacion, findTextEscenario, refreshListEscenario, cargarComboConciliaciones, calculaPaginadorEscenarios
 })(IEscenarioList)

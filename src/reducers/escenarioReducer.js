@@ -13,7 +13,7 @@ const initialState = {
   paginaActual:1,
   registrosPorPagina:7,
   totalRegistros:15,
-  textoBuscar:"",
+  textoBuscarEscenario:"",
   escenarios:[],
   conciliacion : 0,
   paginador: [],

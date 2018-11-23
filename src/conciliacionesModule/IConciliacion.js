@@ -50,7 +50,7 @@ class IConciliacion extends React.Component{
               </div>
               <div className="col-sm-4">
                   <If condition={this.props.registro==undefined}>
-                      <IConciliacionFinder ref="buscador"/>
+                      <IConciliacionFinder/>
                   </If>
               </div>
             </div>

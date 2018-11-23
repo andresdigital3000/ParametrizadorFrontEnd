@@ -14,7 +14,7 @@ const initialState = {
   paginaActual:1,
   registrosPorPagina:7,
   totalRegistros:1,
-  textoBuscar:"",
+  textoBuscarPoliticas:"",
   politicas:[],
   paginador: []
 }

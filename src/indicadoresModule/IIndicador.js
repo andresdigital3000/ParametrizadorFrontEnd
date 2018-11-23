@@ -30,7 +30,7 @@ class IIndicador extends React.Component{
                   </center>
                 </div>
                 <div className="col-sm-4">
-                  <IIndicadorFinder ref="buscador"/>
+                  <IIndicadorFinder/>
                 </div>
               </div>
               <hr/>

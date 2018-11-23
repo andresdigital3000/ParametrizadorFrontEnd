@@ -16,7 +16,7 @@ const initialState = {
   paginaActual:1,
   registrosPorPagina:7,
   totalRegistros:1,
-  textoBuscar:"",
+  textoBuscarParametro:"",
   parametros:[],
   paginador: [],
   escenario:{"id":0,"nombre":"Ningun Escenario"},

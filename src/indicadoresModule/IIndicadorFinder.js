@@ -28,13 +28,17 @@ class IIndicadorFinder extends React.Component{
     }
   }
 
+  componentDidMount(){
+    this.props.findTextIndicador()
+  }
+
   render(){
     return(
         <div className="input-group row">
-          <input type="text" value={this.props.textoBuscar}
+          <input type="text" value={this.props.state.textoBuscarIndicador}
             placeholder="Digite un texto para buscar"
-            name="textoBuscar"
-            id="textoBuscar"
+            name="textoBuscarIndicador"
+            id="textoBuscarIndicador"
             onChange={this.handleInput.bind(this)}
             onKeyPress={this.onKeyPress.bind(this)}
             className='form-control form-control-sm'/>
@@ -49,7 +53,7 @@ class IIndicadorFinder extends React.Component{
 const mapStateToProps = (state) =>{
   return{
     state: {
-      textoBuscar: state.indicadorReducer.textoBuscar,
+      textoBuscarIndicador: state.indicadorReducer.textoBuscarIndicador
     }
   }
 }

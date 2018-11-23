@@ -66,10 +66,6 @@ import {
     CARGA_ESCENARIOS_EN_QUERYS,
     LIMPIAR_ESCENARIO_SELECCIONADO,
     CARGAR_CONCILIACIONES_QUERY,
-    LIMPIAR_ESCENARIO_SELECCIONADO_EJ,
-    CARGA_ESCENARIOS_EJ,
-    UPDATE_VALUE_COMBO_ESCENARIOS_EJ,
-    UPDATE_EJECUTAR_ESCENARIO_FORM_REQUEST,
     UPDATE_QUERYS_APROB_FORM_REQUEST,
     UPD_LINK_RESULTADOS,
     CARGAR_RESULTADOS,
@@ -250,7 +246,7 @@ export const findTextPolitica = () => (dispatch, getState) => {
     if (configuration.usarJsonServer == false) {
         //con API REST}
         let objetoVacio = new Object()
-        let txtBuscar = getState().politicaReducer.textoBuscar
+        let txtBuscar = getState().politicaReducer.textoBuscarPoliticas
         if (txtBuscar != '') {
             APIInvoker.invokeGET('/politicas/findByAny?texto=' + txtBuscar, response => {
                 if (Array.isArray(response) == true) {
@@ -629,7 +625,7 @@ const updateTextConciliacionFindRequest = (field, value) => ({
 
 //Realizar la búsqueda
 export const findTextConciliacion = () => (dispatch, getState) => {
-    let txtBuscar = getState().conciliacionReducer.textoBuscar
+    let txtBuscar = getState().conciliacionReducer.textoBuscarConciliacion
     if (txtBuscar != '') {
         APIInvoker.invokeGET('/conciliaciones/findByAny?texto=' + txtBuscar, response => {
             if (Array.isArray(response) == true) {
@@ -1025,7 +1021,7 @@ const updateTextEscenarioFindRequest = (field, value) => ({
 })
 //Realizar la búsqueda
 export const findTextEscenario = () => (dispatch, getState) => {
-    let txtBuscar = getState().escenarioReducer.textoBuscar
+    let txtBuscar = getState().escenarioReducer.textoBuscarEscenario
     if (txtBuscar != '') {
         APIInvoker.invokeGET('/escenarios/findByAny?texto=' + txtBuscar, response => {
             if (Array.isArray(response) == true) {
@@ -1430,85 +1426,6 @@ const updateComboConciliaciones = (field, value) => ({
     value: value
 })
 
-//Solicita el estado de ejecución de una conciliacion
-export const getStatusEjecucionConciliacion = (operacion) => (dispatch, getState) => {
-    //Variables necesarias para llamar el webservice
-    var xmlhttp = new XMLHttpRequest();
-    let odiUser = configuration.webService.user
-    let pwUser = configuration.webService.pw
-    let repository = configuration.webService.repository
-    let loadplaninstanceid = 1
-    let idConciliacionEjecucion = getState().ejecucionReducer.conciliacion.id
-    let nomConciliacionEjecucion = getState().ejecucionReducer.conciliacion.nombre
-    //Construir peticion SOAP que solicita el estado de la ejecución
-    var sr = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:odi="xmlns.oracle.com/odi/OdiInvoke/">' +
-        '<soapenv:Header/>' +
-        '<soapenv:Body>' +
-        '<odi:OdiGetLoadPlanStatusRequest>' +
-        '<Credentials>' +
-        '  <!--You may enter the following 3 items in any order-->' +
-        '  <!--Optional:-->' +
-        '  <OdiUser>' + odiUser + '</OdiUser>' +
-        '  <!--Optional:-->' +
-        '  <OdiPassword>' + pwUser + '</OdiPassword>' +
-        '  <WorkRepository>' + repository + '</WorkRepository>' +
-        '</Credentials>' +
-        '<!--Zero or more repetitions:-->' +
-        '<LoadPlanInstanceId>' + loadplaninstanceid + '</LoadPlanInstanceId>' +
-        '<LoadPlans>' +
-        '<LoadPlanRunNumber>' + idConciliacionEjecucion + '</LoadPlanRunNumber>' +
-        '</LoadPlans>' +
-        '</odi:OdiGetLoadPlanStatusRequest>' +
-        '</soapenv:Body>' +
-        '</soapenv:Envelope>'
-    if (xmlhttp) {
-        xmlhttp.onreadystatechange = function() {
-            if (xmlhttp.readyState == 4) {
-                if (xmlhttp.status == 200) {
-                    idInstance = 0
-                    var XMLParser = require('react-xml-parser');
-                    var xml = new XMLParser().parseFromString(xmlhttp.response);
-                    if (xml.getElementsByTagName('LoadPlanStatus')[0].value == 'D') {
-                        idInstance = xml.getElementsByTagName('LoadPlaninstanceId')[0].value
-                    } else if (xml.getElementsByTagName('LoadPlanStatus')[0].value == 'E') {
-                        toast.error("Error al ejecutar el proceso, por favorcomuniquese con el asesor", {
-                            position: toast.POSITION.BOTTOM_RIGHT,
-                        })
-                    } else if (xml.getElementsByTagName('LoadPlanStatus')[0].value == 'M') {
-                        idInstance = xml.getElementsByTagName('LoadPlaninstanceId')[0].value
-                        toast.success("Se inició la ejecución con éxito pero con algunos warnings", {
-                            position: toast.POSITION.BOTTOM_RIGHT,
-                        })
-                    } else if (xml.getElementsByTagName('LoadPlanStatus')[0].value == 'Q') {
-                        idInstance = xml.getElementsByTagName('LoadPlaninstanceId')[0].value
-                        toast.success("La ejecución queda en cola", {
-                            position: toast.POSITION.BOTTOM_RIGHT,
-                        })
-                    } else if (xml.getElementsByTagName('LoadPlanStatus')[0].value == 'W') {
-                        idInstance = xml.getElementsByTagName('LoadPlaninstanceId')[0].value
-                        toast.success("La ejecución está en espera", {
-                            position: toast.POSITION.BOTTOM_RIGHT,
-                        })
-                    } else if (xml.getElementsByTagName('LoadPlanStatus')[0].value == 'R') {
-                        toast.warning("La ejecución ya se encuentra corriendo", {
-                            position: toast.POSITION.BOTTOM_RIGHT,
-                        })
-                    }
-                } else {
-                    toast.error("No hay conexión con el servicio de ODI", {
-                        position: toast.POSITION.BOTTOM_RIGHT
-                    })
-                }
-            }
-        }
-        xmlhttp.open('POST', configuration.webService.url, true);
-        //xmlhttp.setRequestHeader('Content-Type','text/html');
-        xmlhttp.send(sr);
-    } else {
-        alert('no existe el objeto xmlhttp');
-    }
-}
-
 export const doEjecutarConciliacion = () => (dispatch, getState) => {
     //decidir si llamar el web service o no segun lo recibido
     let idConciliacionEjecucion = getState().ejecucionReducer.conciliacion.id
@@ -1838,343 +1755,11 @@ export const salvarProgramacion = () => (dispatch, getState) => {
             dispatch(limpiarFormConciliacion())
         } else {
             console.log("Error :" + response.codigo + " " + response.mensaje + ", " + response.descripcion)
-            /*if(response.mensaje=="CT_UQ_TBL_GAI_CONCILIACION_NOMBRE_CONCILIACION"){
-              toast.error("Ya existe otra conciliación con el mismo nombre", {
-                position: toast.POSITION.BOTTOM_RIGHT
-              })
-            }else{
-              toast.error("Error general al adicionar conciliación", {
-                position: toast.POSITION.BOTTOM_RIGHT
-              })
-            }*/
         }
     }, error => {
         console.log('No se ha podido crear la conciliacion')
     })
-
-    /* toast.warn("Grabar hora:minuto="+hora+":"+minuto+" de la fecha="+fecha+", No hay servicio de backend", {
-       position: toast.POSITION.BOTTOM_RIGHT,
-     })*/
 }
-
-/**
- *  E J E C U C I O N  E S C E N A R I O S
- */
-
-//Funcion que elimina el valor ultimo seleccionado del combo
-export const limpiarEscenarioSeleccionadoE = () => ({
-    type: LIMPIAR_ESCENARIO_SELECCIONADO_EJ,
-    lista: {
-        "id": 0,
-        "nombre": "Ninguno"
-    }
-})
-
-//Funcion que carga el combo de conciliaciones
-export const cargarComboEscenariosE = () => (dispatch, getState) => {
-    APIInvoker.invokeGET('/escenarios', response => {
-        if (Array.isArray(response) == true) {
-            dispatch(cargarEscenariosE(response))
-            dispatch(limpiarEscenarioSeleccionadoE())
-        }
-    })
-}
-//Envia resultado para llenar el combo a Reducer
-const cargarEscenariosE = (arrayEscenarios) => ({
-    type: CARGA_ESCENARIOS_EJ,
-    lista: arrayEscenarios
-})
-
-export const updateEjecucionE = (field, value) => (dispatch, getState) => {
-    dispatch(updateComboEscenariosE(field, value))
-}
-
-//Enviar el texto del buscador al reducer store
-const updateComboEscenariosE = (field, value) => ({
-    type: UPDATE_VALUE_COMBO_ESCENARIOS_EJ,
-    field: field,
-    value: value
-})
-
-//Solicita el estado de ejecución de una conciliacion
-export const getStatusEjecucionEscenarios = (operacion) => (dispatch, getState) => {
-    //Variables necesarias para llamar el webservice
-    var xmlhttp = new XMLHttpRequest();
-    let odiUser = configuration.webService.user
-    let pwUser = configuration.webService.pw
-    let repository = configuration.webService.repository
-    let loadplaninstanceid = 1
-    let idEscenarioEjecucion = getState().ejecucionReducer.escenario.id
-    let nomEscenarioEjecucion = getState().ejecucionReducer.escenario.nombre
-    //Construir peticion SOAP que solicita el estado de la ejecución
-    var sr = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:odi="xmlns.oracle.com/odi/OdiInvoke/">' +
-        '<soapenv:Header/>' +
-        '<soapenv:Body>' +
-        '<odi:OdiGetLoadPlanStatusRequest>' +
-        '<Credentials>' +
-        '  <!--You may enter the following 3 items in any order-->' +
-        '  <!--Optional:-->' +
-        '  <OdiUser>' + odiUser + '</OdiUser>' +
-        '  <!--Optional:-->' +
-        '  <OdiPassword>' + pwUser + '</OdiPassword>' +
-        '  <WorkRepository>' + repository + '</WorkRepository>' +
-        '</Credentials>' +
-        '<!--Zero or more repetitions:-->' +
-        '<LoadPlanInstanceId>' + loadplaninstanceid + '</LoadPlanInstanceId>' +
-        '<LoadPlans>' +
-        '<LoadPlanRunNumber>' + idEscenarioEjecucion + '</LoadPlanRunNumber>' +
-        '</LoadPlans>' +
-        '</odi:OdiGetLoadPlanStatusRequest>' +
-        '</soapenv:Body>' +
-        '</soapenv:Envelope>'
-    if (xmlhttp) {
-        xmlhttp.onreadystatechange = function() {
-            if (xmlhttp.readyState == 4) {
-                if (xmlhttp.status == 200) {
-                    idInstance = 0
-                    var XMLParser = require('react-xml-parser');
-                    var xml = new XMLParser().parseFromString(xmlhttp.response);
-                    if (xml.getElementsByTagName('LoadPlanStatus')[0].value == 'D') {
-                        idInstance = xml.getElementsByTagName('LoadPlaninstanceId')[0].value
-                    } else if (xml.getElementsByTagName('LoadPlanStatus')[0].value == 'E') {
-                        toast.error("Error al ejecutar el proceso, por favorcomuniquese con el asesor", {
-                            position: toast.POSITION.BOTTOM_RIGHT,
-                        })
-                    } else if (xml.getElementsByTagName('LoadPlanStatus')[0].value == 'M') {
-                        idInstance = xml.getElementsByTagName('LoadPlaninstanceId')[0].value
-                        toast.success("Se inició la ejecución con éxito pero con algunos warnings", {
-                            position: toast.POSITION.BOTTOM_RIGHT,
-                        })
-                    } else if (xml.getElementsByTagName('LoadPlanStatus')[0].value == 'Q') {
-                        idInstance = xml.getElementsByTagName('LoadPlaninstanceId')[0].value
-                        toast.success("La ejecución queda en cola", {
-                            position: toast.POSITION.BOTTOM_RIGHT,
-                        })
-                    } else if (xml.getElementsByTagName('LoadPlanStatus')[0].value == 'W') {
-                        idInstance = xml.getElementsByTagName('LoadPlaninstanceId')[0].value
-                        toast.success("La ejecución está en espera", {
-                            position: toast.POSITION.BOTTOM_RIGHT,
-                        })
-                    } else if (xml.getElementsByTagName('LoadPlanStatus')[0].value == 'R') {
-                        toast.warning("La ejecución ya se encuentra corriendo", {
-                            position: toast.POSITION.BOTTOM_RIGHT,
-                        })
-                    }
-                } else {
-                    toast.error("No hay conexión con el servicio de ODI", {
-                        position: toast.POSITION.BOTTOM_RIGHT
-                    })
-                }
-            }
-        }
-        xmlhttp.open('POST', configuration.webService.url, true);
-        //xmlhttp.setRequestHeader('Content-Type','text/html');
-        xmlhttp.send(sr);
-    } else {
-        alert('no existe el objeto xmlhttp');
-    }
-}
-
-export const doEjecutarEscenario = () => (dispatch, getState) => {
-    //decidir si llamar el web service o no segun lo recibido
-    let idEscenarioEjecucion = getState().ejecucionReducer.escenario.id
-    let nomEscenarioEjecucion = getState().ejecucionReducer.escenario.nombre
-    let idPlanInstancia = 0
-
-    //Backend necesia proveerme por escenario sus ejecuciones así como lo hace con conciliaciones para saber si ya existe una ejecución
-    //let numEjecuciones = getState().ejecucionReducer.escenario.ejecucionesProceso.length - 1
-    //if(getState().ejecucionReducer.escenario.ejecucionesProceso.length > 0){
-    //  idPlanInstancia = getState().ejecucionReducer.escenario.ejecucionesProceso[numEjecuciones].idPlanInstance
-    //}
-    //tener en cuenta periodicidad
-    //APIInvoker.invokeGET('/parametros?findByAny=Periodicidad ws conciliacion', response => {
-    //  if(Array.isArray(response) == true){
-    //    dispatch(cargarConciliaciones(response))
-    //  }
-    //})
-    //Si hay instancia recuperada de la ejecución
-    if (idPlanInstancia == 0) {
-        //Variables necesarias para llamar el webservice
-        let odiUser = configuration.webService.user
-        let pwUser = configuration.webService.pw
-        let repository = configuration.webService.repository
-        let context = 1
-        let loglevel = 6
-        //Construir peticion SOAP
-        var sr = '<?xml version="1.0" encoding="UTF-8"?>' +
-            '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:odi="xmlns.oracle.com/odi/OdiInvoke/">' +
-            '<soapenv:Header/>' +
-            '<soapenv:Body>' +
-            '<prod:startLoadPlan>' +
-            '<!--Optional:-->' +
-            '<OdiUser>' + odiUser + '</OdiUser>' +
-            '<!--Optional:-->' +
-            '<OdiPassword>' + pwUser + '</OdiPassword>' +
-            '<!--Optional:-->' +
-            '<workRepository>' + repository + '</workRepository>' +
-            '<!--Optional:-->' +
-            '<loadPlanName>' + nomEscenarioEjecucion + '</loadPlanName>' +
-            '<!--Optional:-->' +
-            '<contexto>' + context + '</contexto>' +
-            '</prod:startLoadPlan>' +
-            '</soapenv:Body>' +
-            '</soapenv:Envelope>';
-
-        var xmlhttp = new XMLHttpRequest();
-        if (xmlhttp) {
-            xmlhttp.onreadystatechange = function() {
-                if (xmlhttp.readyState == 4) {
-                    if (xmlhttp.status == 200) {
-                        var XMLParser = require('react-xml-parser');
-                        var xml = new XMLParser().parseFromString(xmlhttp.response);
-                        let idInstance = 0
-                        if (xml.getElementsByTagName('OdiLoadPlanInstanceId')[0].value != '') {
-                            idInstance = xml.getElementsByTagName('OdiLoadPlanInstanceId')[0].value
-                            dispatch(mostrarModal("alert alert-success", "Inicio de ejecución de proceso exitoso :" + idInstance))
-                            //toast.success("Inicio de ejecución de proceso exitoso", {
-                            //  position: toast.POSITION.BOTTOM_RIGHT,
-                            //})
-                        }
-                        if (idInstance != 0) {
-                            let ejecucion_salvar = {
-                                nombre: nomEscenarioEjecucion,
-                                idPlanInstance: idInstance,
-                                idEscenario: idEscenarioEjecucion,
-                            }
-                            APIInvoker.invokePOST('/ejecucionproceso', ejecucion_salvar, response2 => {
-                                if (response2.idPlanInstance != undefined) {
-                                    //toast.success("...y se almacenó la información de la ejecución", {
-                                    //  position: toast.POSITION.BOTTOM_RIGHT
-                                    //})
-                                    console.log("...y se almacenó la información de la ejecución")
-                                    dispatch(cargarComboEscenarios())
-                                } else {
-                                    toast.error("No fue posible almacenar la información de la ejecución", {
-                                        position: toast.POSITION.BOTTOM_RIGHT
-                                    })
-                                }
-                            }, error => {
-                                console.log('No almacenó la información de la ejecución')
-                            })
-                        } else {
-                            toast.error("No se pudo obtener un id de ejecución desde ODI", {
-                                position: toast.POSITION.BOTTOM_RIGHT
-                            })
-                        }
-                    } else {
-                        toast.error("No hay conexión con el servicio de ODI", {
-                            position: toast.POSITION.BOTTOM_RIGHT
-                        })
-                    }
-                }
-            }
-            xmlhttp.open('POST', configuration.webService.url, true);
-            //xmlhttp.setRequestHeader('Access-Control-Allow-Methods','*');
-            //xmlhttp.setRequestHeader('Content-Type','text/xml');
-            xmlhttp.send(sr);
-        } else {
-            toast.error("No se creó objeto xmlhttp", {
-                position: toast.POSITION.BOTTOM_RIGHT
-            })
-        }
-    } else {
-        toast.error("Ya se encuentra en ejecución id " + idPlanInstancia, {
-            position: toast.POSITION.BOTTOM_RIGHT,
-        })
-    }
-}
-
-export const doCancelarEscenario = () => (dispatch, getState) => {
-    //Variables necesarias para llamar el webservice
-    var xmlhttp = new XMLHttpRequest();
-    let idEscenarioEjecucion = getState().ejecucionReducer.escenario.id
-    let nomEscenarioEjecucion = getState().ejecucionReducer.escenario.nombre
-    let idPlanInstancia = 0
-    //let numEjecuciones = getState().ejecucionReducer.escenario.ejecucionesProceso.length - 1
-    //if(getState().ejecucionReducer.escenario.ejecucionesProceso.length > 0){
-    //  idPlanInstancia = getState().ejecucionReducer.escenario.ejecucionesProceso[numEjecuciones].idPlanInstance
-    //}
-    if (idPlanInstancia != 0) {
-        let odiUser = configuration.webService.user
-        let pwUser = configuration.webService.pw
-        let repository = configuration.webService.repository
-        let context = 1
-        let loglevel = 6
-        let runcount = 0
-        let stoplevel = 1
-        //Construir peticion SOAP
-        var sr = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:odi="xmlns.oracle.com/odi/OdiInvoke/">' +
-            '<soapenv:Header/>' +
-            '<soapenv:Body>' +
-            '<odi:OdiStopLoadPlanRequest>' +
-            '   <!--You may enter the following 2 items in any order-->' +
-            '   <Credentials>' +
-            '      <!--You may enter the following 3 items in any order-->' +
-            '      <!--Optional:-->' +
-            '      <!--Optional:-->' +
-            '      <OdiUser>' + odiUser + '</OdiUser>' +
-            '      <OdiPassword>' + pwUser + '</OdiPassword>' +
-            '      <WorkRepository>' + repository + '</WorkRepository>' +
-            '   </Credentials>' +
-            '   <OdiStopLoadPlanRequest>' +
-            '      <LoadPlanInstanceId>' + idPlanInstancia + '</LoadPlanInstanceId>' +
-            '      <LoadPlanInstanceRunCount>' + runcount + '</LoadPlanInstanceRunCount>' +
-            '      <StopLevel>' + stoplevel + '</StopLevel>' +
-            '   </OdiStopLoadPlanRequest>' +
-            '</odi:OdiStopLoadPlanRequest>' +
-            '</soapenv:Body>' +
-            '</soapenv:Envelope>';
-        if (xmlhttp) {
-            xmlhttp.onreadystatechange = function() {
-                if (xmlhttp.readyState == 4) {
-                    if (xmlhttp.status == 200) {
-                        var XMLParser = require('react-xml-parser');
-                        var xml = new XMLParser().parseFromString(xmlhttp.response);
-                        console.log(getState().ejecucionReducer.escenario.id);
-                        console.log(xml.getElementsByTagName('OdiLoadPlanInstanceId'));
-                        if (xml.getElementsByTagName('OdiLoadPlanInstanceId')[0].value == idPlanInstancia) {
-                            dispatch(mostrarModal("alert alert-success", "Se detuvo la ejecución correctamente :" + idPlanInstancia))
-                            //toast.success("Se detuvo la ejecución correctamente", {
-                            //  position: toast.POSITION.BOTTOM_RIGHT,
-                            //})
-                            dispatch(cargarComboConciliaciones())
-                        } else {
-                            toast.error("No se ha podido detener", {
-                                position: toast.POSITION.BOTTOM_RIGHT,
-                            })
-                        }
-                    } else {
-                        toast.error("No hay conexión con el servicio de ODI", {
-                            position: toast.POSITION.BOTTOM_RIGHT
-                        })
-                    }
-                }
-            }
-            xmlhttp.open('POST', configuration.webService.url, true);
-            xmlhttp.send(sr);
-        } else {
-            alert('no existe el objeto xmlhttp');
-        }
-    } else {
-        toast.error("No se ha ejecutado", {
-            position: toast.POSITION.BOTTOM_RIGHT,
-        })
-    }
-}
-
-
-//Programar Conciliaciones
-//Actualizar tecla por tecla los campos del formulario de conciliaciones
-export const updateFormEjecutarEscenarios = (field, value) => (dispatch, getState) => {
-    dispatch(updateFormEjecutarEscenariosRequest(field, value))
-}
-
-//Enviar al reducer la tecla pulsada
-const updateFormEjecutarEscenariosRequest = (field, value) => ({
-    type: UPDATE_EJECUTAR_ESCENARIO_FORM_REQUEST,
-    field: field,
-    value: value
-})
 
 
 /*
@@ -2502,7 +2087,7 @@ export const findTextIndicador = () => (dispatch, getState) => {
     if (configuration.usarJsonServer == false) {
         //con API REST}
         let objetoVacio = new Object()
-        let txtBuscar = getState().indicadorReducer.textoBuscar
+        let txtBuscar = getState().indicadorReducer.textoBuscarIndicador
         if (txtBuscar != '') {
             APIInvoker.invokeGET('/indicadores/findByAny?texto=' + txtBuscar, response => {
                 if (Array.isArray(response) == true) {
@@ -2892,7 +2477,7 @@ export const findTextParametro = () => (dispatch, getState) => {
     if (configuration.usarJsonServer == false) {
         //con API REST}
         let objetoVacio = new Object()
-        let txtBuscar = getState().parametroReducer.textoBuscar
+        let txtBuscar = getState().parametroReducer.textoBuscarParametro
         if (txtBuscar != '') {
             APIInvoker.invokeGET('/parametros/findByAny?texto=' + txtBuscar, response => {
                 if (Array.isArray(response) == true) {
@@ -3214,7 +2799,7 @@ const updateTextQueryFindRequest = (field, value) => ({
 })
 //Realizar la búsqueda
 export const findTextQuery = () => (dispatch, getState) => {
-    let txtBuscar = getState().queryReducer.textoBuscar
+    let txtBuscar = getState().queryReducer.textoBuscarQuery
     if (txtBuscar != '') {
         APIInvoker.invokeGET('/queryescenario?texto=' + txtBuscar, response => {
             if (Array.isArray(response) == true) {

@@ -6,7 +6,7 @@ import IEscenarioFinder from './IEscenarioFinder'
 import IEscenarioPaginador from './IEscenarioPaginador'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { connect } from 'react-redux'
-import { updConciliacion,refreshListEscenario,cargarComboConciliaciones,calculaPaginadorEscenarios, cambioConciliacionesEscenario, cargarConciliacionesEscenario, cargarImpactos } from '../actions/Actions';
+import { updConciliacion,findTextEscenario,refreshListEscenario,cargarComboConciliaciones,calculaPaginadorEscenarios, cambioConciliacionesEscenario, cargarConciliacionesEscenario, cargarImpactos } from '../actions/Actions';
 
 class IEscenario extends React.Component{
   constructor(){
@@ -14,15 +14,11 @@ class IEscenario extends React.Component{
   }
 
   componentWillMount(){
-    //console.log("*************Escenario props ===>")
-    //console.log(this.props)
     this.props.cargarImpactos()
     this.props.cargarConciliacionesEscenario()
     if(this.props.escenario != undefined){
-      //console.log("ejecutar refresh list "+this.props.escenario)
       this.props.refreshListEscenario(this.props.escenario)
     }else if(this.props.conciliacion != undefined && this.props.conciliacion != 0){
-      //console.log("Se ejecuta updConciliacion con "+this.props.conciliacion)
       this.props.updConciliacion(this.props.conciliacion)
     }else if(this.props.registro != undefined && this.props.registro != 0){
       this.props.updConciliacion(this.props.registro)
@@ -32,7 +28,6 @@ class IEscenario extends React.Component{
   }
 
   cambioConciliacionesEscenario(e){
-    //let jsonConciliacion = JSON.parse(e.target.value)
     this.props.updConciliacion(e.target.value)
   }
 
@@ -56,7 +51,7 @@ class IEscenario extends React.Component{
               </div>
               <div className="col-sm-4">
                   <If condition={this.props.registro==undefined}>
-                      <IEscenarioFinder ref="buscador"/>
+                      <IEscenarioFinder/>
                   </If>
               </div>
             </div>
@@ -113,5 +108,5 @@ const mapStateToProps = (state) =>{
 }
 
 export default connect (mapStateToProps,{
-  updConciliacion, refreshListEscenario, cargarComboConciliaciones, calculaPaginadorEscenarios, cambioConciliacionesEscenario, cargarConciliacionesEscenario, cargarImpactos
+  updConciliacion, findTextEscenario, refreshListEscenario, cargarComboConciliaciones, calculaPaginadorEscenarios, cambioConciliacionesEscenario, cargarConciliacionesEscenario, cargarImpactos
 })(IEscenario)

@@ -6,9 +6,9 @@
   "scripts": {
     "postinstall": "webpack --config webpack.config.js --progress",
     "build": "webpack -p",
-    "server": "NODE_ENV=production&&node server.js",
+    "server": "NODE_ENV=production node server.js",
     "server_windows": "set NODE_ENV=production&&node server.js",
-    "start": "nodemon server.js"
+    "start": "npm run postinstall && npm run server"
   },
   "author": "Leonardo Rodriguez",
   "license": "ISC",

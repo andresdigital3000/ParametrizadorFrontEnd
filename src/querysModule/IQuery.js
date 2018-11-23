@@ -50,7 +50,7 @@ class IQuery extends React.Component{
               </div>
               <div className="col-sm-4">
                   <If condition={this.props.registro==undefined}>
-                      <IQueryFinder ref="buscador"/>
+                      <IQueryFinder/>
                   </If>
               </div>
             </div>

@@ -24,7 +24,7 @@ class IParametroPaginador extends React.Component{
     let pgFin=9
     return(
         <nav aria-label="Paginar">
-          <If condition = {this.props.state.txtBuscar.trim()==''}>
+          <If condition = {this.props.state.txtBuscarParametro.trim()==''}>
             <ul className="pagination">
               <If condition = {this.props.state.paginador.length <= 10}>
                 <li className="page-item">
@@ -115,7 +115,7 @@ const mapStateToProps = (state) =>{
       paginador : state.parametroReducer.paginador,
       paginaActual: state.parametroReducer.paginaActual,
       registrosPorPagina: state.parametroReducer.registrosPorPagina,
-      txtBuscar: state.parametroReducer.textoBuscar
+      txtBuscarParametro: state.parametroReducer.textoBuscarParametro
     }
   }
 }

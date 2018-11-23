@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 import APIInvoker from '../utils/APIInvoker'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { connect } from 'react-redux'
-import { updConciliacion,refreshListEscenario, cargarComboConciliaciones, calculaPaginadorEscenarios  } from '../actions/Actions';
+import { updConciliacion,findTextEscenario, refreshListEscenario, cargarComboConciliaciones, calculaPaginadorEscenarios  } from '../actions/Actions';
 
 class IEscenarioItem extends React.Component{
   constructor(){
@@ -14,6 +14,7 @@ class IEscenarioItem extends React.Component{
   componentDidMount(){
     this.props.cargarComboConciliaciones()
     this.props.calculaPaginadorEscenarios()
+    //this.props.findTextEscenario()
   }
 
   render(){
@@ -74,5 +75,5 @@ const mapStateToProps = (state) =>{
 }
 
 export default connect (mapStateToProps,{
-  updConciliacion,refreshListEscenario, cargarComboConciliaciones, calculaPaginadorEscenarios
+  updConciliacion, findTextEscenario, refreshListEscenario, cargarComboConciliaciones, calculaPaginadorEscenarios
 })(IEscenarioItem)

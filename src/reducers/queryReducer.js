@@ -15,7 +15,7 @@ const initialState = {
   paginaActual:1,
   registrosPorPagina:7,
   totalRegistros:15,
-  textoBuscar:"",
+  textoBuscarQuery:"",
   querys:[],
   conciliacion:{"id":0,"queryAprobaciones":["mensaje":""]},
   conciliaciones:[{"id":0,"nombre":"Seleccione una","escenario":["queryescenario":{}]}],
