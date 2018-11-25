@@ -29,7 +29,7 @@ export const conciliacionFormReducer = (state = initialState,action) =>{
         if(action.conciliacion[0].transformaciones.length!=0){
           return update(state,{
               id : {$set: action.conciliacion[0].id},
-              nombre : {$set: action.conciliacion[0].nombre},
+              nombre : {$set: action.conciliacion[0].nombre.substring(3, action.conciliacion[0].nombre.length)},
               webservice : {$set: action.conciliacion[0].transformaciones[0].paqueteWs},
               descripcion : {$set: action.conciliacion[0].descripcion},
               emailasignado : {$set: action.conciliacion[0].usuarioAsignado},
@@ -41,7 +41,7 @@ export const conciliacionFormReducer = (state = initialState,action) =>{
         }else{
           return update(state,{
               id : {$set: action.conciliacion[0].id},
-              nombre : {$set: action.conciliacion[0].nombre},
+              nombre : {$set: action.conciliacion[0].nombre.substring(3, action.conciliacion[0].nombre.length)},
               webservice : {$set: action.conciliacion[0].paquete},
               descripcion : {$set: action.conciliacion[0].descripcion},
               emailasignado : {$set: action.conciliacion[0].usuarioAsignado},
