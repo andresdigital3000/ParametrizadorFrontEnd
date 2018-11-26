@@ -25,14 +25,14 @@ class IModal extends React.Component{
         <div className="modal-dialog" role="document">
           <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title" id="modalMsg">Transacción exitosa</h5>
+              <h5 className="modal-title" id="modalMsg">Transacción exitosa</h5>
                 <button type="button" className="close" data-dismiss="modal" aria-label="Cerrar" onClick={this.ocultarModal.bind(this)}>
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
               <div className="modal-body">
                 <p>
-                  {this.props.state.mensaje.substr(0,50)}...
+                  {this.props.state.mensaje.substr(0,150)}...
                 </p>
               </div>
               <div className="modal-footer">

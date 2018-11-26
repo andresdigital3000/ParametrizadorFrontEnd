@@ -2751,6 +2751,16 @@ const irAPaginaParametros = (pagina) => ({
     pagina: pagina
 })
 
+export const cargarParametrosAVencer = () => (dispatch, getState)=>{
+    APIInvoker.invokeGET('/parametros/findAVencer', response => {
+        if (Array.isArray(response) == true) {
+           // dispatch(cargarListadoParametros(response))
+           console.log("a vencer",response);
+           dispatch(mostrarModal("alert alert-warning", "Tiene parámetros por vencer: " + response.map(function(e){ return e.parametro })))
+        }
+    })
+}
+
 //Funcion que carga el combo de escenarios
 export const cargarListadoEnParametros = () => (dispatch, getState) => {
     let paramTipo = "conciliaciones" //getState().parametroFormReducer.tipo
