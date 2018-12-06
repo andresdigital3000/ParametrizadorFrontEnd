@@ -72,7 +72,9 @@ class IParametroForm extends React.Component{
                 <select id='tipo' value={this.props.state.tipo} className='form-control form-control-lg' onChange={this.handleInput.bind(this)}>
                   <option value=''>Seleccione uno</option>
                   <option value='GENERAL'>GENERAL</option>
+                  <option value='SISTEMA'>PARAMETROS SISTEMA</option>
                   <option value='CONCILIACION'>CONCILIACION</option>
+                  <option value='ESCENARIO'>ESCENARIO</option>
                 </select>
                 <small id="tipoHelp" className="form-text text-muted">Clasifique el tipo de parámetro</small>
               </div>
@@ -169,7 +171,9 @@ class IParametroForm extends React.Component{
                       <select id='tipo' name='tipo' className='form-control form-control-lg' onChange={this.handleInput.bind(this)}>
                         <option value=''>Seleccione uno</option>
                         <option value='GENERAL'>GENERAL</option>
+                        <option value='SISTEMA'>PARAMETROS SISTEMA</option>
                         <option value='CONCILIACION'>CONCILIACION</option>
+                        <option value='ESCENARIO'>ESCENARIO</option>
                       </select>
                       <small id="tipoHelp" className="form-text text-muted">Clasifique el tipo de parámetro</small>
                     </div>

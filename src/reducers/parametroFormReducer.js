@@ -25,7 +25,7 @@ export const parametroFormReducer = (state = initialState,action) =>{
     case CARGAR_PARAMETRO_FORM:
         return update(state,{
           id : {$set: action.parametro[0].id},
-          parametro : {$set: action.parametro[0].parametro},
+          parametro : {$set: action.parametro[0].parametro.substring(2, action.parametro[0].parametro.length)},
           valor : {$set: action.parametro[0].valor},
           descripcion : {$set: action.parametro[0].descripcion},
           tipo : {$set: action.parametro[0].tipo},

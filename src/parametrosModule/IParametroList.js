@@ -4,7 +4,7 @@ import APIInvoker from '../utils/APIInvoker'
 import IParametroItem from './IParametroItem'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { connect } from 'react-redux'
-import { refreshListParametro } from '../actions/Actions';
+import { refreshListParametro, cargarParametrosAVencer } from '../actions/Actions';
 
 
 class IParametroList extends React.Component{
@@ -13,13 +13,10 @@ class IParametroList extends React.Component{
   }
 
   //Seccion de listar parametros
-  /*componentWillMount(){
-    if(this.props.registro == undefined){
-      this.props.refreshListParametro()
-    }else{
-      this.props.refreshListParametro(this.props.registro)
-    }
-  }*/
+  componentWillMount(){
+    //Cargar combo de esecenarios
+    this.props.cargarParametrosAVencer()
+  }
 
   render(){
     return(
@@ -68,5 +65,5 @@ const mapStateToProps = (state) =>{
   }
 }
 export default connect (mapStateToProps,{
-  refreshListParametro
+  refreshListParametro, cargarParametrosAVencer
 })(IParametroList)

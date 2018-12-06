@@ -25,7 +25,7 @@ export const escenarioFormReducer = (state = initialState,action) =>{
     case CARGAR_ESCENARIO_FORM:
         return update(state,{
           id : {$set: action.escenario[0].id},
-          nombre : {$set: action.escenario[0].nombre},
+          nombre : {$set: action.escenario[0].nombre.substring(3, action.escenario[0].nombre.length)},
           impacto : {$set: action.escenario[0].impacto},
           conciliacion : {$set: action.escenario[0].idConciliacion},
           idConciliacion : {$set: action.escenario[0].idConciliacion},

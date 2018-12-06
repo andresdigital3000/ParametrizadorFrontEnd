@@ -474,16 +474,16 @@ export const savePolitica = () => (dispatch, getState) => {
                     console.log("No se ha podido crear la politica con id" + id_politica)
                 })
             } else {
-                if (politica_salvar.nombre.substr(0, long_parametro).toUpperCase() == responseval[0].valor.toUpperCase()) {
                     let politica_salvar = {
                         id: getState().politicaFormReducer.id,
-                        nombre: getState().politicaFormReducer.nombre,
+                        nombre: responseval[0].valor.toUpperCase() + getState().politicaFormReducer.nombre,
                         descripcion: getState().politicaFormReducer.descripcion,
                         objetivo: getState().politicaFormReducer.objetivo,
                         fecha_creacion: '',
                         fecha_actualizacion: '',
                         usuario: getState().loginReducer.profile.userName
                     }
+                    console.log('salvando...upd',politica_salvar)
                     APIInvoker.invokePUT('/politicas', politica_salvar, response => {
                         if (response.id != undefined) {
                             dispatch(mostrarModal("alert alert-success", "Se actualizó la política " + politica_salvar.nombre))
@@ -502,11 +502,6 @@ export const savePolitica = () => (dispatch, getState) => {
                     }, error => {
                         console.log("No se ha podido actualizar la politica")
                     })
-                } else {
-                    toast.error("El nombre de la politica debe tener el prefijo... " + responseval[0].valor.toUpperCase(), {
-                        position: toast.POSITION.BOTTOM_RIGHT
-                    })
-                }
 
             }
         }
@@ -884,8 +879,6 @@ export const saveConciliacion = () => (dispatch, getState) => {
                     })
                     //dispatch(antesLimpiarFormConciliacion())
                 } else {
-                    if (getState().conciliacionFormReducer.nombre.substr(0, long_parametro).toUpperCase() == responseval[0].valor.toUpperCase()) {
-
                         //Si es un registro existente
                         let idPoliticaGrabar = 0
                         let nombrePoliticaGrabar = "Ninguna"
@@ -898,7 +891,7 @@ export const saveConciliacion = () => (dispatch, getState) => {
                         }
                         let conciliacion_salvar = {
                             id: getState().conciliacionFormReducer.id,
-                            nombre: getState().conciliacionFormReducer.nombre,
+                            nombre: responseval[0].valor.toUpperCase() + getState().conciliacionFormReducer.nombre,
                             descripcion: getState().conciliacionFormReducer.descripcion,
                             usuarioAsignado: getState().conciliacionFormReducer.emailasignado,
                             requiereAprobacion: getState().conciliacionFormReducer.requiereAprobacion,
@@ -918,11 +911,6 @@ export const saveConciliacion = () => (dispatch, getState) => {
                         }, error => {
                             console.log('No se ha podido actualizar la conciliacion')
                         })
-                    } else {
-                        toast.error("El nombre de la conciliación debe tener el prefijo... " + responseval[0].valor.toUpperCase(), {
-                            position: toast.POSITION.BOTTOM_RIGHT
-                        })
-                    }
                 }
 
             }
@@ -1217,7 +1205,6 @@ export const saveEscenario = () => (dispatch, getState) => {
     APIInvoker.invokeGET('/parametros/findByAny?texto=Prefijo para escenarios', responseval => {
         if (responseval[0].valor != undefined) {
             let long_parametro = responseval[0].valor.length;
-            if (getState().escenarioFormReducer.nombre.substr(0, long_parametro).toUpperCase() == responseval[0].valor.toUpperCase()) {
                 if (id_escenario == 0 || id_escenario == undefined) {
                     //Si es un escenario nuevo
                     let escenario_salvar = {
@@ -1262,7 +1249,7 @@ export const saveEscenario = () => (dispatch, getState) => {
                     }
                     let escenario_salvar = {
                         id: getState().escenarioFormReducer.id,
-                        nombre: getState().escenarioFormReducer.nombre,
+                        nombre:responseval[0].valor.toUpperCase() + getState().escenarioFormReducer.nombre,
                         impacto: getState().escenarioFormReducer.impacto,
                         usuario: getState().loginReducer.profile.userName,
                         idConciliacion: idConciliacionGrabar,
@@ -1288,11 +1275,6 @@ export const saveEscenario = () => (dispatch, getState) => {
                         console.log('No se ha podido actualizar la escenario')
                     })
                 }
-            } else {
-                toast.error("El nombre del escenario debe tener el prefijo... " + responseval[0].valor.toUpperCase(), {
-                    position: toast.POSITION.BOTTOM_RIGHT
-                })
-            }
         }
     })
 }
@@ -2643,64 +2625,66 @@ export const saveParametro = () => (dispatch, getState) => {
     if (getState().parametroFormReducer.tipo == "CONCILIACION") {
         codPadre = getState().parametroFormReducer.escenario
     }
-    let parametro_salvar = {
-        id: getState().parametroFormReducer.id,
-        parametro: getState().parametroFormReducer.parametro,
-        valor: getState().parametroFormReducer.valor,
-        descripcion: getState().parametroFormReducer.descripcion,
-        tipo: getState().parametroFormReducer.tipo,
-        codPadre: codPadre
-    }
-    if (id_parametro == 0 || id_parametro == undefined) {
-        APIInvoker.invokePOST('/parametros', parametro_salvar, response => {
-            if (response.id != undefined) {
-                dispatch(limpiarFormParametro())
-                dispatch(refreshListParametro())
-                //toast.success("Se grabó el parámetro", {
-                //  position: toast.POSITION.BOTTOM_RIGHT
-                //})
-                $('#modalAdd').modal('hide');
-                dispatch(mostrarModal("alert alert-success", "Se grabó el parámetro " + parametro_salvar.parametro))
-            } else {
-                //Enviar error específico a la consola
-                console.log("Error : " + response.codigo + " Mensaje: " + response.mensaje + ": " + response.descripcion)
-                if (response.mensaje == "CT_UQ_TBL_GAI_PARAMETROS") {
-                    toast.error("Ya existe un parámetro con el mismo nombre", {
-                        position: toast.POSITION.BOTTOM_RIGHT
-                    })
+    APIInvoker.invokeGET('/parametros/findByAny?texto=Prefijo para parametros', responseval => {
+        let parametro_salvar = {
+            id: getState().parametroFormReducer.id,
+            parametro: responseval[0].valor.toUpperCase() + getState().parametroFormReducer.parametro,
+            valor: getState().parametroFormReducer.valor,
+            descripcion: getState().parametroFormReducer.descripcion,
+            tipo: getState().parametroFormReducer.tipo,
+            codPadre: codPadre
+        }
+        if (id_parametro == 0 || id_parametro == undefined) {
+            APIInvoker.invokePOST('/parametros', parametro_salvar, response => {
+                if (response.id != undefined) {
+                    dispatch(limpiarFormParametro())
                     dispatch(refreshListParametro())
+                    //toast.success("Se grabó el parámetro", {
+                    //  position: toast.POSITION.BOTTOM_RIGHT
+                    //})
+                    $('#modalAdd').modal('hide');
+                    dispatch(mostrarModal("alert alert-success", "Se grabó el parámetro " + parametro_salvar.parametro))
                 } else {
-                    //Error sin tratamiento
-                    toast.error("Error general al adicionar parámetro", {
-                        position: toast.POSITION.BOTTOM_RIGHT
-                    })
-                    dispatch(refreshListParametro())
+                    //Enviar error específico a la consola
+                    console.log("Error : " + response.codigo + " Mensaje: " + response.mensaje + ": " + response.descripcion)
+                    if (response.mensaje == "CT_UQ_TBL_GAI_PARAMETROS") {
+                        toast.error("Ya existe un parámetro con el mismo nombre", {
+                            position: toast.POSITION.BOTTOM_RIGHT
+                        })
+                        dispatch(refreshListParametro())
+                    } else {
+                        //Error sin tratamiento
+                        toast.error("Error general al adicionar parámetro", {
+                            position: toast.POSITION.BOTTOM_RIGHT
+                        })
+                        dispatch(refreshListParametro())
+                    }
                 }
-            }
-        }, error => {
-            console.log("No se ha podido crear el parámetro con id" + id_parametro)
-        })
-    } else {
-        APIInvoker.invokePUT('/parametros', parametro_salvar, response => {
-            if (response.id != undefined) {
-                dispatch(mostrarModal("alert alert-success", "Se actualizó el parámetro " + parametro_salvar.parametro))
-                //dispatch(limpiarFormParametro(),browserHistory.push('/parametros'))
-            } else {
-                if (response.mensaje == "CT_UQ_TBL_GAI_PARAMETROS") {
-                    toast.error("Ya existe un parámetro con el mismo nombre", {
-                        position: toast.POSITION.BOTTOM_RIGHT
-                    })
-                    //dispatch(refreshListParametro())
+            }, error => {
+                console.log("No se ha podido crear el parámetro con id" + id_parametro)
+            })
+        } else {
+            APIInvoker.invokePUT('/parametros', parametro_salvar, response => {
+                if (response.id != undefined) {
+                    dispatch(mostrarModal("alert alert-success", "Se actualizó el parámetro " + parametro_salvar.parametro))
+                    //dispatch(limpiarFormParametro(),browserHistory.push('/parametros'))
                 } else {
-                    toast.error("Error general al intentar actualizar parámetro", {
-                        position: toast.POSITION.BOTTOM_RIGHT
-                    })
+                    if (response.mensaje == "CT_UQ_TBL_GAI_PARAMETROS") {
+                        toast.error("Ya existe un parámetro con el mismo nombre", {
+                            position: toast.POSITION.BOTTOM_RIGHT
+                        })
+                        //dispatch(refreshListParametro())
+                    } else {
+                        toast.error("Error general al intentar actualizar parámetro", {
+                            position: toast.POSITION.BOTTOM_RIGHT
+                        })
+                    }
                 }
-            }
-        }, error => {
-            console.log("No se ha podido actualizar el parámetro")
-        })
-    }
+            }, error => {
+                console.log("No se ha podido actualizar el parámetro")
+            })
+        }
+    })
 }
 
 //Funcion para limpiar los campos del formulario de Parametros
@@ -2767,6 +2751,16 @@ const irAPaginaParametros = (pagina) => ({
     type: IR_PAGINA_PARAMETROS,
     pagina: pagina
 })
+
+export const cargarParametrosAVencer = () => (dispatch, getState)=>{
+    APIInvoker.invokeGET('/parametros/findAVencer', response => {
+        if (Array.isArray(response) == true) {
+           // dispatch(cargarListadoParametros(response))
+           console.log("a vencer",response);
+           dispatch(mostrarModal("alert alert-warning", "Tiene parámetros por vencer: " + response.map(function(e){ return e.parametro })))
+        }
+    })
+}
 
 //Funcion que carga el combo de escenarios
 export const cargarListadoEnParametros = () => (dispatch, getState) => {
