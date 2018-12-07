@@ -6,7 +6,7 @@ import IQueryFinder from './IQueryFinder'
 import IQueryPaginador from './IQueryPaginador'
 import { Router, Route, browserHistory, IndexRoute, Link } from "react-router";
 import { connect } from 'react-redux'
-import { updConciliacionQuerys,refreshListQuery,cargarComboEscenariosEnQuerys,calculaPaginadorQuerys, cambioConciliacionesQuery, cargarConciliacionesQuery, updEscenariosQuerys } from '../actions/Actions';
+import { updConciliacionQuerys,refreshListQuery,cargarComboEscenariosEnQuerys,calculaPaginadorQuerys, cambioConciliacionesQuery, cargarConciliacionesQuery, updEscenariosQuerys, updEscenarioQuerys } from '../actions/Actions';
 
 class IQuery extends React.Component{
   constructor(){
@@ -16,13 +16,18 @@ class IQuery extends React.Component{
   componentWillMount(){
     this.props.cargarConciliacionesQuery()
     //this.props.cargarComboEscenariosEnQuerys() 
-    if(this.props.conciliacion != undefined && this.props.conciliacion != 0){
-      this.props.updConciliacionQuerys(this.props.conciliacion)
-    }else if(this.props.registro != undefined && this.props.registro != 0){
-      this.props.updConciliacionQuerys(this.props.registro)
+   
+    if(this.props.conciliacion!=undefined || this.props.registro!=undefined){
+      if(this.props.conciliacion != undefined && this.props.conciliacion != 0){
+        this.props.updConciliacionQuerys(this.props.conciliacion)
+      }else if(this.props.registro != undefined && this.props.registro != 0){
+        this.props.updConciliacionQuerys(this.props.registro)
+      }
+    }else if(this.props.escenario!=undefined){
+      this.props.updEscenarioQuerys(this.props.escenario)
     }else{
       this.props.updConciliacionQuerys(0)
-      this.props.updEscenariosQuerys(0)
+      this.props.updEscenarioQuerys(0)
     }
   }
 
@@ -151,5 +156,5 @@ const mapStateToProps = (state) =>{
 }
 
 export default connect (mapStateToProps,{
-  updConciliacionQuerys, refreshListQuery, cargarComboEscenariosEnQuerys, calculaPaginadorQuerys, cambioConciliacionesQuery, cargarConciliacionesQuery, updEscenariosQuerys
+  updConciliacionQuerys, refreshListQuery, cargarComboEscenariosEnQuerys, calculaPaginadorQuerys, cambioConciliacionesQuery, cargarConciliacionesQuery, updEscenariosQuerys, updEscenarioQuerys
 })(IQuery)
