@@ -22,11 +22,7 @@ const initialState = {
   conciliacion:{"id":0,"queryAprobaciones":["mensaje":""]},
   conciliaciones:[{"id":0,"nombre":"Seleccione una","escenario":["queryescenario":{}]}],
   escenarios:[],
-<<<<<<< HEAD
   escenario:{"id":0, "nombre":""},
-=======
-  escenario : {"id":0,"nombre":"ninguno"},
->>>>>>> a6e6981db1460908edec52fed7282128ef926e82
   paginador: [],
   mensaje:''
 }
