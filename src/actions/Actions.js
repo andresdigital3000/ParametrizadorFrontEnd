@@ -78,7 +78,8 @@ import {
     ACTUALIZA_PAGINADOR_RESULTADOS,
     IR_PAGINA_RESULTADOS,
     CARGAR_CONCILIACIONES_RESULTADO,
-    UPDATE_TIPO_EN_PARAMETROS
+    UPDATE_TIPO_EN_PARAMETROS,
+    CARGAR_POLITICA_EN_CONCILIACION
 } from './const'
 
 import React from 'react'
@@ -590,9 +591,46 @@ const irAPaginaPoliticas = (pagina) => ({
  *  para realizar todas las acciones necesarias del crud de conciliaciones
  */
 
+// Cuando se modifica una política
+ export const cambioPoliticaConciliacion = (_politica) => (dispatch, getState)=>{
+     dispatch(updPoliticaenConciliacion(_politica))
+     if (getState().conciliacionReducer.politica != "" && getState().conciliacionReducer.politica != "0"){
+        APIInvoker.invokeGET('/conciliaciones/politica/' + getState().conciliacionReducer.politica, response => {
+            if (Array.isArray(response) == true) {
+                //if (response[0].id != undefined) {
+                    dispatch(verConciliaciones(response))
+                //} 
+                /*else {
+                    console.log("Error : " + response[0].codigo + " Mensaje: " + response[0].mensaje + ": " + response[0].descripcion)
+                    toast.warn("No se encuentran conciliaciones para politica"+ getState().conciliacionReducer.politica, {
+                        position: toast.POSITION.BOTTOM_RIGHT
+                    })
+                }*/
+            } else {
+                if (response.id != undefined) {
+                    dispatch(verConciliaciones(response))
+                } else {
+                    console.log("Error : " + response.codigo + " Mensaje: " + response.mensaje + ": " + response.descripcion)
+                    toast.warn("No se encuentran conciliaciones para la politica", {
+                        position: toast.POSITION.BOTTOM_RIGHT
+                    })
+                }
+            }
+        })
+      }
+      else{
+        dispatch(refreshListConciliacion())
+      }
+ }
+
+ const updPoliticaenConciliacion = (_politica) =>({
+     type: CARGAR_POLITICA_EN_CONCILIACION,
+     value: _politica
+ })
+
 //Funcion que carga el combo de politicas
 export const cargarComboPoliticas = () => (dispatch, getState) => {
-    APIInvoker.invokeGET('/politicas/findPoliticasSinConciliacion', response => {
+    APIInvoker.invokeGET('/politicas', response => {
         if (Array.isArray(response) == true) {
             if (response[0].id != undefined) {
                 dispatch(cargarPoliticas(response))
@@ -609,6 +647,7 @@ const cargarPoliticas = (arrayPoliticas) => ({
     type: CARGA_POLITICAS,
     lista: arrayPoliticas
 })
+
 
 //Actualizar tecla por tecla el campo de texto del buscador
 export const updateTextFindConciliacion = (field, value) => (dispatch, getState) => {
@@ -2894,7 +2933,7 @@ const actualizarPaginadorQuerys = (array_paginador) => ({
 export const refreshListQuery = () => (dispatch, getState) => {
     //console.log("EJECUTA REFRESH QUERY")
     let objetoVacio = new Object()
-    let escenarioActual = getState().queryReducer.escenario
+    //let escenarioActual = getState().queryReducer.escenario
     let conciliacionActual = getState().queryReducer.conciliacion.id
     let escenarioActual = getState().queryReducer.escenario.id
     if (escenarioActual != 0) {

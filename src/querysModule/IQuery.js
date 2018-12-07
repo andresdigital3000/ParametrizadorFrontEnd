@@ -6,7 +6,7 @@ import IQueryFinder from './IQueryFinder'
 import IQueryPaginador from './IQueryPaginador'
 import { Router, Route, browserHistory, IndexRoute, Link } from "react-router";
 import { connect } from 'react-redux'
-import { updConciliacionQuerys,refreshListQuery,cargarComboEscenariosEnQuerys,calculaPaginadorQuerys, cambioConciliacionesQuery, cargarConciliacionesQuery,updEscenariosQuerys } from '../actions/Actions';
+import { updConciliacionQuerys,refreshListQuery,cargarComboEscenariosEnQuerys,calculaPaginadorQuerys, cambioConciliacionesQuery, cargarConciliacionesQuery, updEscenariosQuerys } from '../actions/Actions';
 
 class IQuery extends React.Component{
   constructor(){
@@ -22,7 +22,7 @@ class IQuery extends React.Component{
       this.props.updConciliacionQuerys(this.props.registro)
     }else{
       this.props.updConciliacionQuerys(0)
-      this.props.updEscenarioQuerys(0)
+      this.props.updEscenariosQuerys(0)
     }
   }
 
