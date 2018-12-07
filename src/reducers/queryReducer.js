@@ -8,6 +8,7 @@ import {
   LIMPIAR_ESCENARIO_SELECCIONADO,
   UPDATE_CONCILIACION_EN_QUERYS,
   CARGAR_CONCILIACIONES_QUERY,
+  UPDATE_ESCENARIO_EN_QUERYS,
   UPDATE_QUERYS_APROB_FORM_REQUEST
 } from '../actions/const'
 import update from 'react-addons-update'
@@ -21,7 +22,7 @@ const initialState = {
   conciliacion:{"id":0,"queryAprobaciones":["mensaje":""]},
   conciliaciones:[{"id":0,"nombre":"Seleccione una","escenario":["queryescenario":{}]}],
   escenarios:[],
-  escenario : {"id":0,"nombre":"ninguno"},
+  escenario:{"id":0, "nombre":""},
   paginador: [],
   mensaje:''
 }
@@ -65,6 +66,10 @@ export const queryReducer = (state = initialState,action) =>{
         case UPDATE_CONCILIACION_EN_QUERYS:
           return update(state,{
             conciliacion : {$set: JSON.parse(action.value)}
+          })
+        case UPDATE_ESCENARIO_EN_QUERYS:
+          return update(state, {
+            escenario : {$set: JSON.parse(action.value)}
           })
         case UPDATE_QUERYS_APROB_FORM_REQUEST:
           return update(state,{

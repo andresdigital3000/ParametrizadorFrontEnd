@@ -6,7 +6,7 @@ import IParametroFinder from './IParametroFinder'
 import IParametroPaginador from './IParametroPaginador'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { connect } from 'react-redux'
-import { refreshListParametro } from '../actions/Actions';
+import { refreshListParametro, updTipoParametros } from '../actions/Actions';
 
 class IParametro extends React.Component{
   constructor(){
@@ -19,6 +19,10 @@ class IParametro extends React.Component{
     }else{
       this.props.refreshListParametro()
     }
+  }
+
+  cambioTipossQuery(e){
+    this.props.updTipoParametros(e.target.value);
   }
 
   render(){
@@ -41,6 +45,18 @@ class IParametro extends React.Component{
                 </div>
                 <div className="col-sm-4">
                   <IParametroFinder/>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-sm-4">
+                  <label htmlFor='tipo'>Tipo</label>
+                  <select id='tipo' value={this.props.state.tipo} className='form-control form-control-lg' onChange={this.cambioTipossQuery.bind(this)}>
+                  <option value=''>Seleccione uno</option>
+                  <option value='GENERAL'>GENERAL</option>
+                  <option value='SISTEMA'>PARAMETROS SISTEMA</option>
+                  <option value='CONCILIACION'>CONCILIACION</option>
+                  <option value='ESCENARIO'>ESCENARIO</option>
+                </select>
                 </div>
               </div>
               <hr/>
@@ -75,5 +91,5 @@ const mapStateToProps = (state) =>{
 }
 
 export default connect (mapStateToProps,{
-  refreshListParametro
+  refreshListParametro, updTipoParametros
 })(IParametro)

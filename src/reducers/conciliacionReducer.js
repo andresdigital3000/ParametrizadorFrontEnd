@@ -4,7 +4,8 @@ import {
   UPDATE_POLITICA_EN_CONCILIACIONES,
   ACTUALIZA_PAGINADOR_CONCILIACIONES,
   IR_PAGINA_CONCILIACIONES,
-  CARGA_POLITICAS
+  CARGA_POLITICAS,
+  CARGAR_POLITICA_EN_CONCILIACION
 } from '../actions/const'
 import update from 'react-addons-update'
 
@@ -46,6 +47,10 @@ export const conciliacionReducer = (state = initialState,action) =>{
       case CARGA_POLITICAS:
         return update(state,{
           politicas: {$set: action.lista}
+        })
+        case CARGAR_POLITICA_EN_CONCILIACION:
+        return update(state,{
+          politica:{$set: action.value}
         })
     default:
       return state
