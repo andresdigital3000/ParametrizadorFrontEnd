@@ -580,7 +580,6 @@ export const moverPaginaPoliticas = (pagina) => (dispatch, getState) => {
     let NumPagsTotales = getState().politicaReducer.paginador.length
     if (pagina > 0 && pagina <= NumPagsTotales) {
         dispatch(irAPaginaPoliticas(pagina))
-        dispatch(refreshListPolitica())
     }
 }
 
@@ -602,7 +601,7 @@ const irAPaginaPoliticas = (pagina) => ({
             if (Array.isArray(response) == true) {
                 //if (response[0].id != undefined) {
                     dispatch(verConciliaciones(response))
-                //} 
+                //}
                 /*else {
                     console.log("Error : " + response[0].codigo + " Mensaje: " + response[0].mensaje + ": " + response[0].descripcion)
                     toast.warn("No se encuentran conciliaciones para politica"+ getState().conciliacionReducer.politica, {
@@ -2545,7 +2544,7 @@ export const findTextParametro = () => (dispatch, getState) => {
 export const updTipoParametros = (_tipo) => (dispatch, getState) => {
     dispatch(updTipoenParametros(_tipo))
     if (_tipo != "")
-    {        
+    {
         APIInvoker.invokeGET('/parametros/padre?tipo='+_tipo, response => {
             if (Array.isArray(response) == true) {
                 dispatch(verParametros(response))
