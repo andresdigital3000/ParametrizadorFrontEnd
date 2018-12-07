@@ -44,7 +44,7 @@ class IQuery extends React.Component{
             </div>
             <div className="row">
               <div className="col-sm-4">
-                <If condition={this.props.registro==undefined && this.props.state.escenario.id==0} >
+                <If condition={this.props.registro==undefined}>
                     <button className="btn btn-primary" id="buttonadd" data-toggle="modal" data-target="#modalAdd"><i className="fa fa-plus-circle"/> Adicionar</button>
                 </If>
               </div>
@@ -54,7 +54,7 @@ class IQuery extends React.Component{
                 </center>
               </div>
               <div className="col-sm-4">
-                  <If condition={this.props.registro==undefined && this.props.state.escenario.id==0}>
+                  <If condition={this.props.registro==undefined}>
                       <IQueryFinder/>
                   </If>
               </div>

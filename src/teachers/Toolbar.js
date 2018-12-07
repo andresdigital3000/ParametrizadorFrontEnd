@@ -36,14 +36,14 @@ class Toolbar extends React.Component{
                   Administrativo
                 </a>
                 <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <Link to="/politicas" className="dropdown-item">Políticas</Link>
-                  <Link to="/conciliaciones" className="dropdown-item">Conciliaciones</Link>
-                  <Link to="/escenarios" className="dropdown-item">Escenarios</Link>
-                  <Link to="/parametros" className="dropdown-item">Parámetros</Link>
-                  <Link to="/querys" className="dropdown-item">Queries</Link>
-                  <Link to="/uc" className="dropdown-item">Usuarios</Link>
-                  <Link to="/uc" className="dropdown-item">Roles</Link>
-                  <Link to="/uc" className="dropdown-item">Accesos</Link>
+                  <Link onClick={this.forceUpdate} to="/politicas" className="dropdown-item">Políticas</Link>
+                  <Link onClick={this.forceUpdate} to="/conciliaciones" className="dropdown-item">Conciliaciones</Link>
+                  <Link onClick={this.forceUpdate} to="/escenarios" className="dropdown-item">Escenarios</Link>
+                  <Link onClick={this.forceUpdate} to="/parametros" className="dropdown-item">Parámetros</Link>
+                  <Link onClick={this.forceUpdate} to="/querys" className="dropdown-item">Queries</Link>
+                  <Link onClick={this.forceUpdate} to="/uc" className="dropdown-item">Usuarios</Link>
+                  <Link onClick={this.forceUpdate} to="/uc" className="dropdown-item">Roles</Link>
+                  <Link onClick={this.forceUpdate} to="/uc" className="dropdown-item">Accesos</Link>
                 </div>
               </li>
               <li className="nav-item dropdown">
@@ -51,8 +51,8 @@ class Toolbar extends React.Component{
                   Ejecución
                 </a>
                 <div className="dropdown-menu" aria-labelledby="navbarDropdown2">
-                  <Link to="/ejecucion" className="dropdown-item">Conciliaciones</Link>
-                  <Link to="/resultados" className="dropdown-item">Aprobación de resultados</Link>
+                  <Link onClick={this.forceUpdate} to="/ejecucion" className="dropdown-item">Conciliaciones</Link>
+                  <Link onClick={this.forceUpdate} to="/resultados" className="dropdown-item">Aprobación de resultados</Link>
 
                 </div>
               </li>
@@ -63,8 +63,8 @@ class Toolbar extends React.Component{
                 <div className="dropdown-menu" aria-labelledby="navbarDropdown3">
                   {
                     React.createElement('a',{href:linkRes,className:'dropdown-item'},'Resultados')
-                  }                  
-                  <Link to="/indicadores" className="dropdown-item">Indicadores</Link>
+                  }
+                  <Link onClick={this.forceUpdate} to="/indicadores" className="dropdown-item">Indicadores</Link>
                 </div>
               </li>
               <li className="nav-item">
