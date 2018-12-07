@@ -84,6 +84,7 @@ render((
             <Route path="/parametros/delete/:idparametrodelete" component={IParametroDelete}></Route>
             <Route path="/querys" component={IQuery}></Route>
             <Route path="/querys/:idconciliacion" component={IQuery}></Route>
+            <Route path="/querys/escenario/:idescenario" component={IQuery}></Route>
             <Route path="/querys/edit/:idquery" component={IQueryForm}></Route>
             <Route path="/querys/delete/:idquerydelete" component={IQueryDelete}></Route>
             <Route path="/querys/aprobar/:aprobar" component={IQueryAprobar}></Route>

@@ -22,6 +22,7 @@ class IQuery extends React.Component{
       this.props.updConciliacionQuerys(this.props.registro)
     }else{
       this.props.updConciliacionQuerys(0)
+      this.props.updEscenarioQuerys(0)
     }
   }
 
@@ -43,7 +44,7 @@ class IQuery extends React.Component{
             </div>
             <div className="row">
               <div className="col-sm-4">
-                <If condition={this.props.registro==undefined}>
+                <If condition={this.props.registro==undefined && this.props.state.escenario.id==0} >
                     <button className="btn btn-primary" id="buttonadd" data-toggle="modal" data-target="#modalAdd"><i className="fa fa-plus-circle"/> Adicionar</button>
                 </If>
               </div>
@@ -53,7 +54,7 @@ class IQuery extends React.Component{
                 </center>
               </div>
               <div className="col-sm-4">
-                  <If condition={this.props.registro==undefined}>
+                  <If condition={this.props.registro==undefined && this.props.state.escenario.id==0}>
                       <IQueryFinder/>
                   </If>
               </div>
@@ -110,24 +111,26 @@ class IQuery extends React.Component{
             </Otherwise>
             </Choose>
             <hr/>
-            <div className="row">
-              <div className="col-sm-1">
+            <If condition={this.props.state.escenario.id==0}>
+              <div className="row">
+                <div className="col-sm-1">
+                </div>
+                <div className="col-sm-8">
+                  <center>
+                    <IQueryPaginador/>
+                  </center>
+                </div>
+                <div className="col-sm-1">
+                  {
+                    this.props.state.conciliacion.id!="0" && this.props.state.querys.length>0 && this.props.state.estado.length==0 ?
+                    <Link to="/querys/aprobar/form" className="btn btn-primary">Aprobar Conciliación</Link> :
+                    <p>&nbsp;</p>
+                  }
+                </div>
+                <div className="col-sm-2">
+                </div>
               </div>
-              <div className="col-sm-8">
-                <center>
-                  <IQueryPaginador/>
-                </center>
-              </div>
-              <div className="col-sm-1">
-                {
-                  this.props.state.conciliacion.id!="0" && this.props.state.querys.length>0 && this.props.state.estado.length==0 ? 
-                  <Link to="/querys/aprobar/form" className="btn btn-primary">Aprobar Conciliación</Link> :
-                  <p>&nbsp;</p>
-                }
-              </div>
-              <div className="col-sm-2">
-              </div>
-            </div>
+              </If>
           </header>
         </div>
     )

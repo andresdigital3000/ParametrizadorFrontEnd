@@ -4,6 +4,7 @@ import {
   ACTUALIZA_PAGINADOR_QUERYS,
   IR_PAGINA_QUERYS,
   CARGA_ESCENARIOS_EN_QUERYS,
+  ASIGNAR_ESCENARIO_SELECCIONADO,
   LIMPIAR_ESCENARIO_SELECCIONADO,
   UPDATE_CONCILIACION_EN_QUERYS,
   CARGAR_CONCILIACIONES_QUERY,
@@ -21,7 +22,11 @@ const initialState = {
   conciliacion:{"id":0,"queryAprobaciones":["mensaje":""]},
   conciliaciones:[{"id":0,"nombre":"Seleccione una","escenario":["queryescenario":{}]}],
   escenarios:[],
+<<<<<<< HEAD
   escenario:{"id":0, "nombre":""},
+=======
+  escenario : {"id":0,"nombre":"ninguno"},
+>>>>>>> a6e6981db1460908edec52fed7282128ef926e82
   paginador: [],
   mensaje:''
 }
@@ -54,6 +59,10 @@ export const queryReducer = (state = initialState,action) =>{
           return update(state,{
             conciliaciones: {$set: action.lista}
           })
+        case ASIGNAR_ESCENARIO_SELECCIONADO:
+            return update  (state,{
+              escenario :{$set: action.lista}
+            })
         case LIMPIAR_ESCENARIO_SELECCIONADO:
           return update  (state,{
             escenario :{$set: action.lista}

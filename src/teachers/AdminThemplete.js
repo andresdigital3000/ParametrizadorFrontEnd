@@ -201,6 +201,10 @@ class AdminThemplete extends React.Component{
                       <IQueryForm conciliacion={this.props.params.idconciliacion}/>
                       <IQuery conciliacion={this.props.params.idconciliacion}/>
                     </When>
+                    <When condition={this.props.params.idescenario}>
+                      <IQueryForm escenario={this.props.params.idescenario}/>
+                      <IQuery escenario={this.props.params.idescenario}/>
+                    </When>
                     <When condition={this.props.params.aprobar}>
                       <IQueryAprobar/>
                     </When>

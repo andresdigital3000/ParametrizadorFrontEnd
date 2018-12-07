@@ -65,6 +65,7 @@ import {
     ACTUALIZA_PAGINADOR_QUERYS,
     IR_PAGINA_QUERYS,
     CARGA_ESCENARIOS_EN_QUERYS,
+    ASIGNAR_ESCENARIO_SELECCIONADO,
     LIMPIAR_ESCENARIO_SELECCIONADO,
     CARGAR_CONCILIACIONES_QUERY,
     UPDATE_QUERYS_APROB_FORM_REQUEST,
@@ -2893,6 +2894,7 @@ const actualizarPaginadorQuerys = (array_paginador) => ({
 export const refreshListQuery = () => (dispatch, getState) => {
     //console.log("EJECUTA REFRESH QUERY")
     let objetoVacio = new Object()
+    let escenarioActual = getState().queryReducer.escenario
     let conciliacionActual = getState().queryReducer.conciliacion.id
     let escenarioActual = getState().queryReducer.escenario.id
     if (escenarioActual != 0) {
@@ -3206,8 +3208,29 @@ const cargarEscenariosenQuerys = (arrayEscenarios) => (
     lista: arrayEscenarios
 })
 
+//Funcion que actualiza el escenario seleccionado en queries
+export const updEscenarioQuerys = (idescenario) => (dispatch,getState) => {
+    console.log("Recibo escenario "+idescenario)
+    APIInvoker.invokeGET('/escenarios/' + idescenario, response => {
+        if (response.id != undefined) {
+            dispatch(asignarEscenarioSeleccionado(response))
+        } else {
+            console.log('No se encuentra el escenario')
+            dispatch(limpiarEscenarioSeleccionado())
+        }
+        dispatch(refreshListQuery())
+    }, error => {
+        console.log('No se pudo cargar las Propiedades del escenario ' + idescenario + ' en querys listar')
+    })
+}
 //Funcion que elimina el valor ultimo seleccionado del combo
-export const limpiarEscenarioSeleccionado = () => ({
+const asignarEscenarioSeleccionado = (listado) => ({
+    type: ASIGNAR_ESCENARIO_SELECCIONADO,
+    lista: listado
+})
+
+//Funcion que elimina el valor ultimo seleccionado del combo
+const limpiarEscenarioSeleccionado = () => ({
     type: LIMPIAR_ESCENARIO_SELECCIONADO,
     lista: {
         "id": 0,
