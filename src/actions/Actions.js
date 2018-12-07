@@ -453,7 +453,7 @@ export const savePolitica = () => (dispatch, getState) => {
                         dispatch(mostrarModal("alert alert-success", "Se grabó la política " + politica_salvar.nombre))
                         dispatch(limpiarFormPolitica())
                         dispatch(refreshListPolitica())
-
+                        //browserHistory.push('/politicas')
                         //toast.success("Se grabó la política", {
                         //  position: toast.POSITION.BOTTOM_RIGHT
                         //})
@@ -490,6 +490,9 @@ export const savePolitica = () => (dispatch, getState) => {
                     APIInvoker.invokePUT('/politicas', politica_salvar, response => {
                         if (response.id != undefined) {
                             dispatch(mostrarModal("alert alert-success", "Se actualizó la política " + politica_salvar.nombre))
+                            dispatch(limpiarFormPolitica())
+                            dispatch(refreshListPolitica())
+                            browserHistory.push('/politicas')
                         } else {
                             if (response.mensaje == "CT_UQ_TBL_GAI_POLITICA_NOMBRE_POLITICA") {
                                 toast.error("Ya existe una política con el mismo nombre", {

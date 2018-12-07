@@ -1,4 +1,5 @@
 import React from 'react';
+import "isomorphic-fetch";
 import { render } from 'react-dom';
 import { Router, Route, browserHistory, IndexRoute, Match } from "react-router";
 import { createStore, applyMiddleware } from 'redux'
