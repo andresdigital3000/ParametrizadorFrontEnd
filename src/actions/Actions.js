@@ -42,6 +42,7 @@ import {
     CARGAR_INDICADOR_FORM,
     IR_PAGINA_INDICADORES,
     UPDATE_ESCENARIO_EN_INDICADORES,
+    UPDATE_ESCENARIO_EN_QUERYS,
     CARGA_ESCENARIOS_EN_INDICADORES,
     UPDATE_RESULTADO_EN_INDICADORES,
     CARGA_PARAMETROS_EN_INDICADORES,
@@ -75,7 +76,8 @@ import {
     UPDATE_CONCILIACION_EN_RESULTADOS,
     ACTUALIZA_PAGINADOR_RESULTADOS,
     IR_PAGINA_RESULTADOS,
-    CARGAR_CONCILIACIONES_RESULTADO
+    CARGAR_CONCILIACIONES_RESULTADO,
+    UPDATE_TIPO_EN_PARAMETROS
 } from './const'
 
 import React from 'react'
@@ -2495,6 +2497,27 @@ export const findTextParametro = () => (dispatch, getState) => {
     }
 }
 
+
+//Cargar el filtro de tipo de parámetro en el reducer de parámetros
+export const updTipoParametros = (_tipo) => (dispatch, getState) => {
+    dispatch(updTipoenParametros(_tipo))
+    if (_tipo != "")
+    {        
+        APIInvoker.invokeGET('/parametros/padre?tipo='+_tipo, response => {
+            if (Array.isArray(response) == true) {
+                dispatch(verParametros(response))
+            }
+        })
+    } else{
+        dispatch(refreshListParametro(null))
+    }
+}
+
+const updTipoenParametros = (tipo) => ({
+    type: UPDATE_TIPO_EN_PARAMETROS,
+    value: tipo
+})
+
 //Recalcular el paginador de parametro
 export const calculaPaginadorParametros = () => (dispatch, getState) => {
     let numregs = 0
@@ -2533,6 +2556,7 @@ export const calculaPaginadorParametros = () => (dispatch, getState) => {
         }
     })
 }
+
 //Envia las variables al store
 const actualizarPaginadorParametros = (array_paginador) => ({
     type: ACTUALIZA_PAGINADOR_PARAMETROS,
@@ -2870,7 +2894,24 @@ export const refreshListQuery = () => (dispatch, getState) => {
     //console.log("EJECUTA REFRESH QUERY")
     let objetoVacio = new Object()
     let conciliacionActual = getState().queryReducer.conciliacion.id
-    if (conciliacionActual != 0) {
+    let escenarioActual = getState().queryReducer.escenario.id
+    if (escenarioActual != 0) {
+        APIInvoker.invokeGET('/queryescenario/escenario/' + escenarioActual, response => {
+            if (Array.isArray(response)) {
+                if (response[0].id != undefined) {
+                    console.log("Detecta escenarioActual ==>>" + escenarioActual)
+                    console.log(response)
+                    dispatch(antesVerQuerys(response))
+                } else {
+                    console.log("Error : " + response[0].codigo + " Mensaje: " + response[0].mensaje + ": " + response[0].descripcion)
+                    dispatch(antesVerQuerys(objetoVacio))
+                }
+            } else {
+                console.log("Error : " + response.codigo + " Mensaje: " + response.mensaje + ": " + response.descripcion)
+                dispatch(antesVerQuerys(objetoVacio))
+            }
+        })
+    } else if (conciliacionActual != 0){
         APIInvoker.invokeGET('/queryescenario/conciliacion/' + conciliacionActual, response => {
             if (Array.isArray(response)) {
                 if (response[0].id != undefined) {
@@ -2886,7 +2927,8 @@ export const refreshListQuery = () => (dispatch, getState) => {
                 dispatch(antesVerQuerys(objetoVacio))
             }
         })
-    } else {
+    } else
+    {
         //si no existe resp
         let regInicial = 0
         let pagActual = getState().queryReducer.paginaActual
@@ -2923,11 +2965,36 @@ const verQuerys = (res) => ({
     lista: res
 })
 
+export const updEscenariosQuerys = (idescenario) => (dispatch, getState)=>{
+    APIInvoker.invokeGET('/escenarios/' + idescenario, response => {
+        if (response.id != undefined) {
+            console.log(JSON.stringify(response));
+            dispatch(updEscenariosenQuery(JSON.stringify(response)))
+        } else {
+            console.log('No se encuentra el escenario')
+            dispatch(updEscenariosenQuery(JSON.stringify({
+                "id": 0,
+                "nombre": "Ningún escenario",
+               // "queryAprobaciones": ["mensaje": ""]
+            })))
+        }
+        dispatch(refreshListQuery())
+    }, error => {
+        console.log('No se pudo cargar las Propiedades del escenario ' + idconciliacion + ' en querys listar')
+    })
+}
+
+const updEscenariosenQuery = (objEscenario) => ({
+    type: UPDATE_ESCENARIO_EN_QUERYS,
+    value: objEscenario
+})
+
 //Cargar el id conciliacion en el reducer de querys
 export const updConciliacionQuerys = (idconciliacion) => (dispatch, getState) => {
     APIInvoker.invokeGET('/conciliaciones/' + idconciliacion, response => {
         if (response.id != undefined) {
             dispatch(updConciliacionenQuery(JSON.stringify(response)))
+            dispatch(cargarComboEscenariosEnQuerys(idconciliacion))
         } else {
             console.log('No se encuentra la conciliacion')
             dispatch(updConciliacionenQuery(JSON.stringify({
@@ -2935,6 +3002,7 @@ export const updConciliacionQuerys = (idconciliacion) => (dispatch, getState) =>
                 "nombre": "Ninguna conciliacion",
                 "queryAprobaciones": ["mensaje": ""]
             })))
+
         }
         dispatch(refreshListQuery())
     }, error => {
@@ -3124,15 +3192,16 @@ const irAPaginaQuerys = (pagina) => ({
 })
 
 //Funcion que carga el combo de escenarios
-export const cargarComboEscenariosEnQuerys = () => (dispatch, getState) => {
-    APIInvoker.invokeGET('/escenarios', response => {
+export const cargarComboEscenariosEnQuerys = (idConciliacion) => (dispatch, getState) => {
+    APIInvoker.invokeGET('/escenarios/conciliacion/'+idConciliacion, response => {
         if (Array.isArray(response) == true) {
             dispatch(cargarEscenariosenQuerys(response))
         }
     })
 }
 //Envia resultado para llenar el combo a Reducer
-const cargarEscenariosenQuerys = (arrayEscenarios) => ({
+const cargarEscenariosenQuerys = (arrayEscenarios) => (
+    {
     type: CARGA_ESCENARIOS_EN_QUERYS,
     lista: arrayEscenarios
 })
