@@ -580,6 +580,7 @@ export const moverPaginaPoliticas = (pagina) => (dispatch, getState) => {
     let NumPagsTotales = getState().politicaReducer.paginador.length
     if (pagina > 0 && pagina <= NumPagsTotales) {
         dispatch(irAPaginaPoliticas(pagina))
+        dispatch(refreshListPolitica())
     }
 }
 
