@@ -632,7 +632,7 @@ const irAPaginaPoliticas = (pagina) => ({
 
 //Funcion que carga el combo de politicas
 export const cargarComboPoliticas = () => (dispatch, getState) => {
-    APIInvoker.invokeGET('/politicas', response => {
+    APIInvoker.invokeGET('/politicas/findPoliticasSinConciliacion', response => {
         if (Array.isArray(response) == true) {
             if (response[0].id != undefined) {
                 dispatch(cargarPoliticas(response))
