@@ -1281,23 +1281,12 @@ export const saveEscenario = () => (dispatch, getState) => {
                         console.log('No se ha podido crear la escenario')
                     })
                 } else {
-                    //Si es actualizar un existente
-                    let idConciliacionGrabar = 0
-                    let nombreConciliacionGrabar = "Ninguna"
-                    if (getState().escenarioReducer.conciliacion.id == 0) {
-                        idConciliacionGrabar = getState().escenarioFormReducer.idConciliacion
-                        nombreConciliacionGrabar = getState().escenarioFormReducer.nombreConciliacion
-                    } else {
-                        idConciliacionGrabar = getState().escenarioReducer.conciliacion.id
-                        nombreConciliacionGrabar = getState().escenarioReducer.conciliacion.nombre
-                    }
                     let escenario_salvar = {
                         id: getState().escenarioFormReducer.id,
                         nombre:responseval[0].valor.toUpperCase() + getState().escenarioFormReducer.nombre,
                         impacto: getState().escenarioFormReducer.impacto,
                         usuario: getState().loginReducer.profile.userName,
-                        idConciliacion: idConciliacionGrabar,
-                        nombreConciliacion: nombreConciliacionGrabar,
+                        idConciliacion: getState().escenarioFormReducer.idConciliacion,
                         descripcion: getState().escenarioFormReducer.descripcion
                     }
                     APIInvoker.invokePUT('/escenarios', escenario_salvar, response => {
