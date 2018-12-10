@@ -908,8 +908,8 @@ export const saveConciliacion = () => (dispatch, getState) => {
                                 toast.error("Ya existe otra conciliación con el mismo nombre", {
                                     position: toast.POSITION.BOTTOM_RIGHT
                                 })
-                            } else if (response.descripcion == "El paquete ya existe") {
-                                toast.error("El paquete ya se usó con otra conciliación", {
+                            } else if (response.descripcion == "El paquete ya esta siendo utilizado") {
+                                toast.error("El paquete ya esta siendo utilizado", {
                                     position: toast.POSITION.BOTTOM_RIGHT
                                 })
                             } else {
