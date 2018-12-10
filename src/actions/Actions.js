@@ -1235,6 +1235,7 @@ export const updateFormEscenarios = (field, value) => (dispatch, getState) => {
             }
         })
     }
+    console.log("SE ENVIARA ==> PARA "+field+" El valor : "+value)
     dispatch(updateFormEscenariosRequest(field, value))
 }
 //Enviar al reducer la tecla pulsada
@@ -1255,7 +1256,7 @@ export const saveEscenario = () => (dispatch, getState) => {
                         nombre: responseval[0].valor.toUpperCase() + getState().escenarioFormReducer.nombre,
                         impacto: getState().escenarioFormReducer.impacto,
                         usuario: getState().loginReducer.profile.userName,
-                        idConciliacion: getState().escenarioFormReducer.idConciliacion,
+                        idConciliacion: getState().escenarioFormReducer.conciliacion,
                         descripcion: getState().escenarioFormReducer.descripcion
                     }
                     //, nombreConciliacion : getState().escenarioFormReducer.nombreConciliacion
@@ -1286,7 +1287,7 @@ export const saveEscenario = () => (dispatch, getState) => {
                         nombre:responseval[0].valor.toUpperCase() + getState().escenarioFormReducer.nombre,
                         impacto: getState().escenarioFormReducer.impacto,
                         usuario: getState().loginReducer.profile.userName,
-                        idConciliacion: getState().escenarioFormReducer.idConciliacion,
+                        idConciliacion: getState().escenarioFormReducer.conciliacion,
                         descripcion: getState().escenarioFormReducer.descripcion
                     }
                     APIInvoker.invokePUT('/escenarios', escenario_salvar, response => {
