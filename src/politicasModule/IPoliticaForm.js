@@ -4,7 +4,7 @@ import APIInvoker from '../utils/APIInvoker'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { Link } from 'react-router';
 import { connect } from 'react-redux'
-import { updateFormPoliticas, savePolitica, cargarPolitica, limpiarFormPolitica } from '../actions/Actions';
+import { updateFormPoliticas, savePolitica, cargarPolitica, limpiarFormPolitica, onNombreIngresado } from '../actions/Actions';
 
 class IPoliticaForm extends React.Component{
   constructor(){
@@ -20,6 +20,10 @@ class IPoliticaForm extends React.Component{
   //Detecta cambios de estado
   handleInput(e){
     this.props.updateFormPoliticas(e.target.id, e.target.value)
+  }
+
+  nombreIngresado(e){
+    this.props.onNombreIngresado(e.target.value)
   }
 
   //Salvar el nuevo registro
@@ -89,8 +93,15 @@ class IPoliticaForm extends React.Component{
                     <input id='id' ref='id' type='hidden' value={this.props.state.id}/>
                     <div className="form-group">
                       <label htmlFor='nombre'>* Nombre</label>
-                      <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un nombre de política' placeholder='Digite un nombre de política' autoComplete='off' maxLength='100'/>
+                      <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} onBlur={this.nombreIngresado.bind(this)} placeholder='Digite un nombre de política' placeholder='Digite un nombre de política' autoComplete='off' maxLength='100'/>
                       <small id="nombreHelp" className="form-text text-muted">Que sea descriptivo</small>
+                      {
+                        this.props.state.errorNombre=="A"?
+                      <div className="alert alert-danger">
+                        <strong>Error! </strong> El nombre de la política ya existe
+                      </div>
+                      : <span></span>
+                      }
                     </div>
                     <div className="form-group">
                       <label htmlFor='descripcion'>* Descripción</label>
@@ -105,10 +116,10 @@ class IPoliticaForm extends React.Component{
                   </div>
                   <div className="modal-footer">
                     (*) Obligatorio
-                    <hr/>
+                    <hr/>                   
                     <button onClick={this.props.limpiarFormPolitica.bind(this)} type="button" className="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                     {
-                      this.props.state.nombre!="" && this.props.state.objetivo!="" && this.props.state.descripcion!="" ?
+                      this.props.state.nombre!="" && this.props.state.objetivo!="" && this.props.state.descripcion!="" && this.props.state.errorNombre=="" ?
                       <button onClick={this.props.savePolitica.bind(this)} className="btn btn-primary">Grabar</button> :
                       <button className="btn btn-primary"  disabled>Formulario incompleto</button>
                     }
@@ -129,10 +140,11 @@ const mapStateToProps = (state) =>{
       id : state.politicaFormReducer.id,
       nombre : state.politicaFormReducer.nombre,
       descripcion : state.politicaFormReducer.descripcion,
-      objetivo : state.politicaFormReducer.objetivo
+      objetivo : state.politicaFormReducer.objetivo,
+      errorNombre : state.politicaFormReducer.errorNombre
     }
   }
 }
 export default connect (mapStateToProps,{
-  updateFormPoliticas, savePolitica, cargarPolitica, limpiarFormPolitica
+  updateFormPoliticas, savePolitica, cargarPolitica, limpiarFormPolitica, onNombreIngresado
 })(IPoliticaForm)

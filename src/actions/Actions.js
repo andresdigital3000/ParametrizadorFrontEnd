@@ -396,9 +396,34 @@ const verPoliticas = (res) => ({
     type: CARGAR_POLITICAS,
     lista: res
 })
+
+// Una vez ingresado el nombre de la política
+export const onNombreIngresado = (value) => (dispatch, getState) => {
+    dispatch(updateFormPoliticasRequest("errorNombre", ''))
+    //getState().politicaFormReducer.errorNombre = '';
+APIInvoker.invokeGET('/politicas/findByAny?texto='+value, response => {
+    if (response != undefined && response[0] != undefined && response[0].conciliaciones.length>0) {
+        var existentes = response.filter((_politica)=>{
+            return _politica.nombre.toUpperCase() == 'PO_'+value.toUpperCase();
+        })
+        if (existentes.length > 0){
+            toast.error("La política que intenta crear ya existe", {
+                position: toast.POSITION.BOTTOM_RIGHT
+            })
+            dispatch(updateFormPoliticasRequest("errorNombre", 'A'))
+        } else {
+            dispatch(updateFormPoliticasRequest("errorNombre", ''))
+        }
+    }
+}, error=>{
+    dispatch(updateFormPoliticasRequest("errorNombre", ''))
+})
+}
+
+
 //Actualizar tecla por tecla los campos del formulario de politicas
 export const updateFormPoliticas = (field, value) => (dispatch, getState) => {
-    if (field == "nombre") {
+    /*if (field == "nombre") {
         APIInvoker.invokeGET('/parametros/findByAny?texto=Prefijo para politicas', response => {
             if (response[0].valor != undefined) {
                 let long_parametro = response[0].valor.length;
@@ -420,7 +445,7 @@ export const updateFormPoliticas = (field, value) => (dispatch, getState) => {
                 }
             }
         })
-    }
+    }*/
     dispatch(updateFormPoliticasRequest(field, value))
 }
 //Enviar al reducer la tecla pulsada
