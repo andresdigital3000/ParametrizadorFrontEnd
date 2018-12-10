@@ -933,8 +933,8 @@ export const saveConciliacion = () => (dispatch, getState) => {
                                 toast.error("Ya existe otra conciliación con el mismo nombre", {
                                     position: toast.POSITION.BOTTOM_RIGHT
                                 })
-                            } else if (response.descripcion == "El paquete ya existe") {
-                                toast.error("El paquete ya se usó con otra conciliación", {
+                            } else if (response.descripcion == "El paquete ya esta siendo utilizado") {
+                                toast.error("El paquete ya esta siendo utilizado", {
                                     position: toast.POSITION.BOTTOM_RIGHT
                                 })
                             } else {
@@ -1260,6 +1260,7 @@ export const updateFormEscenarios = (field, value) => (dispatch, getState) => {
             }
         })
     }
+    console.log("SE ENVIARA ==> PARA "+field+" El valor : "+value)
     dispatch(updateFormEscenariosRequest(field, value))
 }
 //Enviar al reducer la tecla pulsada
@@ -1280,7 +1281,7 @@ export const saveEscenario = () => (dispatch, getState) => {
                         nombre: responseval[0].valor.toUpperCase() + getState().escenarioFormReducer.nombre,
                         impacto: getState().escenarioFormReducer.impacto,
                         usuario: getState().loginReducer.profile.userName,
-                        idConciliacion: getState().escenarioFormReducer.idConciliacion,
+                        idConciliacion: getState().escenarioFormReducer.conciliacion,
                         descripcion: getState().escenarioFormReducer.descripcion
                     }
                     //, nombreConciliacion : getState().escenarioFormReducer.nombreConciliacion
@@ -1306,23 +1307,12 @@ export const saveEscenario = () => (dispatch, getState) => {
                         console.log('No se ha podido crear la escenario')
                     })
                 } else {
-                    //Si es actualizar un existente
-                    let idConciliacionGrabar = 0
-                    let nombreConciliacionGrabar = "Ninguna"
-                    if (getState().escenarioReducer.conciliacion.id == 0) {
-                        idConciliacionGrabar = getState().escenarioFormReducer.idConciliacion
-                        nombreConciliacionGrabar = getState().escenarioFormReducer.nombreConciliacion
-                    } else {
-                        idConciliacionGrabar = getState().escenarioReducer.conciliacion.id
-                        nombreConciliacionGrabar = getState().escenarioReducer.conciliacion.nombre
-                    }
                     let escenario_salvar = {
                         id: getState().escenarioFormReducer.id,
                         nombre:responseval[0].valor.toUpperCase() + getState().escenarioFormReducer.nombre,
                         impacto: getState().escenarioFormReducer.impacto,
                         usuario: getState().loginReducer.profile.userName,
-                        idConciliacion: idConciliacionGrabar,
-                        nombreConciliacion: nombreConciliacionGrabar,
+                        idConciliacion: getState().escenarioFormReducer.conciliacion,
                         descripcion: getState().escenarioFormReducer.descripcion
                     }
                     APIInvoker.invokePUT('/escenarios', escenario_salvar, response => {
