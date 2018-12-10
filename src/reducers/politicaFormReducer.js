@@ -9,7 +9,8 @@ const initialState = {
   id : 0,
   nombre : '',
   descripcion : '',
-  objetivo : ''
+  objetivo : '', 
+  errorNombre : ''
 }
 
 export const politicaFormReducer = (state = initialState,action) =>{
@@ -23,14 +24,16 @@ export const politicaFormReducer = (state = initialState,action) =>{
           id : {$set: action.politica[0].id},
           nombre : {$set: action.politica[0].nombre.substring(3,(action.politica[0].nombre.length))},
           descripcion : {$set: action.politica[0].descripcion},
-          objetivo : {$set: action.politica[0].objetivo}
+          objetivo : {$set: action.politica[0].objetivo},
+          errorNombre : {$set:''}
         })
     case LIMPIAR_FORM_POLITICA:
         return update(state,{
           id : {$set: 0},
           nombre : {$set: ''},
           descripcion : {$set: ''},
-          objetivo : {$set: ''}
+          objetivo : {$set: ''},
+          errorNombre : {$set:''}
         })
     default:
         return state
