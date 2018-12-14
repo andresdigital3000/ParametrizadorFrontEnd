@@ -33,7 +33,7 @@ app.post('/login/:user', function(req,res){
   res.send(body);
 });
 
-app.listen(80,function(){
+app.listen(82,function(){
   console.log("ENV ==> " , process.env.NODE_ENV)
-  console.log('Claro parametrizador app escuchando en puerto 80!');
+  console.log('Ejemplo app escuchando en puerto 82!');
 });

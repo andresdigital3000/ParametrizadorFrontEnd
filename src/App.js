@@ -1,4 +1,5 @@
 import React from 'react';
+import "isomorphic-fetch";
 import { render } from 'react-dom';
 import { Router, Route, browserHistory, IndexRoute, Match } from "react-router";
 import { createStore, applyMiddleware } from 'redux'
@@ -59,6 +60,7 @@ export const store = createStore(
 render((
     <Provider store={ store }>
       <Router history={ browserHistory }>
+<<<<<<< HEAD
 
           <Route path="/" component={ILogin}></Route>
           <Route path="/admin" component={ AdminThemplete } >
@@ -118,6 +120,40 @@ render((
                   return null;
               }
             })()}
+=======
+          <Route path="/login" component={ILogin}></Route>
+          <Route path="/" component={ AdminThemplete } >
+            <Route path="/politicas" component={IPolitica}></Route>
+            <Route path="/politicas/:idpolitica" component={IPolitica}></Route>
+            <Route path="/politicas/edit/:idpolitica" component={IPoliticaForm}></Route>
+            <Route path="/politicas/delete/:idpoliticadelete" component={IPoliticaDelete}></Route>
+            <Route path="/conciliaciones" component={IConciliacion}></Route>
+            <Route path="/conciliaciones/:idpolitica" component={IConciliacion}></Route>
+            <Route path="/conciliaciones/edit/:idconciliacion" component={IConciliacionForm}></Route>
+            <Route path="/conciliaciones/delete/:idconciliaciondelete" component={IConciliacionDelete}></Route>
+            <Route path="/escenarios" component={IEscenario}></Route>
+            <Route path="/escenarios/:idconciliacion" component={IEscenario}></Route>
+            <Route path="/escenarios/list/:idescenario" component={IEscenario}></Route>
+            <Route path="/escenarios/edit/:idescenario" component={IEscenarioForm}></Route>
+            <Route path="/escenarios/delete/:idescenariodelete" component={IEscenarioDelete}></Route>
+            <Route path="/ejecucion" component={IEjecucion}></Route>
+            <Route path="/ejecucion/programar" component={IProgramar}></Route>
+            <Route path="/resultados" component={IResultado}></Route>
+            <Route path="/indicadores" component={IIndicador}></Route>
+            <Route path="/indicadores/:idindicador" component={IIndicador}></Route>
+            <Route path="/indicadores/edit/:idindicador" component={IIndicadorForm}></Route>
+            <Route path="/indicadores/delete/:idindicadordelete" component={IIndicadorDelete}></Route>
+            <Route path="/parametros" component={IParametro}></Route>
+            <Route path="/parametros/:idescenario" component={IParametro}></Route>
+            <Route path="/parametros/edit/:idparametro" component={IParametroForm}></Route>
+            <Route path="/parametros/delete/:idparametrodelete" component={IParametroDelete}></Route>
+            <Route path="/querys" component={IQuery}></Route>
+            <Route path="/querys/:idconciliacion" component={IQuery}></Route>
+            <Route path="/querys/escenario/:idescenario" component={IQuery}></Route>
+            <Route path="/querys/edit/:idquery" component={IQueryForm}></Route>
+            <Route path="/querys/delete/:idquerydelete" component={IQueryDelete}></Route>
+            <Route path="/querys/aprobar/:aprobar" component={IQueryAprobar}></Route>
+>>>>>>> origin/master
             <Route path="/uc" component={IUnderConstruction}></Route>
           </Route>
           <Route path="*" component={IPaginaNoExiste} />

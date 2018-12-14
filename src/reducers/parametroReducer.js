@@ -8,7 +8,8 @@ import {
   ACTUALIZA_PAGINADOR_PARAMETROS,
   IR_PAGINA_PARAMETROS,
   UPDATE_ESCENARIO_EN_PARAMETROS,
-  CARGA_CONCILIACIONES_EN_PARAMETROS
+  CARGA_CONCILIACIONES_EN_PARAMETROS,
+  UPDATE_TIPO_EN_PARAMETROS
 } from '../actions/const'
 import update from 'react-addons-update'
 
@@ -20,7 +21,8 @@ const initialState = {
   parametros:[],
   paginador: [],
   escenario:{"id":0,"nombre":"Ningun Escenario"},
-  escenarios:[]
+  escenarios:[],
+  tipo: ""
 }
 
 export const parametroReducer = (state = initialState,action) =>{
@@ -51,6 +53,10 @@ export const parametroReducer = (state = initialState,action) =>{
     case CARGA_CONCILIACIONES_EN_PARAMETROS:
       return update(state,{
         escenarios: {$set: action.lista}
+      })
+    case UPDATE_TIPO_EN_PARAMETROS:
+      return update(state,{
+        tipo : { $set: action.value}
       })
     default:
       return state

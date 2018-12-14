@@ -33,15 +33,6 @@ class IEscenarioForm extends React.Component{
       this.props.updateFormEscenarios(e.target.id, e.target.value)
   }
 
-  //Detecta cambio en el combo de Conciliaciones
-  cambioConciliaciones(e){
-    //let idcon=JSON.parse(e.target.value)
-    //console.log("CONCILIACION: " )
-    //console.log(idcon.id)
-    this.props.updConciliacion(e.target.value)
-    this.props.refreshListEscenario()
-  }
-
   //Salvar el nuevo registro
   grabarEscenario(e){
     this.props.saveEscenario()
@@ -93,7 +84,7 @@ class IEscenarioForm extends React.Component{
 
             <div className="form-group">
               <label htmlFor='conciliacion'>* Conciliación</label>
-              <select id="conciliacion" name="conciliacion" className='form-control' value={this.props.state.idConciliacion} onChange={this.cambioConciliaciones.bind(this)}>
+              <select id="conciliacion" name="conciliacion" className='form-control' value={this.props.state.conciliacion} onChange={this.handleInput.bind(this)}>
                 {this.props.state.conciliaciones.map(function(currentValue,index,array){
                   return(
                     <option key={currentValue.id} value={currentValue.id}>{currentValue.nombre}</option>
@@ -107,7 +98,7 @@ class IEscenarioForm extends React.Component{
               <hr/>
               <Link to={"/escenarios"} onClick={this.props.limpiarFormEscenario.bind(this)} className="btn btn-warning">Regresar</Link>&nbsp;&nbsp;&nbsp;
               {
-                this.props.state.nombre!="" && this.props.state.idConciliacion!="0" && this.props.state.descripcion!="" ?
+                this.props.state.nombre!="" && this.props.state.conciliacion!="0" && this.props.state.descripcion!="" ?
                 <button onClick={this.props.saveEscenario.bind(this)} className="btn btn-primary">Grabar</button> :
                 <button className="btn btn-primary" disabled>Formulario incompleto</button>
               }
@@ -148,7 +139,7 @@ class IEscenarioForm extends React.Component{
                     </div>
                     <div className="form-group">
                       <label htmlFor='conciliacion'>* Conciliación</label>
-                      <select id="conciliacion" name="conciliacion" className='form-control' value={this.props.state.idConciliacion} onChange={this.cambioConciliaciones.bind(this)}>
+                      <select id="conciliacion" name="conciliacion" className='form-control' value={this.props.state.conciliacion}  onChange={this.handleInput.bind(this)}>
                         <option key="0" value="0">Seleccione una</option>
                         {this.props.state.conciliaciones.map(function(currentValue,index,array){
                           return(
@@ -164,7 +155,7 @@ class IEscenarioForm extends React.Component{
                     <hr/>
                     <button onClick={this.limpiarEscenario.bind(this)} type="button" className="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                     {
-                      this.props.state.idConciliacion!='0' && this.props.state.nombre!="" && this.props.state.descripcion!="" ?
+                      this.props.state.conciliacion!='0' && this.props.state.nombre!="" && this.props.state.descripcion!="" ?
                       <button onClick={this.grabarEscenario.bind(this)} className="btn btn-primary">Grabar</button> :
                       <button className="btn btn-primary" disabled>Formulario incompleto</button>
                     }
@@ -185,7 +176,7 @@ const mapStateToProps = (state) =>{
       id : state.escenarioFormReducer.id,
       nombre : state.escenarioFormReducer.nombre,
       impacto : state.escenarioFormReducer.impacto,
-      conciliacion : state.escenarioReducer.conciliacion,
+      conciliacion : state.escenarioFormReducer.conciliacion,
       conciliaciones: state.ejecucionReducer.conciliaciones,
       idConciliacion : state.escenarioFormReducer.idConciliacion,
       nombreConciliacion : state.escenarioFormReducer.nombreConciliacion,

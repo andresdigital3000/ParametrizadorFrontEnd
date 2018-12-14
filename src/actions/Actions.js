@@ -42,6 +42,7 @@ import {
     CARGAR_INDICADOR_FORM,
     IR_PAGINA_INDICADORES,
     UPDATE_ESCENARIO_EN_INDICADORES,
+    UPDATE_ESCENARIO_EN_QUERYS,
     CARGA_ESCENARIOS_EN_INDICADORES,
     UPDATE_RESULTADO_EN_INDICADORES,
     CARGA_PARAMETROS_EN_INDICADORES,
@@ -64,6 +65,7 @@ import {
     ACTUALIZA_PAGINADOR_QUERYS,
     IR_PAGINA_QUERYS,
     CARGA_ESCENARIOS_EN_QUERYS,
+    ASIGNAR_ESCENARIO_SELECCIONADO,
     LIMPIAR_ESCENARIO_SELECCIONADO,
     CARGAR_CONCILIACIONES_QUERY,
     UPDATE_QUERYS_APROB_FORM_REQUEST,
@@ -76,6 +78,7 @@ import {
     ACTUALIZA_PAGINADOR_RESULTADOS,
     IR_PAGINA_RESULTADOS,
     CARGAR_CONCILIACIONES_RESULTADO,
+<<<<<<< HEAD
     CARGAR_USUARIOS,
     SAVE_USUARIOS,
     UPDATE_USUARIOS_FORM_REQUEST,
@@ -84,6 +87,10 @@ import {
     ELIMINAR_USUARIO,
     ACTUALIZA_PAGINADOR_USUARIOS,
     IR_PAGINA_USUARIOS,
+=======
+    UPDATE_TIPO_EN_PARAMETROS,
+    CARGAR_POLITICA_EN_CONCILIACION
+>>>>>>> origin/master
 } from './const'
 
 import React from 'react'
@@ -540,10 +547,40 @@ const verPoliticas = (res) => ({
     type: CARGAR_POLITICAS,
     lista: res
 })
+
+// Una vez ingresado el nombre de la política
+export const onNombreIngresado = (value) => (dispatch, getState) => {
+    dispatch(updateFormPoliticasRequest("errorNombre", ''))
+    //getState().politicaFormReducer.errorNombre = '';
+APIInvoker.invokeGET('/politicas/findByAny?texto='+value, response => {
+    if (response != undefined && response[0] != undefined && response[0].conciliaciones.length>0) {
+        var existentes = response.filter((_politica)=>{
+            return _politica.nombre.toUpperCase() == 'PO_'+value.toUpperCase();
+        })
+        if (existentes.length > 0){
+            toast.error("La política que intenta crear ya existe", {
+                position: toast.POSITION.BOTTOM_RIGHT
+            })
+            dispatch(updateFormPoliticasRequest("errorNombre", 'A'))
+        } else {
+            dispatch(updateFormPoliticasRequest("errorNombre", ''))
+        }
+    }
+}, error=>{
+    dispatch(updateFormPoliticasRequest("errorNombre", ''))
+})
+}
+
+
 //Actualizar tecla por tecla los campos del formulario de politicas
 export const updateFormPoliticas = (field, value) => (dispatch, getState) => {
+<<<<<<< HEAD
     if (field == "nombre") {
         APIInvoker.invokeGET('/parametros/findByAny?texto=V_Prefijo para politicas', response => {
+=======
+    /*if (field == "nombre") {
+        APIInvoker.invokeGET('/parametros/findByAny?texto=Prefijo para politicas', response => {
+>>>>>>> origin/master
             if (response[0].valor != undefined) {
                 let long_parametro = decryptJS(response[0].valor).length;
                 let long_value = value.length;
@@ -564,7 +601,7 @@ export const updateFormPoliticas = (field, value) => (dispatch, getState) => {
                 }
             }
         })
-    }
+    }*/
     dispatch(updateFormPoliticasRequest(field, value))
 }
 //Enviar al reducer la tecla pulsada
@@ -597,6 +634,10 @@ export const savePolitica = () => (dispatch, getState) => {
                         dispatch(mostrarModal("alert alert-success", "Se grabó la política " + politica_salvar.nombre))
                         dispatch(limpiarFormPolitica())
                         dispatch(refreshListPolitica())
+<<<<<<< HEAD
+=======
+                        //browserHistory.push('/politicas')
+>>>>>>> origin/master
                         //toast.success("Se grabó la política", {
                         //  position: toast.POSITION.BOTTOM_RIGHT
                         //})
@@ -737,6 +778,43 @@ const irAPaginaPoliticas = (pagina) => ({
  *  para realizar todas las acciones necesarias del crud de conciliaciones
  */
 
+// Cuando se modifica una política
+ export const cambioPoliticaConciliacion = (_politica) => (dispatch, getState)=>{
+     dispatch(updPoliticaenConciliacion(_politica))
+     if (getState().conciliacionReducer.politica != "" && getState().conciliacionReducer.politica != "0"){
+        APIInvoker.invokeGET('/conciliaciones/politica/' + getState().conciliacionReducer.politica, response => {
+            if (Array.isArray(response) == true) {
+                //if (response[0].id != undefined) {
+                    dispatch(verConciliaciones(response))
+                //}
+                /*else {
+                    console.log("Error : " + response[0].codigo + " Mensaje: " + response[0].mensaje + ": " + response[0].descripcion)
+                    toast.warn("No se encuentran conciliaciones para politica"+ getState().conciliacionReducer.politica, {
+                        position: toast.POSITION.BOTTOM_RIGHT
+                    })
+                }*/
+            } else {
+                if (response.id != undefined) {
+                    dispatch(verConciliaciones(response))
+                } else {
+                    console.log("Error : " + response.codigo + " Mensaje: " + response.mensaje + ": " + response.descripcion)
+                    toast.warn("No se encuentran conciliaciones para la politica", {
+                        position: toast.POSITION.BOTTOM_RIGHT
+                    })
+                }
+            }
+        })
+      }
+      else{
+        dispatch(refreshListConciliacion())
+      }
+ }
+
+ const updPoliticaenConciliacion = (_politica) =>({
+     type: CARGAR_POLITICA_EN_CONCILIACION,
+     value: _politica
+ })
+
 //Funcion que carga el combo de politicas
 export const cargarComboPoliticas = () => (dispatch, getState) => {
     APIInvoker.invokeGET('/politicas/findPoliticasSinConciliacion', response => {
@@ -756,6 +834,7 @@ const cargarPoliticas = (arrayPoliticas) => ({
     type: CARGA_POLITICAS,
     lista: arrayPoliticas
 })
+
 
 //Actualizar tecla por tecla el campo de texto del buscador
 export const updateTextFindConciliacion = (field, value) => (dispatch, getState) => {
@@ -1013,8 +1092,8 @@ export const saveConciliacion = () => (dispatch, getState) => {
                                 toast.error("Ya existe otra conciliación con el mismo nombre", {
                                     position: toast.POSITION.BOTTOM_RIGHT
                                 })
-                            } else if (response.descripcion == "El paquete ya existe") {
-                                toast.error("El paquete ya se usó con otra conciliación", {
+                            } else if (response.descripcion == "El paquete ya esta siendo utilizado") {
+                                toast.error("El paquete ya esta siendo utilizado", {
                                     position: toast.POSITION.BOTTOM_RIGHT
                                 })
                             } else {
@@ -1344,6 +1423,7 @@ export const updateFormEscenarios = (field, value) => (dispatch, getState) => {
             }
         })
     }
+    console.log("SE ENVIARA ==> PARA "+field+" El valor : "+value)
     dispatch(updateFormEscenariosRequest(field, value))
 }
 //Enviar al reducer la tecla pulsada
@@ -1363,9 +1443,15 @@ export const saveEscenario = () => (dispatch, getState) => {
                     let escenario_salvar = {
                         nombre: decryptJS(responseval[0].valor).toUpperCase() + getState().escenarioFormReducer.nombre,
                         impacto: getState().escenarioFormReducer.impacto,
+<<<<<<< HEAD
                         idConciliacion: getState().escenarioFormReducer.idConciliacion,
                         descripcion: getState().escenarioFormReducer.descripcion,
                         username: window.localStorage.getItem("nombreUsuario")
+=======
+                        usuario: getState().loginReducer.profile.userName,
+                        idConciliacion: getState().escenarioFormReducer.conciliacion,
+                        descripcion: getState().escenarioFormReducer.descripcion
+>>>>>>> origin/master
                     }
                     //, nombreConciliacion : getState().escenarioFormReducer.nombreConciliacion
                     APIInvoker.invokePOST('/escenarios', escenario_salvar, response => {
@@ -1390,24 +1476,20 @@ export const saveEscenario = () => (dispatch, getState) => {
                         console.log('No se ha podido crear la escenario')
                     })
                 } else {
-                    //Si es actualizar un existente
-                    let idConciliacionGrabar = 0
-                    let nombreConciliacionGrabar = "Ninguna"
-                    if (getState().escenarioReducer.conciliacion.id == 0) {
-                        idConciliacionGrabar = getState().escenarioFormReducer.idConciliacion
-                        nombreConciliacionGrabar = getState().escenarioFormReducer.nombreConciliacion
-                    } else {
-                        idConciliacionGrabar = getState().escenarioReducer.conciliacion.id
-                        nombreConciliacionGrabar = getState().escenarioReducer.conciliacion.nombre
-                    }
                     let escenario_salvar = {
                         id: getState().escenarioFormReducer.id,
                         nombre: decryptJS(responseval[0].valor).toUpperCase() + getState().escenarioFormReducer.nombre,
                         impacto: getState().escenarioFormReducer.impacto,
+<<<<<<< HEAD
                         idConciliacion: idConciliacionGrabar,
                         nombreConciliacion: nombreConciliacionGrabar,
                         descripcion: getState().escenarioFormReducer.descripcion,
                         username: window.localStorage.getItem("nombreUsuario")
+=======
+                        usuario: getState().loginReducer.profile.userName,
+                        idConciliacion: getState().escenarioFormReducer.conciliacion,
+                        descripcion: getState().escenarioFormReducer.descripcion
+>>>>>>> origin/master
                     }
                     APIInvoker.invokePUT('/escenarios', escenario_salvar, response => {
                         if (response.id != undefined) {
@@ -2672,6 +2754,27 @@ export const findTextParametro = () => (dispatch, getState) => {
   }
 }
 
+
+//Cargar el filtro de tipo de parámetro en el reducer de parámetros
+export const updTipoParametros = (_tipo) => (dispatch, getState) => {
+    dispatch(updTipoenParametros(_tipo))
+    if (_tipo != "")
+    {
+        APIInvoker.invokeGET('/parametros/padre?tipo='+_tipo, response => {
+            if (Array.isArray(response) == true) {
+                dispatch(verParametros(response))
+            }
+        })
+    } else{
+        dispatch(refreshListParametro(null))
+    }
+}
+
+const updTipoenParametros = (tipo) => ({
+    type: UPDATE_TIPO_EN_PARAMETROS,
+    value: tipo
+})
+
 //Recalcular el paginador de parametro
 export const calculaPaginadorParametros = () => (dispatch, getState) => {
     let numregs = 0
@@ -2710,6 +2813,7 @@ export const calculaPaginadorParametros = () => (dispatch, getState) => {
         }
     })
 }
+
 //Envia las variables al store
 const actualizarPaginadorParametros = (array_paginador) => ({
     type: ACTUALIZA_PAGINADOR_PARAMETROS,
@@ -3117,8 +3221,26 @@ const actualizarPaginadorQuerys = (array_paginador) => ({
 export const refreshListQuery = () => (dispatch, getState) => {
     //console.log("EJECUTA REFRESH QUERY")
     let objetoVacio = new Object()
+    //let escenarioActual = getState().queryReducer.escenario
     let conciliacionActual = getState().queryReducer.conciliacion.id
-    if (conciliacionActual != 0) {
+    let escenarioActual = getState().queryReducer.escenario.id
+    if (escenarioActual != 0) {
+        APIInvoker.invokeGET('/queryescenario/escenario/' + escenarioActual, response => {
+            if (Array.isArray(response)) {
+                if (response[0].id != undefined) {
+                    console.log("Detecta escenarioActual ==>>" + escenarioActual)
+                    console.log(response)
+                    dispatch(antesVerQuerys(response))
+                } else {
+                    console.log("Error : " + response[0].codigo + " Mensaje: " + response[0].mensaje + ": " + response[0].descripcion)
+                    dispatch(antesVerQuerys(objetoVacio))
+                }
+            } else {
+                console.log("Error : " + response.codigo + " Mensaje: " + response.mensaje + ": " + response.descripcion)
+                dispatch(antesVerQuerys(objetoVacio))
+            }
+        })
+    } else if (conciliacionActual != 0){
         APIInvoker.invokeGET('/queryescenario/conciliacion/' + conciliacionActual, response => {
             if (Array.isArray(response)) {
                 if (response[0].id != undefined) {
@@ -3134,7 +3256,8 @@ export const refreshListQuery = () => (dispatch, getState) => {
                 dispatch(antesVerQuerys(objetoVacio))
             }
         })
-    } else {
+    } else
+    {
         //si no existe resp
         let regInicial = 0
         let pagActual = getState().queryReducer.paginaActual
@@ -3171,11 +3294,36 @@ const verQuerys = (res) => ({
     lista: res
 })
 
+export const updEscenariosQuerys = (idescenario) => (dispatch, getState)=>{
+    APIInvoker.invokeGET('/escenarios/' + idescenario, response => {
+        if (response.id != undefined) {
+            console.log(JSON.stringify(response));
+            dispatch(updEscenariosenQuery(JSON.stringify(response)))
+        } else {
+            console.log('No se encuentra el escenario')
+            dispatch(updEscenariosenQuery(JSON.stringify({
+                "id": 0,
+                "nombre": "Ningún escenario",
+               // "queryAprobaciones": ["mensaje": ""]
+            })))
+        }
+        dispatch(refreshListQuery())
+    }, error => {
+        console.log('No se pudo cargar las Propiedades del escenario ' + idconciliacion + ' en querys listar')
+    })
+}
+
+const updEscenariosenQuery = (objEscenario) => ({
+    type: UPDATE_ESCENARIO_EN_QUERYS,
+    value: objEscenario
+})
+
 //Cargar el id conciliacion en el reducer de querys
 export const updConciliacionQuerys = (idconciliacion) => (dispatch, getState) => {
     APIInvoker.invokeGET('/conciliaciones/' + idconciliacion, response => {
         if (response.id != undefined) {
             dispatch(updConciliacionenQuery(JSON.stringify(response)))
+            dispatch(cargarComboEscenariosEnQuerys(idconciliacion))
         } else {
             console.log('No se encuentra la conciliacion')
             dispatch(updConciliacionenQuery(JSON.stringify({
@@ -3183,6 +3331,7 @@ export const updConciliacionQuerys = (idconciliacion) => (dispatch, getState) =>
                 "nombre": "Ninguna conciliacion",
                 "queryAprobaciones": ["mensaje": ""]
             })))
+
         }
         dispatch(refreshListQuery())
     }, error => {
@@ -3375,21 +3524,43 @@ const irAPaginaQuerys = (pagina) => ({
 })
 
 //Funcion que carga el combo de escenarios
-export const cargarComboEscenariosEnQuerys = () => (dispatch, getState) => {
-    APIInvoker.invokeGET('/escenarios', response => {
+export const cargarComboEscenariosEnQuerys = (idConciliacion) => (dispatch, getState) => {
+    APIInvoker.invokeGET('/escenarios/conciliacion/'+idConciliacion, response => {
         if (Array.isArray(response) == true) {
             dispatch(cargarEscenariosenQuerys(response))
         }
     })
 }
 //Envia resultado para llenar el combo a Reducer
-const cargarEscenariosenQuerys = (arrayEscenarios) => ({
+const cargarEscenariosenQuerys = (arrayEscenarios) => (
+    {
     type: CARGA_ESCENARIOS_EN_QUERYS,
     lista: arrayEscenarios
 })
 
+//Funcion que actualiza el escenario seleccionado en queries
+export const updEscenarioQuerys = (idescenario) => (dispatch,getState) => {
+    console.log("Recibo escenario "+idescenario)
+    APIInvoker.invokeGET('/escenarios/' + idescenario, response => {
+        if (response.id != undefined) {
+            dispatch(asignarEscenarioSeleccionado(response))
+        } else {
+            console.log('No se encuentra el escenario')
+            dispatch(limpiarEscenarioSeleccionado())
+        }
+        dispatch(refreshListQuery())
+    }, error => {
+        console.log('No se pudo cargar las Propiedades del escenario ' + idescenario + ' en querys listar')
+    })
+}
 //Funcion que elimina el valor ultimo seleccionado del combo
-export const limpiarEscenarioSeleccionado = () => ({
+const asignarEscenarioSeleccionado = (listado) => ({
+    type: ASIGNAR_ESCENARIO_SELECCIONADO,
+    lista: listado
+})
+
+//Funcion que elimina el valor ultimo seleccionado del combo
+const limpiarEscenarioSeleccionado = () => ({
     type: LIMPIAR_ESCENARIO_SELECCIONADO,
     lista: {
         "id": 0,

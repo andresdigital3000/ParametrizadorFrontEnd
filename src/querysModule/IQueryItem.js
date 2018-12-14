@@ -42,12 +42,12 @@ class IQueryItem extends React.Component{
                   </td>
                   <td>
                     <If condition={currentValue.idEscenario!=undefined}>
-                      <Link to={"/conciliaciones/"+currentValue.idEscenario}>{currentValue.nombreEscenario}</Link>
+                      <Link to={"/escenarios/list/"+currentValue.idEscenario}>{currentValue.nombreEscenario}</Link>
                     </If>
                     <If condition={currentValue.idEscenario==undefined}>
                       No tiene
                     </If>
-                  </td>                
+                  </td>
                   <td>
                     <div className="button-wrap">
                       <Link to={"/querys/edit/"+currentValue.id} className="btn btn-info"><i className="fa fa-list"/></Link>
