@@ -78,7 +78,6 @@ import {
     ACTUALIZA_PAGINADOR_RESULTADOS,
     IR_PAGINA_RESULTADOS,
     CARGAR_CONCILIACIONES_RESULTADO,
-<<<<<<< HEAD
     CARGAR_USUARIOS,
     SAVE_USUARIOS,
     UPDATE_USUARIOS_FORM_REQUEST,
@@ -87,10 +86,8 @@ import {
     ELIMINAR_USUARIO,
     ACTUALIZA_PAGINADOR_USUARIOS,
     IR_PAGINA_USUARIOS,
-=======
     UPDATE_TIPO_EN_PARAMETROS,
     CARGAR_POLITICA_EN_CONCILIACION
->>>>>>> origin/master
 } from './const'
 
 import React from 'react'
@@ -229,57 +226,6 @@ export const loginRequest = () => (dispatch, getState) => {
           })
         }
       }
-
-
-      /*
-        let credentials = {
-          userName : getState().loginFormReducer.username,
-          passWord : getState().loginFormReducer.password,
-          domain : getState().loginFormReducer.dominio
-        }
-
-        if (getState().loginFormReducer.username == "" || getState().loginFormReducer.password == "") {
-          dispatch(loginFailForm('Campos vacíos, verifique'))
-        }else{
-          APIInvoker.invokePOST_Login('/usuarios/login', credentials, response => {
-            if(response.ok){
-              window.localStorage.setItem("token",response.headers.get("authorization"))
-              //Obtiene el valor parametrizado del tiempo para cierre de sesion automático
-              APIInvoker.invokeGET('/parametros/findByAny?texto=V_tiempoExpiraSesion', responsetime => {
-                  if (Array.isArray(responsetime) == true) {
-                    window.localStorage.setItem("tiempoexpirasesion", decryptJS(responsetime[0].valor))
-                    response.json().then(function(result) {
-                      //if result.userExist
-                      if (result.id != undefined){
-                        window.localStorage.setItem("userid", result.id)
-                        window.localStorage.setItem("username", result.usuario)
-                        window.localStorage.setItem("useremail", result.email)
-                        window.localStorage.setItem("nombreUsuario", result.nombreUsuario)
-                        //Roles 0=SinRol 1=Consultor - 2=Ejecutor - 3=Administrador
-                        if (result.roles.length > 0) {
-                          window.localStorage.setItem("userrol", result.roles[0].id)
-                          window.localStorage.setItem("userrolname", result.roles[0].nombre)
-                        }else{
-                          window.localStorage.setItem("userrol", "0")
-                          window.localStorage.setItem("userrolname", "null")
-                        }
-
-                        window.location = '/admin';
-                      }else{
-                        //LLama modal para registrar User
-                        dispatch(mostrarModalRegisterUser())
-                      }
-                    });
-                  }
-              })
-            }else{
-              localStorage.clear();
-              dispatch(loginFailForm('Nombre de usuario o contraseña errados'))
-            }
-          }, error => {
-              dispatch(loginFailForm('NO SE LOGUEO'))
-          })
-        }*/
 }
 
 const updateLoginFormRequest = (field, value) => ({
@@ -574,13 +520,8 @@ APIInvoker.invokeGET('/politicas/findByAny?texto='+value, response => {
 
 //Actualizar tecla por tecla los campos del formulario de politicas
 export const updateFormPoliticas = (field, value) => (dispatch, getState) => {
-<<<<<<< HEAD
     if (field == "nombre") {
         APIInvoker.invokeGET('/parametros/findByAny?texto=V_Prefijo para politicas', response => {
-=======
-    /*if (field == "nombre") {
-        APIInvoker.invokeGET('/parametros/findByAny?texto=Prefijo para politicas', response => {
->>>>>>> origin/master
             if (response[0].valor != undefined) {
                 let long_parametro = decryptJS(response[0].valor).length;
                 let long_value = value.length;
@@ -601,7 +542,7 @@ export const updateFormPoliticas = (field, value) => (dispatch, getState) => {
                 }
             }
         })
-    }*/
+    }
     dispatch(updateFormPoliticasRequest(field, value))
 }
 //Enviar al reducer la tecla pulsada
@@ -634,13 +575,7 @@ export const savePolitica = () => (dispatch, getState) => {
                         dispatch(mostrarModal("alert alert-success", "Se grabó la política " + politica_salvar.nombre))
                         dispatch(limpiarFormPolitica())
                         dispatch(refreshListPolitica())
-<<<<<<< HEAD
-=======
-                        //browserHistory.push('/politicas')
->>>>>>> origin/master
-                        //toast.success("Se grabó la política", {
-                        //  position: toast.POSITION.BOTTOM_RIGHT
-                        //})
+                        browserHistory.push('/politicas')
                     } else {
                         //Enviar error específico a la consola
                         console.log("Error : " + response.codigo + " Mensaje: " + response.mensaje + ": " + response.descripcion)
@@ -1443,15 +1378,9 @@ export const saveEscenario = () => (dispatch, getState) => {
                     let escenario_salvar = {
                         nombre: decryptJS(responseval[0].valor).toUpperCase() + getState().escenarioFormReducer.nombre,
                         impacto: getState().escenarioFormReducer.impacto,
-<<<<<<< HEAD
                         idConciliacion: getState().escenarioFormReducer.idConciliacion,
                         descripcion: getState().escenarioFormReducer.descripcion,
                         username: window.localStorage.getItem("nombreUsuario")
-=======
-                        usuario: getState().loginReducer.profile.userName,
-                        idConciliacion: getState().escenarioFormReducer.conciliacion,
-                        descripcion: getState().escenarioFormReducer.descripcion
->>>>>>> origin/master
                     }
                     //, nombreConciliacion : getState().escenarioFormReducer.nombreConciliacion
                     APIInvoker.invokePOST('/escenarios', escenario_salvar, response => {
@@ -1480,16 +1409,10 @@ export const saveEscenario = () => (dispatch, getState) => {
                         id: getState().escenarioFormReducer.id,
                         nombre: decryptJS(responseval[0].valor).toUpperCase() + getState().escenarioFormReducer.nombre,
                         impacto: getState().escenarioFormReducer.impacto,
-<<<<<<< HEAD
                         idConciliacion: idConciliacionGrabar,
                         nombreConciliacion: nombreConciliacionGrabar,
                         descripcion: getState().escenarioFormReducer.descripcion,
                         username: window.localStorage.getItem("nombreUsuario")
-=======
-                        usuario: getState().loginReducer.profile.userName,
-                        idConciliacion: getState().escenarioFormReducer.conciliacion,
-                        descripcion: getState().escenarioFormReducer.descripcion
->>>>>>> origin/master
                     }
                     APIInvoker.invokePUT('/escenarios', escenario_salvar, response => {
                         if (response.id != undefined) {

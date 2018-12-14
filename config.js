@@ -1,19 +1,9 @@
 module.exports ={
-<<<<<<< HEAD
   debugMode: false,
-  usarJsonServer : true,
   //Api backend
   server:{
     port:"",
     host:"http://localhost:7001/ParametrizadorClaro/api"
-=======
-  debugMode: true,
-  usarJsonServer : false,
-  //Api backend
-  server:{
-    port:"",
-    host:"http://localhost:8080/ParametrizadorBackend/api"
->>>>>>> origin/master
   },
   //Configuración de constantes para enviar a WebService de Odi
   webService:{

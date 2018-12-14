@@ -46,7 +46,7 @@ class ILogin extends React.Component{
                       name="username"
                       id="username"
                       autoComplete='off'
-                      require='true'
+                      require="true"
                       autoFocus
                       onChange={this.handleInput.bind(this)} />
                     <label ref="usernameLabel" id="usernameLabel" htmlFor="username"></label>
