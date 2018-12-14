@@ -86,7 +86,7 @@ class IIndicadorForm extends React.Component{
             </div>
             <div className="form-group">
               <label htmlFor='descripcion'>* Descripción</label>
-              <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite la descripción del indicador' maxLength='200'/>
+              <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite la descripción del indicador' maxLength='200' autoComplete='off'/>
               <small id="descripcionHelp" className="form-text text-muted">Defina para éste indicador</small>
             </div>
             <div className="form-group">
@@ -114,7 +114,7 @@ class IIndicadorForm extends React.Component{
             </div>
             <div className="form-group">
               <label htmlFor='formula'>* Fórmula</label>
-              <textarea id='formula' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.formula} onChange={this.handleInput.bind(this)} placeholder='Digite la fórmula' maxLength='800'/>
+              <textarea id='formula' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.formula} onChange={this.handleInput.bind(this)} placeholder='Digite la fórmula' maxLength='800' autoComplete='off'/>
               <small id="formulaHelp" className="form-text text-muted">Escriba la fórmula</small>
             </div>
             <div className="modal-footer">
@@ -148,7 +148,7 @@ class IIndicadorForm extends React.Component{
                     </div>
                     <div className="form-group">
                       <label htmlFor='descripcion'>* Descripción</label>
-                      <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite la descripción del indicador' maxLength='200' />
+                      <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite la descripción del indicador' maxLength='200' autoComplete='off'/>
                       <small id="descripcionHelp" className="form-text text-muted">Defina para éste indicador</small>
                     </div>
                     <div className="form-group">
@@ -176,7 +176,7 @@ class IIndicadorForm extends React.Component{
                     </div>
                     <div className="form-group">
                       <label htmlFor='formula'>* Fórmula</label>
-                      <textarea id='formula' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.formula} onChange={this.handleInput.bind(this)} placeholder='Digite la fórmula' maxLength='800' />
+                      <textarea id='formula' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.formula} onChange={this.handleInput.bind(this)} placeholder='Digite la fórmula' maxLength='800' autoComplete='off'/>
                       <small id="formulaHelp" className="form-text text-muted">Escriba la fórmula</small>
                     </div>
                     <div className="modal-footer">

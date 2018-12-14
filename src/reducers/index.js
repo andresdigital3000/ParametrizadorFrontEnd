@@ -16,6 +16,8 @@ import parametroReducer from './parametroReducer'
 import parametroFormReducer from './parametroFormReducer'
 import queryReducer from './queryReducer'
 import queryFormReducer from './queryFormReducer'
+import usuarioReducer from './usuarioReducer'
+import usuarioFormReducer from './usuarioFormReducer'
 
 
 export default combineReducers({
@@ -35,5 +37,7 @@ export default combineReducers({
   parametroReducer,
   parametroFormReducer,
   queryReducer,
-  queryFormReducer
+  queryFormReducer,
+  usuarioReducer,
+  usuarioFormReducer
 })

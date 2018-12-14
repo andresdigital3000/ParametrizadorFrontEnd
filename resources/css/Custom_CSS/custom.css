@@ -154,6 +154,12 @@ body .modal-dialog .modal-content .modal-header {
 body .modal-dialog .modal-content .modal-body {
   margin-top: 1.875em; }
 
+.user-tittle {
+	color: #FFFFFF;
+	text-align: right;
+	font-size: 20px;
+}
+
 .navigation {
   width: 100%;
   background-color: #C43E1E;

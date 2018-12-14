@@ -66,7 +66,7 @@ class IConciliacionForm extends React.Component{
             </div>
             <div className="form-group">
               <label htmlFor='descripcion'>* Nombre</label>
-              <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite una descripcion de la conciliación' maxLength='200'/>
+              <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite una descripcion de la conciliación' maxLength='200' autoComplete='off'/>
               <small id="descripcionHelp" className="form-text text-muted">Defina para la conciliación</small>
             </div>
             <div className="form-group">
@@ -76,12 +76,12 @@ class IConciliacionForm extends React.Component{
             </div>
             <div className="form-group">
               <label htmlFor='emailasignado'>* Email Usuario Asignado</label>
-              <input id='emailasignado' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.emailasignado} onChange={this.handleInput.bind(this)} placeholder='Digite un correo electrónico válido'  maxLength='100'/>
+              <input id='emailasignado' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.emailasignado} onChange={this.handleInput.bind(this)} placeholder='Digite un correo electrónico válido'  maxLength='100' autoComplete='off'/>
               <small id="emailHelp" className="form-text text-muted">Defina usuario asignado para la conciliación</small>
             </div>
             <div className="form-group">
               <label htmlFor='tablaDestino'> Destino</label>
-              <input id='tablaDestino' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.tablaDestino} onChange={this.handleInput.bind(this)} placeholder='Digite la tabla de destino' maxLength='50'/>
+              <input id='tablaDestino' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.tablaDestino} onChange={this.handleInput.bind(this)} placeholder='Digite la tabla de destino' maxLength='50' autoComplete='off'/>
               <small id="destinoHelp" className="form-text text-muted">Defina la tabla de destino</small>
             </div>
             <div className="form-group">
@@ -134,7 +134,7 @@ class IConciliacionForm extends React.Component{
                     </div>
                     <div className="form-group">
                       <label htmlFor='descripcion'>* Nombre</label>
-                      <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite una descripción para la conciliación'  maxLength='200'/>
+                      <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite una descripción para la conciliación'  maxLength='200' autoComplete='off'/>
                       <small id="descripcionHelp" className="form-text text-muted">Defina para la política</small>
                     </div>
                     <div className="form-group">
@@ -144,12 +144,12 @@ class IConciliacionForm extends React.Component{
                     </div>
                     <div className="form-group">
                       <label htmlFor='emailasignado'>* Email Usuario Asignado</label>
-                      <input id='emailasignado' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.emailasignado} onChange={this.handleInput.bind(this)} placeholder='Digite un correo electrónico válido'  maxLength='100'/>
+                      <input id='emailasignado' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.emailasignado} onChange={this.handleInput.bind(this)} placeholder='Digite un correo electrónico válido'  maxLength='100' autoComplete='off'/>
                       <small id="emailHelp" className="form-text text-muted">Defina usuario asignado para la conciliación</small>
                     </div>
                     <div className="form-group">
                       <label htmlFor='tablaDestino'> Destino</label>
-                      <input id='tablaDestino' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.tablaDestino} onChange={this.handleInput.bind(this)} placeholder='Digite la tabla de destino' maxLength='50'/>
+                      <input id='tablaDestino' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.tablaDestino} onChange={this.handleInput.bind(this)} placeholder='Digite la tabla de destino' maxLength='50' autoComplete='off'/>
                       <small id="destinoHelp" className="form-text text-muted">Defina la tabla de destino</small>
                     </div>
                     <div className="form-group">

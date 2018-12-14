@@ -1,8 +1,10 @@
 import React from 'react'
-import { browserHistory,Link } from 'react-router'
+import { browserHistory, Link } from 'react-router'
 import { connect } from 'react-redux'
 import { logout, getLinkResultados } from '../actions/Actions'
-
+import AdministracionMenu from './AdministracionMenu'
+import EjecutorMenu from './EjecutorMenu'
+import ConsultaMenu from './ConsultaMenu'
 
 class Toolbar extends React.Component{
   constructor(props){
@@ -11,10 +13,9 @@ class Toolbar extends React.Component{
 
   logout(e){
     e.preventDefault()
-    window.localStorage.removeItem("token")
-    window.localStorage.removeItem("username")
-    this.props.logout()
-    window.location = '/login';
+    //this.props.logout()
+    localStorage.clear();
+    browserHistory.push('/');
   }
 
   componentWillMount(){
@@ -23,6 +24,10 @@ class Toolbar extends React.Component{
 
   render(){
     let linkRes = this.props.urlresultados
+    let username = window.localStorage.getItem("nombreUsuario")
+    let userrol = window.localStorage.getItem("userrol")
+    let userrolname = window.localStorage.getItem("userrolname")
+
     return(
       <nav className="navbar navigation navbar-expand-lg">
           <a className="logo" href="#">Claro</a>
@@ -31,6 +36,29 @@ class Toolbar extends React.Component{
           </button>
           <div className="main--menu navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav navigation-nav mr-auto">
+<<<<<<< HEAD
+
+            {(() => {
+              switch(userrol) {
+                case "1":
+                  return <ConsultaMenu linkRes={linkRes}/>;
+                case "2":
+                  return <EjecutorMenu />;
+                case "3":
+                  return <div> <AdministracionMenu /> <EjecutorMenu /> <ConsultaMenu linkRes={linkRes}/> </div>;
+                default:
+                  return null;
+              }
+            })()}
+
+            <li className="nav-item">
+              <a href="#" className="nav-link"  onClick={this.logout.bind(this)}>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <i className="fa fa-power-off"/>
+              </a>
+            </li>
+
+=======
               <li className="nav-item dropdown">
                 <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Administrativo
@@ -72,7 +100,12 @@ class Toolbar extends React.Component{
                     <i className="fa fa-power-off"/>
                 </a>
               </li>
+>>>>>>> origin/master
             </ul>
+          </div>
+
+          <div className="user-tittle hide" >
+            <p>{(userrolname === "null") ? "Sin Rol Asignado" : userrolname} &nbsp;&nbsp; {username}</p>
           </div>
       </nav>
     )

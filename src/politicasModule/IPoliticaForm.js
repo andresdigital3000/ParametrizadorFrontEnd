@@ -59,12 +59,12 @@ class IPoliticaForm extends React.Component{
             </div>
             <div className="form-group">
               <label htmlFor='descripcion'>* Descripción</label>
-              <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite una descripcion de la política'  maxLength='254'/>
+              <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite una descripcion de la política'  maxLength='254' autoComplete='off'/>
               <small id="descripcionHelp" className="form-text text-muted">Defina para la política</small>
             </div>
             <div className="form-group">
               <label htmlFor='objetivo'>* Objetivo</label>
-              <textarea id='objetivo' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.objetivo} onChange={this.handleInput.bind(this)} placeholder='Digite el objetivo de la política'  maxLength='200'/>
+              <textarea id='objetivo' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.objetivo} onChange={this.handleInput.bind(this)} placeholder='Digite el objetivo de la política'  maxLength='200' autoComplete='off'/>
               <small id="objetivoHelp" className="form-text text-muted">Defina para la política</small>
             </div>
             <div className="form-group">
@@ -105,12 +105,12 @@ class IPoliticaForm extends React.Component{
                     </div>
                     <div className="form-group">
                       <label htmlFor='descripcion'>* Descripción</label>
-                      <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite una descripción para la política'  maxLength='254'/>
+                      <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite una descripción para la política'  maxLength='254' autoComplete='off'/>
                       <small id="descripcionHelp" className="form-text text-muted">Defina para la política</small>
                     </div>
                     <div className="form-group">
                       <label htmlFor='objetivo'>* Objetivo</label>
-                      <textarea id='objetivo' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.objetivo} onChange={this.handleInput.bind(this)} placeholder='Digite el objetivo de la política'  maxLength='200'/>
+                      <textarea id='objetivo' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.objetivo} onChange={this.handleInput.bind(this)} placeholder='Digite el objetivo de la política'  maxLength='200' autoComplete='off'/>
                       <small id="objetivoHelp" className="form-text text-muted">Defina para la política</small>
                     </div>
                   </div>

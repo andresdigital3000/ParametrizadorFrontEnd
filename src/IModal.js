@@ -32,7 +32,7 @@ class IModal extends React.Component{
               </div>
               <div className="modal-body">
                 <p>
-                  {this.props.state.mensaje.substr(0,150)}...
+                  {this.props.state.mensaje}
                 </p>
               </div>
               <div className="modal-footer">

@@ -8,7 +8,7 @@ class APIInvoker {
       "Access-Control-Allow-Headers":"*",
       "Access-Control-Allow-Origin":"*",
       "Access-Control-Allow-Methods":"*",
-      authorization: window.localStorage.getItem("token")
+      authorization : window.localStorage.getItem("token")
     })
   }
 
@@ -41,6 +41,22 @@ class APIInvoker {
     this.invoke(url, okCallback, failCallback, params);
   }
 
+  invokePOST_Login(url,body,okCallback,failCallback){
+    let params = {
+      method:'post',
+      mode : 'cors',
+      headers: {
+        "Content-Type":"application/json",
+        "Access-Control-Allow-Headers":"*",
+        "Access-Control-Allow-Origin":"*",
+        "Access-Control-Allow-Methods":"*",
+        authorization : "Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlcyI6IiIsInN1YiI6ImFkbWluIiwiaXNzIjoicGFyYW1ldHJpemFkb3JDbGFybyIsImlhdCI6MTU0NDIwMDEwOX0.bhMpR7muO6ebXzuKOdnY3s1UfQPiIRWOpLkvjZbkEybFs_n3ZboquLUHc-jt2ErVNFj9de6TnjLQvc5XQWeXlQ"
+      },
+      body: JSON.stringify(body)
+    };
+    this.invokeLogin(url, okCallback, failCallback, params);
+  }
+
   invokePATCH(url,body,okCallback,failCallback){
     let params = {
       method:'patch',
@@ -65,7 +81,6 @@ class APIInvoker {
       console.log("Invoke => " + params.method + ":" + url );
       console.log(params);
     }
-    let host_api
     if(configuration.server.port!=""){
       fetch(`${configuration.server.host}:${configuration.server.port}${url}`,params)
         .then((response)=>{
@@ -104,6 +119,34 @@ class APIInvoker {
           okCallback(responseData)
         }else{
           console.log("Sin respuesta")
+        }
+      })
+    }
+  }
+
+  invokeLogin(url, okCallback, failCallback, params){
+    if(configuration.server.port!=""){
+      fetch(`${configuration.server.host}:${configuration.server.port}${url}`,params)
+        .then((response)=>{
+          return response
+      })
+      .then((responseData)=>{
+        if(responseData){
+          okCallback(responseData)
+        }else{
+          console.log("Sin respuesta de Backend")
+        }
+      })
+    }else{
+      fetch(`${configuration.server.host}${url}`,params)
+        .then((response)=>{
+          return response
+      })
+      .then((responseData)=>{
+        if(responseData){
+          okCallback(responseData)
+        }else{
+          console.log("Sin respuesta de Backend")
         }
       })
     }

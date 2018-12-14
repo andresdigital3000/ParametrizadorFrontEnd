@@ -13,9 +13,9 @@ class IEscenarioForm extends React.Component{
 
   componentWillMount(){
     //Cargar el combo de conciliaciones
-    //if(this.props.conciliacion==undefined){
-    //  this.props.cargarComboConciliaciones()
-    //}
+    if(this.props.conciliacion==undefined){
+      this.props.cargarComboConciliaciones()
+    }
   }
 
   componentDidMount(){

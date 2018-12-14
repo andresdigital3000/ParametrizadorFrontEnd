@@ -9,7 +9,7 @@ const initialState = {
   password:"",
   loginError:false,
   loginMessage:null,
-  dominio:''
+  dominio:'Claro'
 }
 
 export const loginFormReducer = (state = initialState,action) =>{

@@ -1,10 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import APIInvoker from '../utils/APIInvoker'
-import { Router, Route, browserHistory, IndexRoute } from "react-router";
+import { Router, Route, browserHistory, IndexRoute } from "react-router"
 import { Link } from 'react-router';
 import { connect } from 'react-redux'
-import { refreshListParametro } from '../actions/Actions';
+import { refreshListParametro } from '../actions/Actions'
 
 class IParametroItem extends React.Component{
   constructor(){

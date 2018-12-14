@@ -1,0 +1,54 @@
+{
+  "login": {
+    "user": "admin",
+    "password": "test",
+    "token": "#$%EGt2eT##$EG%Y$Y&U&/IETRH45W$%whth$Y$%YGRT",
+    "profile": {
+      "userName": "Administrador Desarrollo Local"
+    }
+  },
+  "conciliaciones": [
+    {
+      "id": 1,
+      "nombre": "Nombre de primera conciliacion",
+      "descripcion": "Descripcion de primera conciliacion editar"
+    },
+    {
+      "id": 2,
+      "nombre": "segunda conciliacion",
+      "descripcion": "descripcion segunda conciliacion"
+    },
+    {
+      "nombre": "tercera conciliacion",
+      "descripcion": "tercera con",
+      "id": 3
+    }
+  ],
+  "politicas": [
+    {
+      "id": 1,
+      "nombre": "Primera politica creada",
+      "descripcion": "Descripcion de primera politica",
+      "objetivo": "objetivo de primera politica"
+    },
+    {
+      "nombre": "Segunda Politica adicionada",
+      "descripcion": "es la descripcion de la segunda politica",
+      "objetivo": "el objetivo de la segunda politica",
+      "id": 2
+    },
+    {
+      "id": 3,
+      "nombre": "politica tres",
+      "descripcion": "descripcion de politica tres",
+      "objetivo": "objetivo politica tres"
+    }
+  ],
+  "escenarios": [
+    {
+      "nombre": "escenario primero",
+      "descripcion": "descripcion de escenario primero",
+      "id": 1
+    }
+  ]
+}

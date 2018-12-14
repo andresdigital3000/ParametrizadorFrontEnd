@@ -24,6 +24,10 @@ import IQuery from '../querysModule/IQuery'
 import IQueryForm from '../querysModule/IQueryForm'
 import IQueryDelete from '../querysModule/IQueryDelete'
 import IQueryAprobar from '../querysModule/IQueryAprobar'
+import IUsuario from '../usuariosModule/IUsuario'
+import IUsuarioForm from '../usuariosModule/IUsuarioForm'
+import IUsuarioDelete from '../usuariosModule/IUsuarioDelete'
+
 import IUnderConstruction from '../IUnderConstruction'
 import IModal from '../IModal'
 import Loading from '../politicasModule/Loading.js'
@@ -35,9 +39,63 @@ import '!style-loader!css-loader!react-toastify/../../resources/css/ReactToastif
 
 import { mostrarModal,ocultarModal } from '../actions/Actions';
 
+// Valor en milisiegundos del intervalo de revisión para autoLogout
+const CHECK_INTERVAL = 60000;
+const STORE_KEY =  'lastAction';
+
 class AdminThemplete extends React.Component{
+
   constructor(props){
     super(props)
+    this.check();
+    this.initListener();
+    this.initInterval();
+  }
+
+  getLastAction() {
+    return parseInt(localStorage.getItem(STORE_KEY));
+  }
+
+  setLastAction(lastAction: number) {
+    localStorage.setItem(STORE_KEY, lastAction.toString());
+  }
+
+  initListener() {
+    document.body.addEventListener('click', () => this.reset());
+    //document.body.addEventListener('mouseover',()=> this.reset());
+    //document.body.addEventListener('mouseout',() => this.reset());
+    document.body.addEventListener('keydown',() => this.reset());
+    document.body.addEventListener('keyup',() => this.reset());
+    document.body.addEventListener('keypress',() => this.reset());
+  }
+
+  reset() {
+    this.setLastAction(Date.now());
+  }
+
+  initInterval() {
+    setInterval(() => {
+    this.check();
+    }, CHECK_INTERVAL);
+  }
+
+  check() {
+    // Valor límite en minutos para autoLogout
+    const MINUTES_UNITL_AUTO_LOGOUT = parseInt(window.localStorage.getItem("tiempoexpirasesion"))-1
+    const now = Date.now();
+    const timeleft = this.getLastAction() + MINUTES_UNITL_AUTO_LOGOUT * 60 * 1000;
+    const diff = timeleft - now;
+    const isTimeout = diff < 0;
+    //console.log("LocalStore" + window.localStorage.getItem("tiempoexpirasesion"));
+    //console.log("Minutos para Expirar " + MINUTES_UNITL_AUTO_LOGOUT);
+    //console.log("timeleft " + timeleft);
+    //console.log("Diferencia " + diff);
+    //console.log("Booleano " + isTimeout);
+    if (isTimeout) {
+      // Call here logout function, expire session
+      localStorage.clear();
+      window.location = '/';
+    }
   }
 
   componentWillMount(){
@@ -51,8 +109,6 @@ class AdminThemplete extends React.Component{
   ocultarModal(){
     this.props.ocultarModal()
   }
-
-  //<button className="btn btn-primary" data-toggle="modal" data-target="#modalMsg"><i className="fa fa-plus-circle"/>Mostrar Modal</button>
 
   render(){
     return(
@@ -211,6 +267,26 @@ class AdminThemplete extends React.Component{
                     <Otherwise>
                       <IQueryForm/>
                       <IQuery/>
+                    </Otherwise>
+                  </Choose>
+                </If>
+                <If condition={this.props.location.pathname.substr(1,8) == 'usuarios'}>
+                  <Choose>
+                    <When condition={this.props.params.idusuario && this.props.location.pathname.substr(1,13) == 'usuarios/edit'}>
+                      <IUsuarioForm registro={this.props.params}/>
+                    </When>
+                    <When condition={this.props.params.idusuario && this.props.location.pathname.substr(1,13) != 'usuarios/edit'}>
+                      <IUsuarioForm registro={this.props.params.idusuario}/>
+                    </When>
+                    <When condition={this.props.params.idusuariodelete}>
+                      <IUsuarioDelete registro={this.props.params}/>
+                    </When>
+                    <When condition={this.props.params.idusuariofiltro}>
+                      <IUsuarioForm registro={this.props.params}/>
+                    </When>
+                    <Otherwise>
+                      <IUsuarioForm/>
+                      <IUsuario/>
                     </Otherwise>
                   </Choose>
                 </If>

@@ -1,6 +1,10 @@
 import React from 'react'
 import update from 'react-addons-update'
 import APIInvoker from './utils/APIInvoker'
+import IModalRegister from './IModalRegister'
+import IModal from './IModal'
+import { ToastContainer, toast } from 'react-toastify';
+import '!style-loader!css-loader!react-toastify/../../resources/css/ReactToastify.css';
 import { link, Router } from 'react-router';
 import { connect } from 'react-redux'
 import { updateLoginForm, loginRequest } from './actions/Actions'
@@ -23,6 +27,9 @@ class ILogin extends React.Component{
     return(
       <div className="LoginWrapper d-flex align-items-center justify-content-center clearfix">
         <div className="container">
+        <ToastContainer modal={true} zIndex={9999} hideProgressBar={true} autoClose={5000}/>
+        <IModal/>
+        <IModalRegister/>
           <div className="row">
             <div className="col-xs-12">
             </div>
@@ -38,6 +45,9 @@ class ILogin extends React.Component{
                       placeholder="Usuario"
                       name="username"
                       id="username"
+                      autoComplete='off'
+                      require='true'
+                      autoFocus
                       onChange={this.handleInput.bind(this)} />
                     <label ref="usernameLabel" id="usernameLabel" htmlFor="username"></label>
                   </div>
@@ -48,6 +58,8 @@ class ILogin extends React.Component{
                       value={this.props.password}
                       placeholder="Contraseña"
                       name="password"
+                      autoComplete='off'
+                      require="true"
                       onChange={this.handleInput.bind(this)}/>
                     <label ref="passwordLabel" htmlFor="passwordLabel"></label>
                   </div>
