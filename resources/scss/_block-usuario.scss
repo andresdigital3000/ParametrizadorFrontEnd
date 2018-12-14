@@ -1,0 +1,15 @@
+.block-user {
+	display:flex;
+	align-items: center;
+	justify-content: flex-end;
+	a {
+		font-size: .8rem;
+		color: rgba(0,0,0,.5);
+		img {
+			width: 25px;
+			height: 25px;
+			margin-right: .1rem;
+			margin-left: .1rem;
+		}
+	}
+}

@@ -1,0 +1,18 @@
+
+.content-table .table-container {
+	background: white;
+	width: 100%;
+}
+
+.custom-table {
+	background: white;
+	box-shadow: 0px 0px 3px 10px rgba(0,0,0,.3);
+	th, td {
+	    border-bottom: 1px solid #ddd;
+	    background: white;
+	}
+
+	th {
+		text-align: center;
+	}
+}

@@ -1,0 +1,39 @@
+@import "_variables";
+@import "_mixins";
+@import "_login";
+@import "_general";
+@import "_header";
+@import "_main-menu";
+@import "_info-bar";
+@import "_custom-table";
+@import "_bread_custom";
+@import "_block-usuario";
+@import "_block-perfil";
+@import "_block-admin-form";
+@import "_form";
+@import "_custom-tabs";
+
+
+.btn-primary {
+	background: $color-secundario !important;
+	border-radius: 0 !important;
+	border: none;
+}
+
+.modal-info {
+}
+
+.modal-info {
+	input {
+		width: 100%;
+	}
+}
+
+.shadow {
+	border-box: 0px 0px 10px 10px rgba(0,0,0,.3);
+}
+
+.form-text{
+	font-size: .8rem;
+	font-style: italic;
+}
