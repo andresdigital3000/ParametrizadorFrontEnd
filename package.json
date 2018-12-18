@@ -4,11 +4,10 @@
   "description": "Web Claro React",
   "main": "index.js",
   "scripts": {
-    "postinstall": "webpack --config webpack.config.js --progress",
     "build": "webpack -p",
-    "server": "NODE_ENV=production && node server.js",
+    "server": "NODE_ENV=production&&node server.js",
     "server_windows": "set NODE_ENV=production&&node server.js",
-    "start": "nodemon server.js"
+    "start": "npm run build && npm run server_windows"
   },
   "author": "Leonardo Rodriguez",
   "license": "ISC",
