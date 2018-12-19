@@ -118,6 +118,10 @@ export const loginRequest = () => (dispatch, getState) => {
       if (getState().loginFormReducer.username == "" || getState().loginFormReducer.password == "") {
         dispatch(loginFailForm('Campos vacíos, verifique'))
       }else{
+        APIInvoker.invokeGET('/parametros/returnSeed', responseS => {
+          window.localStorage.setItem("seed", responseS.valor)
+        })
+
         if (getState().loginFormReducer.dominio === "Claro"){
           APIInvoker.invokeGET('/parametros/findByAny?texto=LDAPClaro', responseClaro => {
             if (Array.isArray(responseClaro) == true){
@@ -326,13 +330,13 @@ const logoutRequest = () => ({
 
 //Funcion para encriptar dato
 function encryptJS(dato) {
-  let ciphertext = CryptoJS.AES.encrypt(dato, cryptoP.secret).toString()
+  let ciphertext = CryptoJS.AES.encrypt(dato, window.localStorage.getItem("seed")).toString()
   return ciphertext
 }
 
 //Funcion para desencriptar dato
 function decryptJS(ciphertext) {
-  let bytes = CryptoJS.AES.decrypt(ciphertext, cryptoP.secret)
+  let bytes = CryptoJS.AES.decrypt(ciphertext, window.localStorage.getItem("seed"))
   let dato = bytes.toString(CryptoJS.enc.Utf8)
   return dato
 }

@@ -17,8 +17,4 @@ module.exports ={
     port: 82,
     server: "http://localhost"
   },
-  //seguridad emulada
-  crypto:{
-    secret: "ParametrizadorClaro2018_Nitolo"
-  }
 }
