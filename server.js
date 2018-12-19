@@ -35,5 +35,5 @@ app.post('/login/:user', function(req,res){
 
 app.listen(82,function(){
   console.log("ENV ==> " , process.env.NODE_ENV)
-  console.log('Ejemplo app escuchando en puerto 82!');
+  console.log('Parametrizador Claro app escuchando en puerto 82!');
 });

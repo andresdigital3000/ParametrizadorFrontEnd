@@ -104,7 +104,7 @@ import IMsg from '../ejecucionModule/IMsg'
 import CryptoJS from 'crypto-js'
 
 var configuration = require('../../config');
-const usarJsonServer = configuration.usarJsonServer
+const cryptoP = configuration.crypto
 
 /*
  * A C C I O N E S   D E L   C O M P O N E N T E  L O G I N  F O R M  ILogin
@@ -326,13 +326,13 @@ const logoutRequest = () => ({
 
 //Funcion para encriptar dato
 function encryptJS(dato) {
-  let ciphertext = CryptoJS.AES.encrypt(dato,'ParametrizadorClaro2018_Nitolo').toString()
+  let ciphertext = CryptoJS.AES.encrypt(dato, cryptoP.secret).toString()
   return ciphertext
 }
 
 //Funcion para desencriptar dato
 function decryptJS(ciphertext) {
-  let bytes = CryptoJS.AES.decrypt(ciphertext, 'ParametrizadorClaro2018_Nitolo')
+  let bytes = CryptoJS.AES.decrypt(ciphertext, cryptoP.secret)
   let dato = bytes.toString(CryptoJS.enc.Utf8)
   return dato
 }

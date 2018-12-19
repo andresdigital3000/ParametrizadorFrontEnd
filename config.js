@@ -18,7 +18,7 @@ module.exports ={
     server: "http://localhost"
   },
   //seguridad emulada
-  jwt:{
-    secret: "#$%EGt2eT##$EG%Y$Y&U&/IETRH45W$%whth$Y$%YGRT"
+  crypto:{
+    secret: "ParametrizadorClaro2018_Nitolo"
   }
 }
