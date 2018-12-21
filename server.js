@@ -33,7 +33,7 @@ app.post('/login/:user', function(req,res){
   res.send(body);
 });
 
-app.listen(82,function(){
+app.listen(80,function(){
   console.log("ENV ==> " , process.env.NODE_ENV)
-  console.log('Parametrizador Claro app escuchando en puerto 82!');
+  console.log('Parametrizador Claro app escuchando en puerto 80!');
 });

@@ -80,9 +80,6 @@ class ILogin extends React.Component{
                 <div className="row">
                   <If condition={this.props.state.loginError}>
                     <div className="alert alert-danger alert-dismissible fade show" role="alert">
-                      <button type="button" className="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
                       <strong>{this.props.state.loginMessage}</strong>
                     </div>
                   </If>

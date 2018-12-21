@@ -5,7 +5,7 @@ module.exports ={
     port:"",
     host:"http://localhost:7001/ParametrizadorClaro/api"
   },
-  //Configuración de constantes para enviar a WebService de Odi
+  //Configuración de constantes WebService de Odi
   webService:{
     stopLevel : "IMMEDIATE",
     runCount : 1,
@@ -14,7 +14,7 @@ module.exports ={
 
   //aplicacion front
   resources:{
-    port: 82,
+    port: 80,
     server: "http://localhost"
   },
 }

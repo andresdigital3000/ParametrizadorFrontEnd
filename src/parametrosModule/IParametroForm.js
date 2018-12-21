@@ -179,12 +179,12 @@ class IParametroForm extends React.Component{
                     </div>
                     <div className="form-group">
                       {
-                        this.props.state.tipo!='' && this.props.state.tipo!='GENERAL' ?
+                        this.props.state.tipo!='' && this.props.state.tipo!='SISTEMA' ?
                         <label htmlFor='escenario'>* Listado</label> :
                         <label htmlFor='escenario'>Listado</label>
                       }
                       {
-                        this.props.state.tipo!='' && this.props.state.tipo!='GENERAL' ?
+                        this.props.state.tipo!='' && this.props.state.tipo!='SISTEMA' ?
                         <select id='escenario' className='form-control' value={this.props.state.escenario} onChange={this.handleInput.bind(this)}>
                           <option value="">Seleccione uno</option>
                           {this.props.state.escenarios.map(function(currentValue,index,array){
