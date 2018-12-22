@@ -30,6 +30,7 @@ import IUsuarioDelete from '../usuariosModule/IUsuarioDelete'
 
 import IUnderConstruction from '../IUnderConstruction'
 import IModal from '../IModal'
+import IModalLoad from '../IModalLoad'
 import Loading from '../politicasModule/Loading.js'
 import { browserHistory } from 'react-router'
 import { connect } from 'react-redux'
@@ -114,6 +115,7 @@ class AdminThemplete extends React.Component{
     return(
       <div data-reactroot="" className="container-fluid">
           <ToastContainer modal={true} zIndex={9999} hideProgressBar={true} autoClose={5000}/>
+          <IModalLoad/>
           <IModal/>
           <Choose>
             <When condition={this.props.load}>

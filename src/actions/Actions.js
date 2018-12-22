@@ -1,6 +1,7 @@
 import {
     LOGIN_SUCCESS,
     LOGIN_ERROR,
+    LIMPIAR_FORM_LOGIN,
     SHOW_MODAL,
     HIDE_MODAL,
     UPDATE_LOGIN_FORM_REQUEST,
@@ -104,7 +105,6 @@ import IMsg from '../ejecucionModule/IMsg'
 import CryptoJS from 'crypto-js'
 
 var configuration = require('../../config');
-const cryptoP = configuration.crypto
 
 /*
  * A C C I O N E S   D E L   C O M P O N E N T E  L O G I N  F O R M  ILogin
@@ -120,6 +120,8 @@ export const loginRequest = () => (dispatch, getState) => {
             position: toast.POSITION.BOTTOM_CENTER
         })
       }else{
+        dispatch(mostrarModalLoad())
+        //$('#modalLoad').modal('show')
         APIInvoker.invokeGET('/parametros/returnSeed', responseS => {
           window.localStorage.setItem("seed", responseS.valor)
         })
@@ -139,6 +141,8 @@ export const loginRequest = () => (dispatch, getState) => {
               }
               APIInvoker.invokePOST_Login('/usuarios/login', credentials, response => {
                 if(response.ok){
+                  dispatch(cerrarModalLoad())
+                  //$('#modalLoad').modal('hide')
                   window.localStorage.setItem("token",response.headers.get("authorization"))
                   //Obtiene el valor parametrizado del tiempo para cierre de sesion automático
                   APIInvoker.invokeGET('/parametros/findByAny?texto=V_tiempoExpiraSesion', responsetime => {
@@ -151,12 +155,12 @@ export const loginRequest = () => (dispatch, getState) => {
                             window.localStorage.setItem("username", result.usuario)
                             window.localStorage.setItem("useremail", result.email)
                             window.localStorage.setItem("nombreUsuario", result.nombreUsuario)
-                            //Roles 0=SinRol 1=Consultor - 2=Ejecutor - 3=Administrador
+                            //Roles SinRol - Consultor - Ejecutor - Administrador
                             if (result.roles.length > 0) {
-                              window.localStorage.setItem("userrol", result.roles[0].id)
+                              //window.localStorage.setItem("userrol", result.roles[0].id)
                               window.localStorage.setItem("userrolname", result.roles[0].nombre)
                             }else{
-                              window.localStorage.setItem("userrol", "0")
+                              //window.localStorage.setItem("userrol", "0")
                               window.localStorage.setItem("userrolname", "null")
                             }
 
@@ -169,11 +173,15 @@ export const loginRequest = () => (dispatch, getState) => {
                       }
                   })
                 }else{
-                  toast.error("Nombre de usuario o contraseña errados", {
+                  dispatch(cerrarModalLoad())
+                  //$('#modalLoad').modal('hide')
+                  toast.error("Nombre de usuario o contraseña incorrectos, verifique", {
                       position: toast.POSITION.BOTTOM_CENTER
                   })
                 }
               }, error => {
+                  dispatch(cerrarModalLoad())
+                  //$('#modalLoad').modal('hide')
                   toast.error("NO SE LOGUEO", {
                       position: toast.POSITION.BOTTOM_CENTER
                   })
@@ -195,6 +203,8 @@ export const loginRequest = () => (dispatch, getState) => {
               }
               APIInvoker.invokePOST_Login('/usuarios/login', credentials, response => {
                 if(response.ok){
+                  dispatch(cerrarModalLoad())
+                  //$('#modalLoad').modal('hide')
                   window.localStorage.setItem("token",response.headers.get("authorization"))
                   //Obtiene el valor parametrizado del tiempo para cierre de sesion automático
                   APIInvoker.invokeGET('/parametros/findByAny?texto=V_tiempoExpiraSesion', responsetime => {
@@ -207,12 +217,12 @@ export const loginRequest = () => (dispatch, getState) => {
                             window.localStorage.setItem("username", result.usuario)
                             window.localStorage.setItem("useremail", result.email)
                             window.localStorage.setItem("nombreUsuario", result.nombreUsuario)
-                            //Roles 0=SinRol 1=Consultor - 2=Ejecutor - 3=Administrador
+                            //Roles SinRol - Consultor - Ejecutor - Administrador
                             if (result.roles.length > 0) {
-                              window.localStorage.setItem("userrol", result.roles[0].id)
+                              //window.localStorage.setItem("userrol", result.roles[0].id)
                               window.localStorage.setItem("userrolname", result.roles[0].nombre)
                             }else{
-                              window.localStorage.setItem("userrol", "0")
+                              //window.localStorage.setItem("userrol", "0")
                               window.localStorage.setItem("userrolname", "null")
                             }
 
@@ -225,11 +235,15 @@ export const loginRequest = () => (dispatch, getState) => {
                       }
                   })
                 }else{
-                  toast.error("Nombre de usuario o contraseña errados", {
+                  dispatch(cerrarModalLoad())
+                  //$('#modalLoad').modal('hide')
+                  toast.error("Nombre de usuario o contraseña incorrectos, verifique", {
                       position: toast.POSITION.BOTTOM_CENTER
                   })
                 }
               }, error => {
+                dispatch(cerrarModalLoad())
+                //$('#modalLoad').modal('hide')
                 toast.error("NO SE LOGUEO", {
                     position: toast.POSITION.BOTTOM_CENTER
                 })
@@ -250,6 +264,18 @@ const loginFailForm = (loginMessage) => ({
     type: LOGIN_ERROR,
     loginMessage: loginMessage
 })
+
+export const limpiarFormLogin = () => ({
+  type:LIMPIAR_FORM_LOGIN
+})
+
+export const mostrarModalLoad = () => (dispatch, getState) => {
+    $('#modalLoad').modal('show')
+}
+
+export const cerrarModalLoad = () => (dispatch, getState) => {
+    $('#modalLoad').modal('hide')
+}
 
 export const mostrarModalRegisterUser = () => (dispatch, getState) => {
     $('#modalRegisterUser').modal('show');
@@ -317,8 +343,8 @@ export const relogin = () => (dispatch, getState) => {
             window.localStorage.setItem("username", window.localStorage.getItem("username"))
             window.localStorage.setItem("useremail", window.localStorage.getItem("useremail"))
             window.localStorage.setItem("nombreUsuario", window.localStorage.getItem("nombreUsuario"))
-            //Roles 1=Consultor - 2=Ejecutor - 3=Administrador
-            window.localStorage.setItem("userrol", window.localStorage.getItem("userrol"))
+            //Roles SinRol - Consultor - Ejecutor - Administrador
+            //window.localStorage.setItem("userrol", window.localStorage.getItem("userrol"))
             window.localStorage.setItem("userrolname", window.localStorage.getItem("userrolname"))
             dispatch(loginSuccess({"username": window.localStorage.getItem("username")}))
         }
@@ -3764,7 +3790,12 @@ export const saveUsuario = () => (dispatch, getState) => {
       }
       APIInvoker.invokePOST('/usuarios', usuario_salvar, response => {
           if (response.id != undefined) {
-              $('#modalRegisterUser').modal('hide');
+              $('#modalRegisterUser').modal('hide')
+              $('#modalLoad').modal('hide')
+              dispatch(limpiarFormUsuario())
+              dispatch(limpiarFormLogin())
+              localStorage.clear();
+              browserHistory.push('/admin')
               dispatch(mostrarModal("alert alert-success", "Registro Exitoso. Bienvenido Usuario " + usuario_salvar.usuario + ". Por favor solicite asignación de rol a un administrador y vuelva a ingresar "))
           } else {
               //Enviar error específico a la consola

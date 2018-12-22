@@ -63,8 +63,8 @@ render((
           <Route path="/" component={ILogin}></Route>
           <Route path="/admin" component={ AdminThemplete } >
             {(() => {
-              switch(window.localStorage.getItem("userrol")) {
-                case "1":
+              switch(window.localStorage.getItem("userrolname")) {
+                case "Consultor":
                   return <div>
                           <Route path="/resultados" component={IResultado}></Route>
                           <Route path="/indicadores" component={IIndicador}></Route>
@@ -72,13 +72,13 @@ render((
                           <Route path="/indicadores/edit/:idindicador" component={IIndicadorForm}></Route>
                           <Route path="/indicadores/delete/:idindicadordelete" component={IIndicadorDelete}></Route>
                          </div>;
-                case "2":
+                case "Ejecutor":
                   return <div>
                           <Route path="/ejecucion" component={IEjecucion}></Route>
                           <Route path="/ejecucion/programar" component={IProgramar}></Route>
                           <Route path="/resultados" component={IResultado}></Route>
                         </div>;
-                case "3":
+                case "Administrador":
                   return <div>
                           <Route path="/politicas" component={IPolitica}></Route>
                           <Route path="/politicas/:idpolitica" component={IPolitica}></Route>

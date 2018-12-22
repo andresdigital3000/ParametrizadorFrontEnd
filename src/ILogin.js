@@ -3,6 +3,7 @@ import update from 'react-addons-update'
 import APIInvoker from './utils/APIInvoker'
 import IModalRegister from './IModalRegister'
 import IModal from './IModal'
+import IModalLoad from './IModalLoad'
 import { ToastContainer, toast } from 'react-toastify';
 import '!style-loader!css-loader!react-toastify/../../resources/css/ReactToastify.css';
 import { link, Router } from 'react-router';
@@ -28,6 +29,7 @@ class ILogin extends React.Component{
       <div className="LoginWrapper d-flex align-items-center justify-content-center clearfix">
         <div className="container">
         <ToastContainer modal={true} zIndex={9999} hideProgressBar={true} autoClose={5000}/>
+        <IModalLoad/>
         <IModal/>
         <IModalRegister/>
           <div className="row">
@@ -76,13 +78,6 @@ class ILogin extends React.Component{
                   <div className="input-group">
                     <button className="btn btn-danger" id="submitBtn" onClick={this.login.bind(this)}>Ingreso</button>
                   </div>
-                </div>
-                <div className="row">
-                  <If condition={this.props.state.loginError}>
-                    <div className="alert alert-danger alert-dismissible fade show" role="alert">
-                      <strong>{this.props.state.loginMessage}</strong>
-                    </div>
-                  </If>
                 </div>
               </form>
             </div>

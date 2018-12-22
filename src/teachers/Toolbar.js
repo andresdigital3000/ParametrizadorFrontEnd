@@ -25,7 +25,7 @@ class Toolbar extends React.Component{
   render(){
     let linkRes = this.props.urlresultados
     let username = window.localStorage.getItem("nombreUsuario")
-    let userrol = window.localStorage.getItem("userrol")
+    //let userrol = window.localStorage.getItem("userrol")
     let userrolname = window.localStorage.getItem("userrolname")
 
     return(
@@ -37,12 +37,12 @@ class Toolbar extends React.Component{
           <div className="main--menu navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav navigation-nav mr-auto">
               {(() => {
-                switch(userrol) {
-                  case "1":
+                switch(userrolname) {
+                  case "Consultor":
                     return <ConsultaMenu linkRes={linkRes}/>;
-                  case "2":
+                  case "Ejecutor":
                     return <EjecutorMenu />;
-                  case "3":
+                  case "Administrador":
                     return <div> <AdministracionMenu /> <EjecutorMenu /> <ConsultaMenu linkRes={linkRes}/> </div>;
                   default:
                     return null;
