@@ -75,7 +75,7 @@ const mapStateToProps = (state) =>{
       escenario: state.queryReducer.escenario
     }
   }
-}
+} 
 
 export default connect (mapStateToProps,{
   updEscenarioEnQuerys, refreshListQuery, cargarComboEscenariosEnQuerys, calculaPaginadorQuerys

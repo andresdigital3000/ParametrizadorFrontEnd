@@ -12,8 +12,8 @@ class IUsuarioForm extends React.Component{
   }
 
   componentDidMount(){
-    if(this.props.registro){
-      this.props.cargarUsuario(this.props.registro.idusuario)
+    if(this.props.params && this.props.params.idusuario){
+      this.props.cargarUsuario(this.props.params.idusuario)
     }
   }
 
@@ -36,7 +36,7 @@ class IUsuarioForm extends React.Component{
     return(
       <div className="container">
       <Choose>
-        <When condition={this.props.registro}>
+        <When condition={this.props.params}>
           <div className="form-wrapper">
             <header className="head-table">
               <div className="form-group">

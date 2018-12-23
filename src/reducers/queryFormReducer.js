@@ -1,7 +1,8 @@
 import {
   UPDATE_QUERYS_FORM_REQUEST,
   CARGAR_QUERY_FORM,
-  LIMPIAR_FORM_QUERY
+  LIMPIAR_FORM_QUERY,
+  UPDATE_ESCENARIO_QUERYS_FORM_REQUEST
 } from '../actions/const'
 import update from 'react-addons-update'
 
@@ -19,6 +20,11 @@ const initialState = {
 
 export const queryFormReducer = (state = initialState,action) =>{
   switch (action.type) {
+    case UPDATE_ESCENARIO_QUERYS_FORM_REQUEST:
+      return update(state, {
+        idEscenario: {$set: action.idEscenario},
+        nombreEscenario: {$set: action.descEscenario},
+      })
     case UPDATE_QUERYS_FORM_REQUEST:
         return update(state,{
           [action.field] : {$set: action.value}

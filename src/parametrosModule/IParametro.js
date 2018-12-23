@@ -7,6 +7,9 @@ import IParametroPaginador from './IParametroPaginador'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { connect } from 'react-redux'
 import { refreshListParametro, updTipoParametros } from '../actions/Actions';
+import IParametroForm from './IParametroForm'
+import ReactTable from "react-table";
+import {Link} from 'react-router'
 
 class IParametro extends React.Component{
   constructor(){
@@ -14,8 +17,8 @@ class IParametro extends React.Component{
   }
 
   componentWillMount(){
-    if(this.props.idescenario != undefined){
-      this.props.refreshListParametro(this.props.idescenario)
+    if(this.props.params.idparametro){
+      this.props.refreshListParametro(this.props.params.idparametro)
     }else{
       this.props.refreshListParametro()
     }
@@ -28,6 +31,7 @@ class IParametro extends React.Component{
   render(){
     return(
         <div className="container">
+          <IParametroForm/>
             <header className="head-table">
               <div className="row">
                   <br/>
@@ -44,32 +48,76 @@ class IParametro extends React.Component{
                   </center>
                 </div>
                 <div className="col-sm-4">
-                  <IParametroFinder/>
                 </div>
               </div>
               <div className="row">
                 <div className="col-sm-4">
-                  <label htmlFor='tipo'>Tipo</label>
-                  <select id='tipo' value={this.props.state.tipo} className='form-control form-control-lg' onChange={this.cambioTipossQuery.bind(this)}>
-                  <option value=''>Seleccione uno</option>
-                  <option value='GENERAL'>GENERAL</option>
-                  <option value='SISTEMA'>PARAMETROS SISTEMA</option>
-                  <option value='CONCILIACION'>CONCILIACION</option>
-                  <option value='ESCENARIO'>ESCENARIO</option>
-                </select>
                 </div>
               </div>
-              <hr/>
               <div className="row-fluid">
-                <IParametroList registro={this.props.registro} idescenario={this.props.idescenario}/>
+                <ReactTable
+                  data={this.props.state.items}
+                  previousText= {'Anterior'}
+                  nextText= {'Siguiente'}
+                  loadingText= {'Cargando...'}
+                  noDataText= {'Sin registros'}
+                  pageText= {'Página'}
+                  ofText= {'de'}
+                  rowsText= {'Registros'}
+                  filterable
+                  defaultFilterMethod={(filter, row) => String(row[filter.id]) === filter.value}
+                  defaultSorted={[{id: "registDate", desc: true }]}
+                  columns={[
+                      {
+                          Header: "PARÁMETROS",
+                          accessor: "parametro",
+                          filterMethod: (filter, row) =>
+                              row[filter.id].toLowerCase().includes(filter.value.toLowerCase()) 
+                      },
+                      {
+                          Header: "NOMBRE",
+                          accessor: "valor",
+                          filterMethod: (filter, row) =>
+                              row[filter.id].toLowerCase().includes(filter.value.toLowerCase()) 
+                      },
+                      {
+                        Header: "POLÍTICA",
+                        accessor: "descripcion",
+                        filterMethod: (filter, row) =>
+                            row[filter.id].toLowerCase().includes(filter.value.toLowerCase()) 
+                      },
+                      {
+                        Header: "REQUIERE APROBACIÓN",
+                        accessor: 'tipo',
+                        filterMethod: (filter, row) =>
+                            row[filter.id].toLowerCase().includes(filter.value.toLowerCase()) 
+                      },
+                      {
+                        Header: "REQUIERE APROBACIÓN",
+                        accessor: 'tipo',
+                        filterable: false,
+                        Cell: row => (
+                          <div style={{textAlign: 'center'}}>
+                            <Link to={"/parametros/edit/"+row.row._original.id} className="btn btn-info" style={{marginRight: '10px'}}><i className="fa fa-pencil"/></Link>
+                            <If condition={row.value=="SISTEMA"}>
+                              &nbsp;
+                            </If>
+                            <If condition={row.value!="SISTEMA"}>
+                              <Link to={"/parametros/delete/"+row.row._original.id} className="btn btn-danger"><i className="fa fa-trash-o"/></Link>
+                            </If>
+                          </div>
+                        )
+                      }
+                  ]}
+                  defaultPageSize={10}
+                  className="-striped -highlight"
+                />
               </div>
-              <hr/>
               <div className="row">
                 <div className="col-sm-1">
                 </div>
                 <div className="col-sm-4">
                   <center>
-                    <IParametroPaginador/>
                   </center>
                 </div>
                 <div className="col-sm-1">
@@ -85,7 +133,8 @@ class IParametro extends React.Component{
 const mapStateToProps = (state) =>{
   return{
     state: {
-      conciliacion: state.escenarioReducer.conciliacion
+      conciliacion: state.escenarioReducer.conciliacion,
+      items: state.parametroReducer.parametros
     }
   }
 }

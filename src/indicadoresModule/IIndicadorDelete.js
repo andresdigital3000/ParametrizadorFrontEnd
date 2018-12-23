@@ -13,8 +13,8 @@ class IIndicadorDelete extends React.Component{
   }
 
   componentDidMount(){
-    if(this.props.registro){
-      this.props.cargarIndicador(this.props.registro.idindicadordelete)
+    if(this.props.params && this.props.params.idindicador){
+      this.props.cargarIndicador(this.props.params.idindicador)
     }
   }
 
@@ -49,7 +49,7 @@ class IIndicadorDelete extends React.Component{
             <div className="row">
               <div className="col-sm-12">
                 <Choose>
-                  <When condition={this.props.registro}>
+                  <When condition={this.props.params.idindicador}>
                       <input id='id' ref='id' type='hidden' value={this.props.state.id}/>
                       <div className="form-group">
                         <label htmlFor='nombre'>Nombre</label>

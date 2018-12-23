@@ -92,6 +92,7 @@ class AdminThemplete extends React.Component{
     //console.log("Diferencia " + diff);
     //console.log("Booleano " + isTimeout);
     if (isTimeout) {
+
       // Call here logout function, expire session
       localStorage.clear();
       window.location = '/';
@@ -111,6 +112,10 @@ class AdminThemplete extends React.Component{
   }
 
   render(){
+    const childrenWithProps = React.Children.map(this.props.children, child =>
+      React.cloneElement(child, { doSomething: this.doSomething })
+    );
+
     return(
       <div data-reactroot="" className="container-fluid">
           <ToastContainer modal={true} zIndex={9999} hideProgressBar={true} autoClose={5000}/>
@@ -118,7 +123,8 @@ class AdminThemplete extends React.Component{
           <Choose>
             <When condition={this.props.load}>
                 <Toolbar/>
-                <If condition={this.props.location.pathname == '/uc'}>
+                {childrenWithProps} 
+                {/*<If condition={this.props.location.pathname == '/uc'}>
                   <IUnderConstruction/>
                 </If>
                 <If condition={this.props.location.pathname.substr(1,9) == 'politicas'}>
@@ -289,7 +295,7 @@ class AdminThemplete extends React.Component{
                       <IUsuario/>
                     </Otherwise>
                   </Choose>
-                </If>
+                </If>*/}
             </When>
             <Otherwise>
               <Loading/>

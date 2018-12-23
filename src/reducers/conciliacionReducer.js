@@ -5,7 +5,8 @@ import {
   ACTUALIZA_PAGINADOR_CONCILIACIONES,
   IR_PAGINA_CONCILIACIONES,
   CARGA_POLITICAS,
-  CARGAR_POLITICA_EN_CONCILIACION
+  CARGAR_POLITICA_EN_CONCILIACION,
+  CARGAR_CONCILIACION_FORM_2
 } from '../actions/const'
 import update from 'react-addons-update'
 
@@ -21,7 +22,15 @@ const initialState = {
 }
 
 export const conciliacionReducer = (state = initialState,action) =>{
+  console.log('conciliacionReducer => ', action)
   switch (action.type) {
+      case CARGAR_CONCILIACION_FORM_2:
+      return update(state,{
+          politica: {
+            id: {$set: action.conciliacion[0].idPolitica},
+            nombre: {$set: action.conciliacion[0].nombrePolitica}
+          }
+        })
       case UPDATE_FINDER:
         return update(state,{
           [action.field] : {$set: action.value}
@@ -41,6 +50,7 @@ export const conciliacionReducer = (state = initialState,action) =>{
           conciliaciones : {$set: action.lista}
         })
       case UPDATE_POLITICA_EN_CONCILIACIONES:
+        console.log("UPDATE_POLITICA_EN_CONCILIACIONES", action)
         return update(state,{
           politica: {$set: action.value}
         })

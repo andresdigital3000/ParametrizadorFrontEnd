@@ -4,7 +4,8 @@ import APIInvoker from '../utils/APIInvoker'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { Link } from 'react-router';
 import { connect } from 'react-redux'
-import { updateFormParametros, saveParametro, cargarParametro, limpiarFormParametro, refreshListParametro, cargarListadoEnParametros } from '../actions/Actions';
+import { updateFormParametros, updateFormEscenarioParametros, saveParametro, cargarParametro, limpiarFormParametro, refreshListParametro, cargarListadoEnParametros } from '../actions/Actions';
+import AsyncSelect from 'react-select/lib/Async'
 
 //import Select from 'react-select';
 //import 'react-select/dist/react-select.css';
@@ -16,12 +17,12 @@ class IParametroForm extends React.Component{
 
   componentWillMount(){
     //Cargar combo de esecenarios
-    this.props.cargarListadoEnParametros()
+    //this.props.cargarListadoEnParametros()
   }
 
   componentDidMount(){
-    if(this.props.registro!=undefined){
-      this.props.cargarParametro(this.props.registro.idparametro)
+    if(this.props.params && this.props.params.idparametro){
+      this.props.cargarParametro(this.props.params.idparametro)
     }else{
       this.props.limpiarFormParametro()
     }
@@ -50,11 +51,33 @@ class IParametroForm extends React.Component{
     this.props.limpiarFormParametro()
   }
 
+  loadOptions(inputValue, callback) {
+    let realInput = inputValue || ''
+    if(realInput.length < 3) {
+      callback( [{value: 0, label: 'Capture al menos 3 caracteres'}])
+      return
+    }else if(this.props.state.tipo!='' && this.props.state.tipo!='GENERAL'){
+      //this.props.cargarComboConciliaciones(realInput, callback)
+      this.props.cargarListadoEnParametros(realInput, callback)
+    }else{
+      callback( [{value: 0, label: 'No aplica'}])
+      return
+    }
+  };
+
+  cambioListadoSelect(newValue){
+    if(newValue.value == 0 ){
+      this.props.updateFormEscenarioParametros(null, null)
+    }else{
+      this.props.updateFormEscenarioParametros(newValue.value, newValue.label)
+    }
+  }
+
   render(){
     return(
       <div className="container">
       <Choose>
-        <When condition={this.props.registro}>
+        <When condition={this.props.params}>
           <div className="form-wrapper">
             <header className="head-table">
               <div className="form-group">
@@ -185,18 +208,20 @@ class IParametroForm extends React.Component{
                       }
                       {
                         this.props.state.tipo!='' && this.props.state.tipo!='GENERAL' ?
-                        <select id='escenario' className='form-control' value={this.props.state.escenario} onChange={this.handleInput.bind(this)}>
-                          <option value="">Seleccione uno</option>
-                          {this.props.state.escenarios.map(function(currentValue,index,array){
-                            return(
-                              <option key={currentValue.id} value={currentValue.id}>{currentValue.nombre}</option>
-                            );
-                          })}
-                        </select> :
+                        <AsyncSelect
+                          cacheOptions
+                          loadOptions={this.loadOptions.bind(this)}
+                          defaultOptions
+                          onInputChange={this.handleInputChange}
+                          value={{value: this.props.state.escenario, label: this.props.state.nombreConciliacion }}
+                          onChange={this.cambioListadoSelect.bind(this)}
+                        /> :
                         <select id='escenario' className='form-control' value={this.props.state.escenario}>
                           <option value='0'>No aplica</option>
                         </select>
                       }
+
+                      
                     </div>
                     <div className="form-group">
                       <label htmlFor='parametro'>* Parámetro</label>
@@ -252,10 +277,12 @@ const mapStateToProps = (state) =>{
       descripcion : state.parametroFormReducer.descripcion,
       tipo : state.parametroFormReducer.tipo,
       escenario : state.parametroFormReducer.escenario,
+      escenario : state.parametroFormReducer.escenario,
+      nombreConciliacion: state.parametroFormReducer.escenarioDescripcion,
       escenarios : state.parametroFormReducer.escenarios
     }
   }
 }
 export default connect (mapStateToProps,{
-  updateFormParametros, saveParametro, cargarParametro, limpiarFormParametro, refreshListParametro, cargarListadoEnParametros
+  updateFormParametros, saveParametro, cargarParametro, limpiarFormParametro, refreshListParametro, cargarListadoEnParametros, updateFormEscenarioParametros
 })(IParametroForm)

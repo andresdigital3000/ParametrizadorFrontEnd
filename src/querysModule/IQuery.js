@@ -6,7 +6,10 @@ import IQueryFinder from './IQueryFinder'
 import IQueryPaginador from './IQueryPaginador'
 import { Router, Route, browserHistory, IndexRoute, Link } from "react-router";
 import { connect } from 'react-redux'
-import { updConciliacionQuerys,refreshListQuery,cargarComboEscenariosEnQuerys,calculaPaginadorQuerys, cambioConciliacionesQuery, cargarConciliacionesQuery, updEscenariosQuerys, updEscenarioQuerys } from '../actions/Actions';
+import { updConciliacionQuerys,calculaPaginadorQuerys, cambioConciliacionesQuery, cargarConciliacionesQuery, updEscenariosQuerys, updEscenarioQuerys } from '../actions/Actions';
+import IQueryForm from './IQueryForm'
+import ReactTable from "react-table"
+
 
 class IQuery extends React.Component{
   constructor(){
@@ -15,7 +18,6 @@ class IQuery extends React.Component{
 
   componentWillMount(){
     this.props.cargarConciliacionesQuery()
-    //this.props.cargarComboEscenariosEnQuerys() 
    
     if(this.props.conciliacion!=undefined || this.props.registro!=undefined){
       if(this.props.conciliacion != undefined && this.props.conciliacion != 0){
@@ -26,7 +28,6 @@ class IQuery extends React.Component{
     }else if(this.props.escenario!=undefined){
       this.props.updEscenarioQuerys(this.props.escenario)
     }else{
-      this.props.updConciliacionQuerys(0)
       this.props.updEscenarioQuerys(0)
     }
   }
@@ -43,6 +44,7 @@ class IQuery extends React.Component{
   render(){
     return(
         <div className="container">
+        <IQueryForm/>
           <header className="head-table">
             <div className="row">
                 <br/>
@@ -59,83 +61,97 @@ class IQuery extends React.Component{
                 </center>
               </div>
               <div className="col-sm-4">
-                  <If condition={this.props.registro==undefined}>
-                      <IQueryFinder/>
-                  </If>
               </div>
             </div>
             <div className="row">
               <div className="col-sm-4">
-                <label htmlFor='conciliacion'>Conciliación</label>
-                <select id="conciliacion" name="conciliacion" className='form-control' value={this.props.state.conciliacion.id} onChange={this.cambioConciliacionesQuery.bind(this)}>
-                  <option key="0" value="0">Todas</option>
-                  {this.props.state.conciliaciones.map(function(currentValue,index,array){
-                    return(
-                      <option key={currentValue.id} value={currentValue.id}>{currentValue.nombre}</option>
-                    );
-                  })}
-                </select>
               </div>
               <div className="col-sm-4">
-                <label htmlFor='estado'>Estado</label>
-                <p>
-                  <b>
-                    <If condition={this.props.state.estado.length > 0}>
-                        <If condition={this.props.state.estado[0].estadoAprobacion==1}>Aprobado</If>
-                        <If condition={this.props.state.estado[0].estadoAprobacion==0}>Rechazado</If>
-                        &nbsp;-&nbsp;{this.props.state.estado[0].mensaje}
-                    </If>
-                    <If condition={this.props.state.estado.length == 0}>
-                        Pendiente por aprobación
-                    </If>&nbsp;
-                  </b>
-                </p>
+                
               </div>
               <div className="col-sm-4">
-                <label htmlFor='escenario'>Escenario</label>
-                <select id="escenario" name="escenario" className='form-control' value={this.props.state.escenario.id} onChange={this.cambioEscenariosQuery.bind(this)}>
-                  <option key="0" value="0">Todas</option>
-                  {this.props.state.escenarios.map(function(currentValue,index,array){
-                    return(
-                      <option key={currentValue.id} value={currentValue.id}>{currentValue.nombre}</option>
-                    );
-                  })}
-                </select>
               </div>
             </div>
-            <hr/>
-            <Choose>
-            <When condition={this.props.registro != undefined}>
-              <IQueryList escenario={this.props.registro}/>
-            </When>
-            <When condition={this.props.conciliacion != undefined}>
-              <IQueryList conciliacion={this.props.conciliacion}/>
-            </When>
-            <Otherwise>
-              <IQueryList conciliacion={0}/>
-            </Otherwise>
-            </Choose>
-            <hr/>
-            <If condition={this.props.state.escenario.id==0}>
-              <div className="row">
-                <div className="col-sm-1">
-                </div>
-                <div className="col-sm-8">
-                  <center>
-                    <IQueryPaginador/>
-                  </center>
-                </div>
-                <div className="col-sm-1">
+            <ReactTable
+              data={this.props.state.querys}
+              previousText= {'Anterior'}
+              nextText= {'Siguiente'}
+              loadingText= {'Cargando...'}
+              noDataText= {'Sin registros'}
+              pageText= {'Página'}
+              ofText= {'de'}
+              rowsText= {'Registros'}
+              filterable
+              defaultFilterMethod={(filter, row) => String(row[filter.id]) === filter.value}
+              defaultSorted={[{id: "registDate", desc: true }]}
+              columns={[
                   {
-                    this.props.state.conciliacion.id!="0" && this.props.state.querys.length>0 && this.props.state.estado.length==0 ?
-                    <Link to="/querys/aprobar/form" className="btn btn-primary">Aprobar Conciliación</Link> :
-                    <p>&nbsp;</p>
+                      Header: "NOMBRE",
+                      accessor: "nombreQuery",
+                      Cell: row => (<center>{row.value}</center>),
+                      filterMethod: (filter, row) =>
+                          row[filter.id].toLowerCase().includes(filter.value.toLowerCase()) 
+                  },
+                  {
+                      Header: "QUERY",
+                      accessor: "query",
+                      filterMethod: (filter, row) =>
+                          row[filter.id].toLowerCase().includes(filter.value.toLowerCase()) 
+                  },
+                  {
+                    Header: "ORDEN",
+                    accessor: "orden",
+                    Cell: row => (<center>{row.value}</center>),
+                    filterMethod: (filter, row) =>
+                        new String(row[filter.id]).toLowerCase().includes(filter.value.toLowerCase()) 
+                  },
+                  {
+                    Header: "CONCILIACIÓN",
+                    accessor: 'nombreConciliacion',
+                    Cell: row => (
+                      <div>
+                        <If condition={row.row._original.idConciliacion!=undefined}>
+                          <Link to={"/conciliaciones/"+row.row._original.idConciliacion}>{row.value}</Link>
+                        </If>
+                        <If condition={row.row._original.idConciliacion==undefined}>
+                          No tiene
+                        </If>
+                      </div>
+                    ),
+                    filterMethod: (filter, row) =>
+                        row[filter.id].toLowerCase().includes(filter.value.toLowerCase()) 
+                  },
+                  {
+                    Header: "ESCENARIO",
+                    accessor: 'nombreEscenario',
+                    filterMethod: (filter, row) =>
+                        row[filter.id].toLowerCase().includes(filter.value.toLowerCase()) ,
+                    Cell: row => (
+                      <div style={{textAlign: 'center'}}>
+                        <If condition={row.row._original.idEscenario!=undefined}>
+                          <Link to={"/escenarios/list/"+row.row._original.idEscenario}>{row.value}</Link>
+                        </If>
+                        <If condition={row.row._original.idEscenario==undefined}>
+                          No tiene
+                        </If>
+                      </div>
+                    )
+                  },
+                  {
+                    Header: "ACCIONES",
+                    accessor: 'id',
+                    filterable: false,
+                    Cell: row => (
+                      <div style={{textAlign: 'center'}}>
+                        <Link to={"/querys/edit/"+row.value} className="btn btn-info" style={{marginRight: '10px'}}><i className="fa fa-pencil"/></Link>
+                        <Link to={"/querys/delete/"+row.value} className="btn btn-danger"><i className="fa fa-trash-o"/></Link>
+                      </div>
+                    )
                   }
-                </div>
-                <div className="col-sm-2">
-                </div>
-              </div>
-              </If>
+              ]}
+              defaultPageSize={10}
+              className="-striped -highlight"
+            />
           </header>
         </div>
     )
@@ -150,11 +166,12 @@ const mapStateToProps = (state) =>{
       conciliaciones : state.queryReducer.conciliaciones,
       escenarios : state.queryReducer.escenarios,
       querys : state.queryReducer.querys,
-      estado : state.queryReducer.conciliacion.queryAprobaciones
+      estado : state.queryReducer.conciliacion.queryAprobaciones,
+      
     }
   }
 }
 
 export default connect (mapStateToProps,{
-  updConciliacionQuerys, refreshListQuery, cargarComboEscenariosEnQuerys, calculaPaginadorQuerys, cambioConciliacionesQuery, cargarConciliacionesQuery, updEscenariosQuerys, updEscenarioQuerys
+  updConciliacionQuerys, calculaPaginadorQuerys, cambioConciliacionesQuery, cargarConciliacionesQuery, updEscenariosQuerys, updEscenarioQuerys
 })(IQuery)

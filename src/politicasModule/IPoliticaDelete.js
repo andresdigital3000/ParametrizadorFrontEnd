@@ -8,14 +8,12 @@ import { cargarPolitica,borrarPolitica,limpiarFormPolitica } from '../actions/Ac
 
 
 class IPoliticaDelete extends React.Component{
-  constructor(){
-    super(...arguments)
+  constructor(args){
+    super(args)
   }
 
   componentDidMount(){
-    if(this.props.registro){
-      this.props.cargarPolitica(this.props.registro.idpoliticadelete)
-    }
+    this.props.cargarPolitica(this.props.params.idpolitica)
   }
 
   borrarPolitica(e){
@@ -49,7 +47,7 @@ class IPoliticaDelete extends React.Component{
             <div className="row">
               <div className="col-sm-12">
                 <Choose>
-                  <When condition={this.props.registro}>
+                  <When condition={this.props.params.idpolitica}>
                       <input id='id' ref='id' type='hidden' value={this.props.state.id}/>
                       <div className="form-group">
                         <label htmlFor='nombre'>Código</label>

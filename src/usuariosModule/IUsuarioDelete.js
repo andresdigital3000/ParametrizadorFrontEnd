@@ -13,8 +13,8 @@ class IUsuarioDelete extends React.Component{
   }
 
   componentDidMount(){
-    if(this.props.registro){
-      this.props.cargarUsuario(this.props.registro.idusuariodelete)
+    if(this.props.params && this.props.params.idusuario){
+      this.props.cargarUsuario(this.props.params.idusuario)
     }
   }
 
@@ -49,7 +49,7 @@ class IUsuarioDelete extends React.Component{
             <div className="row">
               <div className="col-sm-12">
                 <Choose>
-                  <When condition={this.props.registro}>
+                  <When condition={this.props.params}>
                       <input id='id' ref='id' type='hidden' value={this.props.state.id}/>
                       <div className="form-group">
                         <label htmlFor='nombre'>Usuario</label>

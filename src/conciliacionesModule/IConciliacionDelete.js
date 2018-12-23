@@ -13,8 +13,8 @@ class IConciliacionDelete extends React.Component{
   }
 
   componentDidMount(){
-    if(this.props.registro){
-      this.props.cargarConciliacion(this.props.registro.idconciliaciondelete)
+    if(this.props.params && this.props.params.idconciliaciondelete){
+      this.props.cargarConciliacion(this.props.params.idconciliaciondelete)
     }
   }
 

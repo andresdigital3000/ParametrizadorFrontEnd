@@ -49,7 +49,7 @@ var createBrowserHistory = require('history/createBrowserHistory')
 
 const middleware=[ thunk ];
 if(process.env.NODE_ENV !== 'production'){
-  middleware.push(createLogger());
+  //middleware.push(createLogger());
 }
 
 export const store = createStore(
@@ -61,68 +61,67 @@ render((
     <Provider store={ store }>
       <Router history={ browserHistory }>
           <Route path="/" component={ILogin}></Route>
+          <Route path="/politicas/edit/:idpolitica" component={IPoliticaForm}></Route>
           <Route path="/admin" component={ AdminThemplete } >
-            {(() => {
-              switch(window.localStorage.getItem("userrol")) {
-                case "1":
-                  return <div>
-                          <Route path="/resultados" component={IResultado}></Route>
-                          <Route path="/indicadores" component={IIndicador}></Route>
-                          <Route path="/indicadores/:idindicador" component={IIndicador}></Route>
-                          <Route path="/indicadores/edit/:idindicador" component={IIndicadorForm}></Route>
-                          <Route path="/indicadores/delete/:idindicadordelete" component={IIndicadorDelete}></Route>
-                         </div>;
-                case "2":
-                  return <div>
-                          <Route path="/ejecucion" component={IEjecucion}></Route>
-                          <Route path="/ejecucion/programar" component={IProgramar}></Route>
-                          <Route path="/resultados" component={IResultado}></Route>
-                        </div>;
-                case "3":
-                  return <div>
-                          <Route path="/politicas" component={IPolitica}></Route>
-                          <Route path="/politicas/:idpolitica" component={IPolitica}></Route>
-                          <Route path="/politicas/edit/:idpolitica" component={IPoliticaForm}></Route>
-                          <Route path="/politicas/delete/:idpoliticadelete" component={IPoliticaDelete}></Route>
-                          <Route path="/conciliaciones" component={IConciliacion}></Route>
-                          <Route path="/conciliaciones/:idpolitica" component={IConciliacion}></Route>
-                          <Route path="/conciliaciones/edit/:idconciliacion" component={IConciliacionForm}></Route>
-                          <Route path="/conciliaciones/delete/:idconciliaciondelete" component={IConciliacionDelete}></Route>
-                          <Route path="/escenarios" component={IEscenario}></Route>
-                          <Route path="/escenarios/:idconciliacion" component={IEscenario}></Route>
-                          <Route path="/escenarios/list/:idescenario" component={IEscenario}></Route>
-                          <Route path="/escenarios/edit/:idescenario" component={IEscenarioForm}></Route>
-                          <Route path="/escenarios/delete/:idescenariodelete" component={IEscenarioDelete}></Route>
-                          <Route path="/ejecucion" component={IEjecucion}></Route>
-                          <Route path="/ejecucion/programar" component={IProgramar}></Route>
-                          <Route path="/resultados" component={IResultado}></Route>
-                          <Route path="/indicadores" component={IIndicador}></Route>
-                          <Route path="/indicadores/:idindicador" component={IIndicador}></Route>
-                          <Route path="/indicadores/edit/:idindicador" component={IIndicadorForm}></Route>
-                          <Route path="/indicadores/delete/:idindicadordelete" component={IIndicadorDelete}></Route>
-                          <Route path="/parametros" component={IParametro}></Route>
-                          <Route path="/parametros/:idescenario" component={IParametro}></Route>
-                          <Route path="/parametros/edit/:idparametro" component={IParametroForm}></Route>
-                          <Route path="/parametros/delete/:idparametrodelete" component={IParametroDelete}></Route>
-                          <Route path="/querys" component={IQuery}></Route>
-                          <Route path="/querys/:idconciliacion" component={IQuery}></Route>
-                          <Route path="/querys/edit/:idquery" component={IQueryForm}></Route>
-                          <Route path="/querys/delete/:idquerydelete" component={IQueryDelete}></Route>
-                          <Route path="/querys/aprobar/:aprobar" component={IQueryAprobar}></Route>
-                          <Route path="/usuarios" component={IUsuario}></Route>
-                          <Route path="/usuarios/:idusuario" component={IUsuario}></Route>
-                          <Route path="/usuarios/edit/:idusuario" component={IUsuarioForm}></Route>
-                          <Route path="/usuarios/delete/:idusuariodelete" component={IUsuarioDelete}></Route>
-                         </div>;
-                default:
-                  return null;
-              }
-            })()}
-            
+            <Choose>
+              <When condition = {window.localStorage.getItem("userrol") == 1}>
+                <div>
+                  <Route path="/resultados" component={IResultado}></Route>
+                  <Route path="/indicadores" component={IIndicador}></Route>
+                  <Route path="/indicadores/:idindicador" component={IIndicador}></Route>
+                  <Route path="/indicadores/edit/:idindicador" component={IIndicadorForm}></Route>
+                  <Route path="/indicadores/delete/:idindicadordelete" component={IIndicadorDelete}></Route>
+                </div>
+              </When>
+              <When condition = {window.localStorage.getItem("userrol") == 2}>
+                <div>
+                  <Route path="/ejecucion" component={IEjecucion}></Route>
+                  <Route path="/ejecucion/programar" component={IProgramar}></Route>
+                  <Route path="/resultados" component={IResultado}></Route>
+                </div>
+              </When>
+              <When condition = {window.localStorage.getItem("userrol") == 3}>
+                <div>
+                  <Route path="/politicas" component={IPolitica}></Route>
+                  <Route path="/politicas/:idpolitica" component={IPolitica}></Route>
+                  <Route path="/politicas/edit/:idpolitica" component={IPoliticaForm}></Route>
+                  <Route path="/politicas/delete/:idpolitica" component={IPoliticaDelete}></Route>
+                  <Route path="/conciliaciones" component={IConciliacion}></Route>
+                  <Route path="/conciliaciones/:idconciliacion" component={IConciliacion}></Route>
+                  <Route path="/conciliaciones/edit/:idconciliacion" component={IConciliacionForm}></Route>
+                  <Route path="/conciliaciones/delete/:idconciliaciondelete" component={IConciliacionDelete}></Route>
+                  <Route path="/conciliaciones/aprobar/:idconciliacion" component={IQueryAprobar}></Route>
+                  <Route path="/escenarios" component={IEscenario}></Route>
+                  <Route path="/escenarios/:id" component={IEscenario}></Route>
+                  <Route path="/escenarios/list/:idescenario" component={IEscenario}></Route>
+                  <Route path="/escenarios/edit/:idescenario" component={IEscenarioForm}></Route>
+                  <Route path="/escenarios/delete/:idescenario" component={IEscenarioDelete}></Route>
+                  <Route path="/ejecucion" component={IEjecucion}></Route>
+                  <Route path="/ejecucion/programar" component={IProgramar}></Route>
+                  <Route path="/resultados" component={IResultado}></Route>
+                  <Route path="/indicadores" component={IIndicador}></Route>
+                  <Route path="/indicadores/:idindicador" component={IIndicador}></Route>
+                  <Route path="/indicadores/edit/:idindicador" component={IIndicadorForm}></Route>
+                  <Route path="/indicadores/delete/:idindicador" component={IIndicadorDelete}></Route>
+                  <Route path="/parametros" component={IParametro}></Route>
+                  <Route path="/parametros/:idparametro" component={IParametro}></Route>
+                  <Route path="/parametros/edit/:idparametro" component={IParametroForm}></Route>
+                  <Route path="/parametros/delete/:idparametro" component={IParametroDelete}></Route>
+                  <Route path="/querys" component={IQuery}></Route>
+                  <Route path="/querys/:idquery" component={IQuery}></Route>
+                  <Route path="/querys/edit/:idquery" component={IQueryForm}></Route>
+                  <Route path="/querys/delete/:idquery" component={IQueryDelete}></Route>
+                  <Route path="/querys/escenario/:idquery" component={IQuery}></Route>
+                  <Route path="/usuarios" component={IUsuario}></Route>
+                  <Route path="/usuarios/:idusuario" component={IUsuario}></Route>
+                  <Route path="/usuarios/edit/:idusuario" component={IUsuarioForm}></Route>
+                  <Route path="/usuarios/delete/:idusuario" component={IUsuarioDelete}></Route>
+                </div>
+              </When>
+            </Choose>
             <Route path="/uc" component={IUnderConstruction}></Route>
           </Route>
           <Route path="*" component={IPaginaNoExiste} />
-
       </Router>
     </Provider>
 ),document.getElementById('root'));
