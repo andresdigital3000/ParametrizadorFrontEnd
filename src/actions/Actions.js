@@ -80,6 +80,7 @@ import {
     IR_PAGINA_RESULTADOS,
     CARGAR_CONCILIACIONES_RESULTADO,
     CARGAR_USUARIOS,
+    CARGA_ROLES,
     SAVE_USUARIOS,
     UPDATE_USUARIOS_FORM_REQUEST,
     CARGAR_USUARIO_FORM,
@@ -100,11 +101,7 @@ import APIInvoker from '../utils/APIInvoker'
 import { browserHistory } from 'react-router'
 import update from 'react-addons-update'
 import config from '../../config'
-import {
-    ToastContainer,
-    toast,
-    dismiss
-} from 'react-toastify';
+import { ToastContainer, toast, dismiss } from 'react-toastify'
 import IMsg from '../ejecucionModule/IMsg'
 import CryptoJS from 'crypto-js'
 
@@ -118,7 +115,6 @@ export const updateLoginForm = (field, value) => (dispatch, getState) => {
 }
 
 export const loginRequest = () => (dispatch, getState) => {
-      
       //Con json server
       if (getState().loginFormReducer.username == "" || getState().loginFormReducer.password == "") {
         toast.error("Campos vacíos, verifique", {
@@ -126,7 +122,6 @@ export const loginRequest = () => (dispatch, getState) => {
         })
       }else{
         dispatch(mostrarModalLoad())
-        //$('#modalLoad').modal('show')
         APIInvoker.invokeGET('/parametros/returnSeed', responseS => {
           window.localStorage.setItem("seed", responseS.valor)
         })
@@ -147,16 +142,13 @@ export const loginRequest = () => (dispatch, getState) => {
               APIInvoker.invokePOST_Login('/usuarios/login', credentials, response => {
                 if(response.ok){
                   dispatch(cerrarModalLoad())
-                  //$('#modalLoad').modal('hide')
                   window.localStorage.setItem("token",response.headers.get("authorization"))
                   //Obtiene el valor parametrizado del tiempo para cierre de sesion automático
                   APIInvoker.invokeGET('/parametros/findByAny?texto=V_tiempoExpiraSesion', responsetime => {
                       if (Array.isArray(responsetime) == true) {
                         window.localStorage.setItem("tiempoexpirasesion", (responsetime[0].tipo === "SISTEMA" ? decryptJS(responsetime[0].valor) : responsetime[0].valor))
                         response.json().then(function(result) {
-
-                            window.localStorage.setItem("token",result.token)
-                            console.log("token =>", result.token)
+                          window.localStorage.setItem("token",result.token)
                           //if result.userExist
                           if (result.id != undefined){
                             window.localStorage.setItem("userid", result.id)
@@ -165,10 +157,8 @@ export const loginRequest = () => (dispatch, getState) => {
                             window.localStorage.setItem("nombreUsuario", result.nombreUsuario)
                             //Roles SinRol - Consultor - Ejecutor - Administrador
                             if (result.roles.length > 0) {
-                              //window.localStorage.setItem("userrol", result.roles[0].id)
                               window.localStorage.setItem("userrolname", result.roles[0].nombre)
                             }else{
-                              //window.localStorage.setItem("userrol", "0")
                               window.localStorage.setItem("userrolname", "null")
                             }
 
@@ -182,14 +172,12 @@ export const loginRequest = () => (dispatch, getState) => {
                   })
                 }else{
                   dispatch(cerrarModalLoad())
-                  //$('#modalLoad').modal('hide')
                   toast.error("Nombre de usuario o contraseña incorrectos, verifique", {
                       position: toast.POSITION.BOTTOM_CENTER
                   })
                 }
               }, error => {
                   dispatch(cerrarModalLoad())
-                  //$('#modalLoad').modal('hide')
                   toast.error("NO SE LOGUEO", {
                       position: toast.POSITION.BOTTOM_CENTER
                   })
@@ -212,7 +200,6 @@ export const loginRequest = () => (dispatch, getState) => {
               APIInvoker.invokePOST_Login('/usuarios/login', credentials, response => {
                 if(response.ok){
                   dispatch(cerrarModalLoad())
-                  //$('#modalLoad').modal('hide')
                   window.localStorage.setItem("token",response.headers.get("authorization"))
                   //Obtiene el valor parametrizado del tiempo para cierre de sesion automático
                   APIInvoker.invokeGET('/parametros/findByAny?texto=V_tiempoExpiraSesion', responsetime => {
@@ -228,10 +215,8 @@ export const loginRequest = () => (dispatch, getState) => {
                             window.localStorage.setItem("nombreUsuario", result.nombreUsuario)
                             //Roles SinRol - Consultor - Ejecutor - Administrador
                             if (result.roles.length > 0) {
-                              //window.localStorage.setItem("userrol", result.roles[0].id)
                               window.localStorage.setItem("userrolname", result.roles[0].nombre)
                             }else{
-                              //window.localStorage.setItem("userrol", "0")
                               window.localStorage.setItem("userrolname", "null")
                             }
 
@@ -245,14 +230,12 @@ export const loginRequest = () => (dispatch, getState) => {
                   })
                 }else{
                   dispatch(cerrarModalLoad())
-                  //$('#modalLoad').modal('hide')
                   toast.error("Nombre de usuario o contraseña incorrectos, verifique", {
                       position: toast.POSITION.BOTTOM_CENTER
                   })
                 }
               }, error => {
                 dispatch(cerrarModalLoad())
-                //$('#modalLoad').modal('hide')
                 toast.error("NO SE LOGUEO", {
                     position: toast.POSITION.BOTTOM_CENTER
                 })
@@ -2556,7 +2539,6 @@ export const cargarIndicador = (idindicador) => (dispatch, getState) => {
         if (Array.isArray(response) == true) {
             if (response[0].id != undefined) {
                 //if(response[0].idEscenario!=undefined){
-                console.log("CARGAR PARAMETROS ==> de escenario" + response[0].idEscenario)
                 dispatch(cargarComboParametros(response[0].idEscenario))
                 //}
                 dispatch(cargarIndicadorEnForm(response[0]))
@@ -2569,7 +2551,6 @@ export const cargarIndicador = (idindicador) => (dispatch, getState) => {
         } else {
             if (response.id != undefined) {
                 if (response.idEscenario != undefined) {
-                    console.log("CARGAR PARAMETROS ==> de escenario" + response.idEscenario)
                     dispatch(cargarComboParametros(response.idEscenario))
                 }
                 dispatch(cargarIndicadorEnForm([response]))
@@ -3570,7 +3551,6 @@ const cargarEscenariosenQuerys = (arrayEscenarios) => (
 
 //Funcion que actualiza el escenario seleccionado en queries
 export const updEscenarioQuerys = (idescenario) => (dispatch,getState) => {
-    console.log("Recibo escenario "+idescenario)
     APIInvoker.invokeGET('/escenarios/' + idescenario, response => {
         if (response.id != undefined) {
             dispatch(asignarEscenarioSeleccionado(response))
@@ -3723,6 +3703,26 @@ export const findTextUsuario = () => (dispatch, getState) => {
   }
 }
 
+//Funcion que carga el combo de roles
+export const cargarComboRoles = () => (dispatch, getState) => {
+    APIInvoker.invokeGET('/usuarios/getRoles', response => {
+        if (Array.isArray(response) == true) {
+            if (response[0].id != undefined) {
+                dispatch(cargarRoles(response))
+            } else {
+                toast.info("No se encuentran Roles", {
+                    position: toast.POSITION.BOTTOM_RIGHT
+                })
+            }
+        }
+    })
+}
+//Envia resultado para llenar el combo a UsuarioReducer
+const cargarRoles = (arrayRoles) => ({
+    type: CARGA_ROLES,
+    lista: arrayRoles
+})
+
 //Recalcular el paginador de usuario
 export const calculaPaginadorUsuarios = () => (dispatch, getState) => {
     let numregs = 0
@@ -3747,8 +3747,6 @@ export const calculaPaginadorUsuarios = () => (dispatch, getState) => {
                 })
                 offset = regfin + 1
             }
-            //console.log("Variable de paginador ==>")
-            //console.log(array_paginador)
             //preparar variable para Enviar
             let update_paginador = {
                 totalRegistros: numregs,
@@ -3769,6 +3767,7 @@ const actualizarPaginadorUsuarios = (array_paginador) => ({
 
 //Actualizar el listado de usuarios
 export const refreshListUsuario = (resp) => (dispatch, getState) => {
+  dispatch(cargarComboRoles())
     //Igual para jsonserver o API
     let objetoVacio = new Object()
     if (resp == null) {
@@ -3851,12 +3850,12 @@ export const saveUsuario = () => (dispatch, getState) => {
           usuario: getState().loginFormReducer.username,
           email: getState().usuarioFormReducer.email,
           nombreUsuario: getState().usuarioFormReducer.nombreUsuario,
-          fechaCreacion: '',
-          fechaActualizacion: '',
+          fecha_creacion: '',
+          fecha_actualizacion: '',
           username: getState().loginFormReducer.username
       }
       APIInvoker.invokePOST('/usuarios', usuario_salvar, response => {
-          if (response.id != undefined) {
+          if (response.fechaCreacion != undefined) {
               $('#modalRegisterUser').modal('hide')
               $('#modalLoad').modal('hide')
               dispatch(limpiarFormUsuario())
@@ -3892,9 +3891,7 @@ export const saveUsuario = () => (dispatch, getState) => {
         usuario: getState().usuarioFormReducer.usuario,
         email: getState().usuarioFormReducer.email,
         nombreUsuario: getState().usuarioFormReducer.nombreUsuario,
-        idrol: getState().usuarioFormReducer.rol,
-        fechaCreacion: '',
-        fechaActualizacion: '',
+        rol: getState().usuarioFormReducer.rol,
         username: window.localStorage.getItem("nombreUsuario")
     }
     APIInvoker.invokePUT('/usuarios', usuario_salvar, response => {

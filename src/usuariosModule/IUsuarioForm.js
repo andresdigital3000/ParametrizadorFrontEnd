@@ -5,6 +5,7 @@ import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { Link } from 'react-router';
 import { connect } from 'react-redux'
 import { updateFormUsuarios, saveUsuario, cargarUsuario, limpiarFormUsuario } from '../actions/Actions';
+import AsyncSelect from 'react-select/lib/Async'
 
 class IUsuarioForm extends React.Component{
   constructor(){
@@ -61,12 +62,14 @@ class IUsuarioForm extends React.Component{
               <input id='nombreUsuario' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.nombreUsuario} onChange={this.handleInput.bind(this)} placeholder='Digite el nombre completo del Usuario' autoComplete='off'  maxLength='200'/>
             </div>
             <div className="form-group">
-              <label htmlFor='rol'>* Rol de Usuario</label>
+              <label htmlFor='rol'>Rol de Usuario</label>
               <select className="custom-select" id="rol" name="rol" value={this.props.state.rol} onChange={this.handleInput.bind(this)}>
                 <option value="0">Sin Rol</option>
-                <option value="1">Consultor</option>
-                <option value="2">Ejecutor</option>
-                <option value="3">Administrador</option>
+                {
+                  this.props.state.roles.map(function(rol) {
+                    return <option value={rol.id.toString()}>{rol.nombre}</option>;
+                  })
+                }
               </select>
             </div>
             <div className="form-group">
@@ -94,7 +97,8 @@ const mapStateToProps = (state) =>{
       usuario : state.usuarioFormReducer.usuario,
       email : state.usuarioFormReducer.email,
       nombreUsuario : state.usuarioFormReducer.nombreUsuario,
-      rol : state.usuarioFormReducer.rol
+      rol : state.usuarioFormReducer.rol,
+      roles : state.usuarioReducer.roles
     }
   }
 }

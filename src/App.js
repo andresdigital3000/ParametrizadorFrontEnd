@@ -61,10 +61,9 @@ render((
     <Provider store={ store }>
       <Router history={ browserHistory }>
           <Route path="/" component={ILogin}></Route>
-          <Route path="/politicas/edit/:idpolitica" component={IPoliticaForm}></Route>
           <Route path="/admin" component={ AdminThemplete } >
             <Choose>
-              <When condition = {window.localStorage.getItem("userrol") == 1}>
+              <When condition = {window.localStorage.getItem("userrolname") === "Consultor"}>
                 <div>
                   <Route path="/resultados" component={IResultado}></Route>
                   <Route path="/indicadores" component={IIndicador}></Route>
@@ -73,14 +72,14 @@ render((
                   <Route path="/indicadores/delete/:idindicadordelete" component={IIndicadorDelete}></Route>
                 </div>
               </When>
-              <When condition = {window.localStorage.getItem("userrol") == 2}>
+              <When condition = {window.localStorage.getItem("userrolname") === "Ejecutor"}>
                 <div>
                   <Route path="/ejecucion" component={IEjecucion}></Route>
                   <Route path="/ejecucion/programar" component={IProgramar}></Route>
                   <Route path="/resultados" component={IResultado}></Route>
                 </div>
               </When>
-              <When condition = {window.localStorage.getItem("userrol") == 3}>
+              <When condition = {window.localStorage.getItem("userrolname") === "Administrador"}>
                 <div>
                   <Route path="/politicas" component={IPolitica}></Route>
                   <Route path="/politicas/:idpolitica" component={IPolitica}></Route>

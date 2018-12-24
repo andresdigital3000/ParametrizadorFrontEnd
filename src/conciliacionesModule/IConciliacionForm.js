@@ -7,9 +7,6 @@ import { connect } from 'react-redux'
 import { updateFormConciliaciones, saveConciliacion, cargarConciliacion, limpiarFormConciliacion, cargarComboPoliticas, updPolitica, calculaPaginadorConciliaciones,refreshListConciliacion } from '../actions/Actions';
 import AsyncSelect from 'react-select/lib/Async'
 
-
-
-
 class IConciliacionForm extends React.Component{
   constructor(){
     super(...arguments)
@@ -54,7 +51,6 @@ class IConciliacionForm extends React.Component{
       //this.props.cargarComboPoliticas()
     }
   }
-
 
   //Salvar el nuevo registro
   grabarConciliacion(e){
@@ -108,8 +104,6 @@ class IConciliacionForm extends React.Component{
               <input id='tablaDestino' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.tablaDestino} onChange={this.handleInput.bind(this)} placeholder='Digite la tabla de destino' maxLength='50' autoComplete='off'/>
               <small id="destinoHelp" className="form-text text-muted">Defina la tabla de destino</small>
             </div>
-            
-
             <div className="form-group">
               <label htmlFor='politica'>* Política</label>
               <AsyncSelect
@@ -122,8 +116,6 @@ class IConciliacionForm extends React.Component{
               />
               <small id="nombreHelp" className="form-text text-muted">Para crear conciliación</small>
             </div>
-
-
             <div className="form-group">
               <label htmlFor='requiereAprobacion'>* Requiere Aprobación</label>
               <select id="requiereAprobacion" name="requiereAprobacion" className='form-control' value={this.props.state.requiereAprobacion} onChange={this.handleInput.bind(this)}>
@@ -189,12 +181,11 @@ class IConciliacionForm extends React.Component{
                         onInputChange={this.handleInputChange}
                         //value={this.props.state.idPolitica}
                         onChange={this.cambioPoliticaSelect.bind(this)}
-                        
                       />
                       <small id="nombreHelp" className="form-text text-muted">Para crear conciliación</small>
                     </div>
 
-                    
+
                     <div className="form-group">
                       <label htmlFor='requiereAprobacion'>* Requiere Aprobación</label>
                       <select id="requiereAprobacion" name="requiereAprobacion" className='form-control' value={this.props.state.requiereAprobacion} onChange={this.handleInput.bind(this)}>

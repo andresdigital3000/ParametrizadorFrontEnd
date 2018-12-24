@@ -25,7 +25,7 @@ export const usuarioFormReducer = (state = initialState,action) =>{
           usuario : {$set: action.usuario[0].usuario},
           email : {$set: action.usuario[0].email},
           nombreUsuario : {$set: action.usuario[0].nombreUsuario},
-          rol : {$set: action.usuario[0].roles.map(function(rol) { return rol.id; }).toString()}
+          rol : {$set: (action.usuario[0].roles.length > 0 ? action.usuario[0].roles.map(function(rol) { return rol.id; }).toString() : "0")}
         })
     case LIMPIAR_FORM_USUARIO:
         return update(state,{

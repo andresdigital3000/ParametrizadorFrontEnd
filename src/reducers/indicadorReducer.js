@@ -38,7 +38,6 @@ export const indicadorReducer = (state = initialState,action) =>{
           paginaActual : {$set: action.pagina}
         })
     case CARGAR_INDICADORES:
-      //console.log("Lista de indicadores: "+ JSON.stringify(action.lista))
       return update(state,{
         indicadores : {$set: action.lista}
       })

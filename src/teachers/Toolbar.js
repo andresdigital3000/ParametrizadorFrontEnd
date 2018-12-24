@@ -25,7 +25,6 @@ class Toolbar extends React.Component{
   render(){
     let linkRes = this.props.urlresultados
     let username = window.localStorage.getItem("nombreUsuario")
-    //let userrol = window.localStorage.getItem("userrol")
     let userrolname = window.localStorage.getItem("userrolname")
 
     return(
