@@ -19,7 +19,6 @@ import queryFormReducer from './queryFormReducer'
 import usuarioReducer from './usuarioReducer'
 import usuarioFormReducer from './usuarioFormReducer'
 
-
 export default combineReducers({
   loginReducer,
   loginFormReducer,

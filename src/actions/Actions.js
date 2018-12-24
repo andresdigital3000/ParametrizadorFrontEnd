@@ -88,7 +88,11 @@ import {
     ACTUALIZA_PAGINADOR_USUARIOS,
     IR_PAGINA_USUARIOS,
     UPDATE_TIPO_EN_PARAMETROS,
-    CARGAR_POLITICA_EN_CONCILIACION
+    CARGAR_POLITICA_EN_CONCILIACION,
+    UPDATE_CONCILIACION_ESCENARIO,
+    UPDATE_PARAMETROS_ESCENARIO_FORM_REQUEST,
+    CARGAR_CONCILIACION_FORM_2,
+    UPDATE_ESCENARIO_QUERYS_FORM_REQUEST
 } from './const'
 
 import React from 'react'
@@ -114,6 +118,7 @@ export const updateLoginForm = (field, value) => (dispatch, getState) => {
 }
 
 export const loginRequest = () => (dispatch, getState) => {
+      
       //Con json server
       if (getState().loginFormReducer.username == "" || getState().loginFormReducer.password == "") {
         toast.error("Campos vacíos, verifique", {
@@ -149,6 +154,9 @@ export const loginRequest = () => (dispatch, getState) => {
                       if (Array.isArray(responsetime) == true) {
                         window.localStorage.setItem("tiempoexpirasesion", (responsetime[0].tipo === "SISTEMA" ? decryptJS(responsetime[0].valor) : responsetime[0].valor))
                         response.json().then(function(result) {
+
+                            window.localStorage.setItem("token",result.token)
+                            console.log("token =>", result.token)
                           //if result.userExist
                           if (result.id != undefined){
                             window.localStorage.setItem("userid", result.id)
@@ -211,6 +219,7 @@ export const loginRequest = () => (dispatch, getState) => {
                       if (Array.isArray(responsetime) == true) {
                         window.localStorage.setItem("tiempoexpirasesion", (responsetime[0].tipo === "SISTEMA" ? decryptJS(responsetime[0].valor) : responsetime[0].valor))
                         response.json().then(function(result) {
+                            window.localStorage.setItem("token",result.token)
                           //if result.userExist
                           if (result.id != undefined){
                             window.localStorage.setItem("userid", result.id)
@@ -477,7 +486,7 @@ export const refreshListPolitica = (resp) => (dispatch, getState) => {
             regInicial = getState().politicaReducer.paginador[pagActual - 1].offset
         }
         let regPagina = getState().politicaReducer.registrosPorPagina
-        APIInvoker.invokeGET('/politicas?offset=' + regInicial + '&limit=' + regPagina, response1 => {
+        APIInvoker.invokeGET('/politicas', response1 => {
             if (Array.isArray(response1) == true) {
                 //Array con todos los registros
                 if (response1[0].id != undefined) {
@@ -485,7 +494,6 @@ export const refreshListPolitica = (resp) => (dispatch, getState) => {
                 } else {
                     dispatch(antesVerPoliticas(objetoVacio))
                     console.log("Error : " + response1[0].codigo + " Mensaje: " + response1[0].mensaje + ": " + response1[0].descripcion)
-                    //alert("No se encuentran políticas")
                 }
             } else {
                 //Cuando el response no es un array, es decir, un solo registro
@@ -494,7 +502,6 @@ export const refreshListPolitica = (resp) => (dispatch, getState) => {
                 } else {
                     dispatch(antesVerPoliticas(objetoVacio))
                     console.log("Error : " + response1.codigo + " Mensaje: " + response1.mensaje + ": " + response1.descripcion)
-                    //alert("No se encuentra la política")
                 }
             }
         })
@@ -523,7 +530,7 @@ export const refreshListPolitica = (resp) => (dispatch, getState) => {
 }
 
 const antesVerPoliticas = (resp) => (dispatch, getState) => {
-    dispatch(calculaPaginadorPoliticas())
+    //dispatch(calculaPaginadorPoliticas())
     dispatch(verPoliticas(resp))
 }
 //Enviar la accion de ver politicas al Reducer STORE
@@ -600,8 +607,8 @@ export const savePolitica = () => (dispatch, getState) => {
             nombre: (responseval[0].tipo === "SISTEMA" ? decryptJS(responseval[0].valor) : responseval[0].valor).toUpperCase() + getState().politicaFormReducer.nombre,
             descripcion: getState().politicaFormReducer.descripcion,
             objetivo: getState().politicaFormReducer.objetivo,
-            fecha_creacion: '',
-            fecha_actualizacion: '',
+            //fecha_creacion: '',
+            //fecha_actualizacion: '',
             username: window.localStorage.getItem("nombreUsuario")
         }
         if (responseval[0].valor != undefined) {
@@ -639,8 +646,8 @@ export const savePolitica = () => (dispatch, getState) => {
                         nombre: (responseval[0].tipo === "SISTEMA" ? decryptJS(responseval[0].valor) : responseval[0].valor).toUpperCase() + getState().politicaFormReducer.nombre,
                         descripcion: getState().politicaFormReducer.descripcion,
                         objetivo: getState().politicaFormReducer.objetivo,
-                        fecha_creacion: '',
-                        fecha_actualizacion: '',
+                        //fecha_creacion: '',
+                        //fecha_actualizacion: '',
                         username: window.localStorage.getItem("nombreUsuario")
                     }
                     //console.log('salvando...upd',politica_salvar)
@@ -789,11 +796,15 @@ const irAPaginaPoliticas = (pagina) => ({
  })
 
 //Funcion que carga el combo de politicas
-export const cargarComboPoliticas = () => (dispatch, getState) => {
-    APIInvoker.invokeGET('/politicas/findPoliticasSinConciliacion', response => {
+export const cargarComboPoliticas = (filter, callback) => (dispatch, getState) => {
+    APIInvoker.invokeGET(`/politicas/findPoliticasSinConciliacion?name=${filter}`, response => {
         if (Array.isArray(response) == true) {
             if (response[0].id != undefined) {
+                console.log("response", response)
                 dispatch(cargarPoliticas(response))
+                let options = response.map(x => {return {value: x.id, label: x.nombre} })
+                console.log("options ", options)
+                callback(options)
             } else {
                 toast.info("No se encuentran politicas sin conciliaciones asociadas", {
                     position: toast.POSITION.BOTTOM_RIGHT
@@ -906,7 +917,7 @@ export const refreshListConciliacion = (resp) => (dispatch, getState) => {
             regInicial = getState().conciliacionReducer.paginador[pagActual - 1].offset
         }
         let regPagina = getState().conciliacionReducer.registrosPorPagina
-        APIInvoker.invokeGET('/conciliaciones?offset=' + regInicial + '&limit=' + regPagina, response1 => {
+        APIInvoker.invokeGET('/conciliaciones', response1 => {
             if (Array.isArray(response1) == true) {
                 if (response1[0].id != undefined) {
                     dispatch(antesVerConciliaciones(response1))
@@ -966,7 +977,7 @@ export const refreshListConciliacion = (resp) => (dispatch, getState) => {
 }
 //Calcular el paginador antes de mostrar el listado
 const antesVerConciliaciones = (resp) => (dispatch, getState) => {
-    dispatch(calculaPaginadorConciliaciones())
+    //dispatch(calculaPaginadorConciliaciones())
     dispatch(verConciliaciones(resp))
 }
 //Enviar la accion de ver conciliaciones al Reducer STORE
@@ -1142,12 +1153,15 @@ export const limpiarFormConciliacion = () => ({
 //Funcion para cargar la conciliacion en el formulario
 export const cargarConciliacion = (idconciliacion) => (dispatch, getState) => {
     APIInvoker.invokeGET('/conciliaciones/' + idconciliacion, response => {
+        console.log('sdvresponse', response)
         if (Array.isArray(response) == true) {
             //console.log("conciliacion traida al editar conciliaicion ===>>")
             //console.log(response)
             dispatch(cargarConciliacionEnForm(response))
+            dispatch(cargarConciliacion2(response))
         } else {
             dispatch(cargarConciliacionEnForm([response]))
+            dispatch(cargarConciliacion2([response]))
         }
     }, error => {
         console.log('No se pudo actualizar los campos')
@@ -1158,6 +1172,12 @@ const cargarConciliacionEnForm = (conciliacion) => ({
     type: CARGAR_CONCILIACION_FORM,
     conciliacion: conciliacion
 })
+
+const cargarConciliacion2 = (conciliacion) => ({
+    type: CARGAR_CONCILIACION_FORM_2,
+    conciliacion: conciliacion
+})
+
 //Funcion que elimina una conciliacion
 export const borrarConciliacion = () => (dispatch, getState) => {
     let idconciliacion = getState().conciliacionFormReducer.id
@@ -1321,7 +1341,7 @@ export const refreshListEscenario = (resp) => (dispatch, getState) => {
                 regInicial = getState().escenarioReducer.paginador[pagActual - 1].offset
             }
             let regPagina = getState().escenarioReducer.registrosPorPagina
-            APIInvoker.invokeGET('/escenarios?offset=' + regInicial + '&limit=' + regPagina, response => {
+            APIInvoker.invokeGET('/escenarios', response => {
                 if (Array.isArray(response)) {
                     if (response[0].id != undefined) {
                         dispatch(antesVerEscenarios(response))
@@ -1342,8 +1362,8 @@ export const refreshListEscenario = (resp) => (dispatch, getState) => {
 }
 
 const antesVerEscenarios = (resp) => (dispatch, getState) => {
-    dispatch(calculaPaginadorEscenarios()),
-        dispatch(verEscenarios(resp))
+    //dispatch(calculaPaginadorEscenarios()),
+    dispatch(verEscenarios(resp))
 }
 //Enviar la accion de ver escenarios al Reducer STORE
 const verEscenarios = (res) => ({
@@ -1371,6 +1391,14 @@ const updConciliacionReducerEscenario = (objConciliacion) => ({
     value: objConciliacion
 })
 
+export const updateConciliacion = (idConciliacion, nombreConciliacion) => (dispatch, getState) => {
+    dispatch({
+        type: UPDATE_CONCILIACION_ESCENARIO,
+        idConciliacion: idConciliacion,
+        nombreConciliacion: nombreConciliacion
+    })
+}
+
 //Actualizar tecla por tecla los campos del formulario de escenarios
 export const updateFormEscenarios = (field, value) => (dispatch, getState) => {
     if (field == "nombre") {
@@ -1396,7 +1424,6 @@ export const updateFormEscenarios = (field, value) => (dispatch, getState) => {
             }
         })
     }
-    console.log("SE ENVIARA ==> PARA "+field+" El valor : "+value)
     dispatch(updateFormEscenariosRequest(field, value))
 }
 //Enviar al reducer la tecla pulsada
@@ -1416,20 +1443,20 @@ export const saveEscenario = () => (dispatch, getState) => {
                     let escenario_salvar = {
                         nombre: (responseval[0].tipo === "SISTEMA" ? decryptJS(responseval[0].valor) : responseval[0].valor).toUpperCase() + getState().escenarioFormReducer.nombre,
                         impacto: getState().escenarioFormReducer.impacto,
-                        idConciliacion: getState().escenarioFormReducer.idConciliacion,
+                        idConciliacion: getState().escenarioFormReducer.conciliacion,
                         descripcion: getState().escenarioFormReducer.descripcion,
                         username: window.localStorage.getItem("nombreUsuario")
                     }
                     //, nombreConciliacion : getState().escenarioFormReducer.nombreConciliacion
                     APIInvoker.invokePOST('/escenarios', escenario_salvar, response => {
-                        if (response.id != undefined) {
+                        console.log("/escenarios ==>", response)
+                        if (response.idConciliacion != undefined) {
                             $('#modalAdd').modal('hide');
                             dispatch(mostrarModal("alert alert-success", "Se grabó el escenario " + escenario_salvar.nombre))
                             dispatch(limpiarFormEscenario())
                             dispatch(refreshListEscenario())
                         } else {
                             if (response.mensaje == "CT_UQ_TBL_GAI_ESCENARIO_NOMBRE_ESCENARIO") {
-                                //console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
                                 toast.error("Ya existe un escenario con el mismo nombre", {
                                     position: toast.POSITION.BOTTOM_RIGHT
                                 })
@@ -1447,8 +1474,8 @@ export const saveEscenario = () => (dispatch, getState) => {
                         id: getState().escenarioFormReducer.id,
                         nombre: (responseval[0].tipo === "SISTEMA" ? decryptJS(responseval[0].valor) : responseval[0].valor).toUpperCase() + getState().escenarioFormReducer.nombre,
                         impacto: getState().escenarioFormReducer.impacto,
-                        idConciliacion: idConciliacionGrabar,
-                        nombreConciliacion: nombreConciliacionGrabar,
+                        idConciliacion: getState().escenarioFormReducer.conciliacion,
+                        nombreConciliacion: getState().escenarioFormReducer.nombreConciliacion,
                         descripcion: getState().escenarioFormReducer.descripcion,
                         username: window.localStorage.getItem("nombreUsuario")
                     }
@@ -1582,14 +1609,26 @@ export const limpiarConciliacionSeleccionada = () => ({
 })
 
 //Funcion que carga el combo de conciliaciones
-export const cargarComboConciliaciones = () => (dispatch, getState) => {
-    APIInvoker.invokeGET('/conciliaciones', response => {
+export const cargarComboConciliaciones = (filter, callback) => (dispatch, getState) => {
+    APIInvoker.invokeGET(`/conciliaciones?name=${filter}`, response => {
+        if (Array.isArray(response) == true) {
+            dispatch(cargarConciliaciones(response))
+            dispatch(limpiarConciliacionSeleccionada())
+            let options = response.map(x => {return {value: x.id, label: x.nombre} })
+            callback(options)
+        }
+    })
+}
+
+export const cargarComboConciliacionesEjecución = () => (dispatch, getState) => {
+    APIInvoker.invokeGET(`/conciliaciones`, response => {
         if (Array.isArray(response) == true) {
             dispatch(cargarConciliaciones(response))
             dispatch(limpiarConciliacionSeleccionada())
         }
     })
 }
+
 //Envia resultado para llenar el combo a Reducer
 const cargarConciliaciones = (arrayConciliaciones) => ({
     type: CARGA_CONCILIACIONES,
@@ -2054,8 +2093,8 @@ export const refreshListResultado = () => (dispatch, getState) => {
 }
 
 const antesVerResultados = (resp) => (dispatch, getState) => {
-    dispatch(calculaPaginadorResultados()),
-        dispatch(verResultados(resp))
+    //dispatch(calculaPaginadorResultados()),
+    dispatch(verResultados(resp))
 }
 //Enviar la accion de ver resultados al Reducer STORE
 const verResultados = (res) => ({
@@ -2362,7 +2401,7 @@ export const refreshListIndicador = (resp) => (dispatch, getState) => {
             regInicial = getState().indicadorReducer.paginador[pagActual - 1].offset
         }
         let regPagina = getState().indicadorReducer.registrosPorPagina
-        APIInvoker.invokeGET('/indicadores?offset=' + regInicial + '&limit=' + regPagina, response1 => {
+        APIInvoker.invokeGET('/indicadores', response1 => {
             if (Array.isArray(response1) == true) {
                 //Array con todos los registros
                 if (response1[0].id != undefined) {
@@ -2408,7 +2447,7 @@ export const refreshListIndicador = (resp) => (dispatch, getState) => {
 }
 
 const antesVerIndicadores = (resp) => (dispatch, getState) => {
-    dispatch(calculaPaginadorIndicadores())
+    //dispatch(calculaPaginadorIndicadores())
     dispatch(verIndicadores(resp))
 }
 //Enviar la accion de ver indicadores al Reducer STORE
@@ -2794,7 +2833,7 @@ export const refreshListParametro = (resp) => (dispatch, getState) => {
             regInicial = getState().parametroReducer.paginador[pagActual - 1].offset
         }
         let regPagina = getState().parametroReducer.registrosPorPagina
-        APIInvoker.invokeGET('/parametros?offset=' + regInicial + '&limit=' + regPagina, response1 => {
+        APIInvoker.invokeGET('/parametros', response1 => {
             if (Array.isArray(response1) == true) {
                 //Array con todos los registros
                 if (response1[0].id != undefined) {
@@ -2886,7 +2925,7 @@ export const refreshListParametro = (resp) => (dispatch, getState) => {
 }
 
 const antesVerParametros = (resp) => (dispatch, getState) => {
-    dispatch(calculaPaginadorParametros())
+    //dispatch(calculaPaginadorParametros())
     dispatch(verParametros(resp))
 }
 //Enviar la accion de ver parametros al Reducer STORE
@@ -2904,6 +2943,15 @@ const updateFormParametrosRequest = (field, value) => ({
     field: field,
     value: value
 })
+
+export const updateFormEscenarioParametros = (idEscenario, descEscenario) => (dispatch, getState) => {
+    console.log('dispatch', idEscenario, descEscenario)
+    dispatch({
+        type: UPDATE_PARAMETROS_ESCENARIO_FORM_REQUEST,
+        idEscenario,
+        descEscenario
+    })
+}
 
 //Funcion para guardar o actualizar el parametro
 export const saveParametro = () => (dispatch, getState) => {
@@ -3074,11 +3122,12 @@ export const cargarParametrosAVencer = () => (dispatch, getState)=>{
 }
 
 //Funcion que carga el combo de escenarios
-export const cargarListadoEnParametros = () => (dispatch, getState) => {
-    let paramTipo = "conciliaciones" //getState().parametroFormReducer.tipo
-    APIInvoker.invokeGET('/' + paramTipo, response => {
+export const cargarListadoEnParametros = (filter, callback) => (dispatch, getState) => {
+    APIInvoker.invokeGET(`/conciliaciones?name=${filter}`, response => {
         if (Array.isArray(response) == true) {
             dispatch(cargarListadoParametros(response))
+            let options = response.map(x => {return {value: x.id, label: x.nombre} })
+            callback(options)
         }
     })
 }
@@ -3189,8 +3238,6 @@ export const refreshListQuery = () => (dispatch, getState) => {
         APIInvoker.invokeGET('/queryescenario/escenario/' + escenarioActual, response => {
             if (Array.isArray(response)) {
                 if (response[0].id != undefined) {
-                    console.log("Detecta escenarioActual ==>>" + escenarioActual)
-                    console.log(response)
                     dispatch(antesVerQuerys(response))
                 } else {
                     console.log("Error : " + response[0].codigo + " Mensaje: " + response[0].mensaje + ": " + response[0].descripcion)
@@ -3226,7 +3273,7 @@ export const refreshListQuery = () => (dispatch, getState) => {
             regInicial = getState().queryReducer.paginador[pagActual - 1].offset
         }
         let regPagina = getState().queryReducer.registrosPorPagina
-        APIInvoker.invokeGET('/queryescenario?offset=' + regInicial + '&limit=' + regPagina, response => {
+        APIInvoker.invokeGET('/queryescenario', response => {
             if (Array.isArray(response)) {
                 if (response[0].id != undefined) {
                     dispatch(antesVerQuerys(response))
@@ -3246,8 +3293,8 @@ export const refreshListQuery = () => (dispatch, getState) => {
 }
 
 const antesVerQuerys = (resp) => (dispatch, getState) => {
-    dispatch(calculaPaginadorQuerys()),
-        dispatch(verQuerys(resp))
+    //dispatch(calculaPaginadorQuerys()),
+    dispatch(verQuerys(resp))
 }
 //Enviar la accion de ver querys al Reducer STORE
 const verQuerys = (res) => ({
@@ -3331,6 +3378,15 @@ export const updateFormQuerys = (field, value) => (dispatch, getState) => {
     }
     dispatch(updateFormQuerysRequest(field, value))
 }
+
+export const updateEscenarioFormQuerys = (idEscenario, descEscenario) => (dispatch, getState) => {
+    dispatch({
+        type: UPDATE_ESCENARIO_QUERYS_FORM_REQUEST,
+        idEscenario,
+        descEscenario
+    })
+}
+
 //Enviar al reducer la tecla pulsada
 const updateFormQuerysRequest = (field, value) => ({
     type: UPDATE_QUERYS_FORM_REQUEST,
@@ -3486,12 +3542,25 @@ const irAPaginaQuerys = (pagina) => ({
 
 //Funcion que carga el combo de escenarios
 export const cargarComboEscenariosEnQuerys = (idConciliacion) => (dispatch, getState) => {
-    APIInvoker.invokeGET('/escenarios/conciliacion/'+idConciliacion, response => {
+    let conciliacion = idConciliacion ? `/conciliacion/${idConciliacion}` : ''
+    APIInvoker.invokeGET(`/escenarios${conciliacion}`, response => {
         if (Array.isArray(response) == true) {
             dispatch(cargarEscenariosenQuerys(response))
         }
     })
 }
+
+//Funcion que carga el combo de escenarios
+export const cargarComboEscenariosEnQuerysByName = (filter, callback) => (dispatch, getState) => {
+    APIInvoker.invokeGET(`/escenarios?name=${filter}`, response => {
+        if (Array.isArray(response) == true) {
+            dispatch(cargarEscenariosenQuerys(response))
+            let options = response.map(x => {return {value: x.id, label: x.nombre} })
+            callback(options)
+        }
+    })
+}
+
 //Envia resultado para llenar el combo a Reducer
 const cargarEscenariosenQuerys = (arrayEscenarios) => (
     {
@@ -3718,7 +3787,6 @@ export const refreshListUsuario = (resp) => (dispatch, getState) => {
                 } else {
                     dispatch(antesVerUsuarios(objetoVacio))
                     console.log("Error : " + response1[0].codigo + " Mensaje: " + response1[0].mensaje + ": " + response1[0].descripcion)
-                    //alert("No se encuentran usuarios")
                 }
             } else {
                 //Cuando el response no es un array, es decir, un solo registro
@@ -3727,7 +3795,6 @@ export const refreshListUsuario = (resp) => (dispatch, getState) => {
                 } else {
                     dispatch(antesVerUsuarios(objetoVacio))
                     console.log("Error : " + response1.codigo + " Mensaje: " + response1.mensaje + ": " + response1.descripcion)
-                    //alert("No se encuentra la usuarios")
                 }
             }
         })

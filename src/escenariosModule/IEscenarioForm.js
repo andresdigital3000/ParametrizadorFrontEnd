@@ -4,7 +4,8 @@ import APIInvoker from '../utils/APIInvoker'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { Link } from 'react-router';
 import { connect } from 'react-redux'
-import { updateFormEscenarios, saveEscenario, cargarEscenario, limpiarFormEscenario, cargarComboConciliaciones, updConciliacion, refreshListEscenario } from '../actions/Actions';
+import { updateFormEscenarios, cargarImpactos, updateConciliacion, saveEscenario, cargarEscenario, limpiarFormEscenario, cargarComboConciliaciones, updConciliacion, refreshListEscenario } from '../actions/Actions';
+import AsyncSelect from 'react-select/lib/Async'
 
 class IEscenarioForm extends React.Component{
   constructor(){
@@ -12,17 +13,12 @@ class IEscenarioForm extends React.Component{
   }
 
   componentWillMount(){
-    //Cargar el combo de conciliaciones
-    if(this.props.conciliacion==undefined){
-      this.props.cargarComboConciliaciones()
-    }
+    this.props.cargarImpactos()
   }
 
   componentDidMount(){
-    console.log("PROPS en form ==>>")
-    console.log(this.props)
-    if(this.props.registro!=undefined){
-      this.props.cargarEscenario(this.props.registro.idescenario)
+    if(this.props.params && this.props.params.idescenario){
+      this.props.cargarEscenario(this.props.params.idescenario)
     }else{
       this.props.limpiarFormEscenario()
     }
@@ -46,11 +42,30 @@ class IEscenarioForm extends React.Component{
     this.props.updConciliacion(0)
   }
 
+  loadOptions(inputValue, callback) {
+    let realInput = inputValue || ''
+    if(realInput.length < 3) {
+      callback( [{value: 0, label: 'Capture al menos 3 caracteres'}])
+      return
+    }else{
+      this.props.cargarComboConciliaciones(realInput, callback)
+    }
+  };
+
+  cambioConciliacionSelect(newValue){
+    if(newValue.value == 0 ){
+      this.props.updateConciliacion(null, null)
+    }else{
+      this.props.updateConciliacion(newValue.value, newValue.label)
+    }
+  }
+  
+
   render(){
     return(
       <div className="container">
       <Choose>
-        <When condition={this.props.registro}>
+        <When condition={this.props.params}>
           <div className="form-wrapper">
             <header className="head-table">
               <div className="form-group">
@@ -84,13 +99,14 @@ class IEscenarioForm extends React.Component{
 
             <div className="form-group">
               <label htmlFor='conciliacion'>* Conciliación</label>
-              <select id="conciliacion" name="conciliacion" className='form-control' value={this.props.state.conciliacion} onChange={this.handleInput.bind(this)}>
-                {this.props.state.conciliaciones.map(function(currentValue,index,array){
-                  return(
-                    <option key={currentValue.id} value={currentValue.id}>{currentValue.nombre}</option>
-                  );
-                })}
-              </select>
+              <AsyncSelect
+                cacheOptions
+                loadOptions={this.loadOptions.bind(this)}
+                defaultOptions
+                onInputChange={this.handleInputChange}
+                value={{value: this.props.state.idConciliacion, label: this.props.state.nombreConciliacion }}
+                onChange={this.cambioConciliacionSelect.bind(this)}
+              />
               <small id="nombreHelp" className="form-text text-muted">Para crear escenario</small>
             </div>
             <div className="form-group">
@@ -139,14 +155,14 @@ class IEscenarioForm extends React.Component{
                     </div>
                     <div className="form-group">
                       <label htmlFor='conciliacion'>* Conciliación</label>
-                      <select id="conciliacion" name="conciliacion" className='form-control' value={this.props.state.conciliacion}  onChange={this.handleInput.bind(this)}>
-                        <option key="0" value="0">Seleccione una</option>
-                        {this.props.state.conciliaciones.map(function(currentValue,index,array){
-                          return(
-                            <option key={currentValue.id} value={currentValue.id}>{currentValue.nombre}</option>
-                          );
-                        })}
-                      </select>
+                      <AsyncSelect
+                        cacheOptions
+                        loadOptions={this.loadOptions.bind(this)}
+                        defaultOptions
+                        onInputChange={this.handleInputChange}
+                        //value={{value: this.props.state.idPolitica, label: this.props.state.nombrePolitica }}
+                        onChange={this.cambioConciliacionSelect.bind(this)}
+                      />
                       <small id="nombreHelp" className="form-text text-muted">Para crear escenario</small>
                     </div>
                   </div>
@@ -186,5 +202,5 @@ const mapStateToProps = (state) =>{
   }
 }
 export default connect (mapStateToProps,{
-  updateFormEscenarios, saveEscenario, cargarEscenario, limpiarFormEscenario, cargarComboConciliaciones, updConciliacion, refreshListEscenario
+  updateFormEscenarios, saveEscenario,  cargarImpactos, cargarEscenario, limpiarFormEscenario, cargarComboConciliaciones, updConciliacion, refreshListEscenario, updateConciliacion
 })(IEscenarioForm)

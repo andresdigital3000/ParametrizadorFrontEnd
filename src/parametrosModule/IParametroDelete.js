@@ -13,8 +13,8 @@ class IParametroDelete extends React.Component{
   }
 
   componentDidMount(){
-    if(this.props.registro){
-      this.props.cargarParametro(this.props.registro.idparametrodelete)
+    if(this.props.params && this.props.params.idparametro){
+      this.props.cargarParametro(this.props.params.idparametro)
     }
   }
 

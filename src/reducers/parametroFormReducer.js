@@ -2,7 +2,8 @@ import {
   UPDATE_PARAMETROS_FORM_REQUEST,
   CARGAR_PARAMETRO_FORM,
   LIMPIAR_FORM_PARAMETRO,
-  CARGA_CONCILIACIONES_EN_PARAMETROS
+  CARGA_CONCILIACIONES_EN_PARAMETROS,
+  UPDATE_PARAMETROS_ESCENARIO_FORM_REQUEST
 } from '../actions/const'
 import update from 'react-addons-update'
 
@@ -18,6 +19,12 @@ const initialState = {
 
 export const parametroFormReducer = (state = initialState,action) =>{
   switch (action.type) {
+    case UPDATE_PARAMETROS_ESCENARIO_FORM_REQUEST:
+        console.log("display 2",action )
+        return update(state,{
+          escenario: {$set: action.idEscenario},
+          escenarioDescripcion: {$set: action.descEscenario}
+        })
     case UPDATE_PARAMETROS_FORM_REQUEST:
         return update(state,{
           [action.field] : {$set: action.value}
@@ -37,7 +44,9 @@ export const parametroFormReducer = (state = initialState,action) =>{
           parametro : {$set: ''},
           valor : {$set: ''},
           descripcion : {$set: ''},
-          escenario : {$set : 0}
+          escenario : {$set : 0},
+          escenarioDescripcion : {$set : ''},
+          nombreConciliacion: {$set : ''},
         })
     case CARGA_CONCILIACIONES_EN_PARAMETROS:
         return update(state,{

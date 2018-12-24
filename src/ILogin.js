@@ -1,6 +1,7 @@
 import React from 'react'
 import update from 'react-addons-update'
 import APIInvoker from './utils/APIInvoker'
+import APIInvoker2 from './utils/APIInvoker2'
 import IModalRegister from './IModalRegister'
 import IModal from './IModal'
 import IModalLoad from './IModalLoad'
@@ -48,7 +49,6 @@ class ILogin extends React.Component{
                       name="username"
                       id="username"
                       autoComplete='off'
-                      require="true"
                       autoFocus
                       onChange={this.handleInput.bind(this)} />
                     <label ref="usernameLabel" id="usernameLabel" htmlFor="username"></label>
@@ -61,7 +61,6 @@ class ILogin extends React.Component{
                       placeholder="Contraseña"
                       name="password"
                       autoComplete='off'
-                      require="true"
                       onChange={this.handleInput.bind(this)}/>
                     <label ref="passwordLabel" htmlFor="passwordLabel"></label>
                   </div>

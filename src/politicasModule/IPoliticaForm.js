@@ -9,11 +9,12 @@ import { updateFormPoliticas, savePolitica, cargarPolitica, limpiarFormPolitica,
 class IPoliticaForm extends React.Component{
   constructor(){
     super(...arguments)
+    
   }
 
   componentDidMount(){
-    if(this.props.registro){
-      this.props.cargarPolitica(this.props.registro.idpolitica)
+    if(this.props.params && this.props.params.idpolitica){
+      this.props.cargarPolitica(this.props.params.idpolitica)
     }
   }
 
@@ -40,7 +41,7 @@ class IPoliticaForm extends React.Component{
     return(
       <div className="container">
       <Choose>
-        <When condition={this.props.registro}>
+        <When condition={this.props.params}>
           <div className="form-wrapper">
             <header className="head-table">
               <div className="form-group">

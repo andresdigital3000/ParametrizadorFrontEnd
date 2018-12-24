@@ -4,7 +4,8 @@ import APIInvoker from '../utils/APIInvoker'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { Link } from 'react-router';
 import { connect } from 'react-redux'
-import { updateFormQuerys, saveQuery, cargarQuery, limpiarFormQuery, cargarComboEscenariosEnQuerys, updConciliacionQuerys, refreshListQuery } from '../actions/Actions';
+import { updateEscenarioFormQuerys, updateFormQuerys, saveQuery, cargarQuery, limpiarFormQuery, cargarComboEscenariosEnQuerysByName, updConciliacionQuerys, refreshListQuery } from '../actions/Actions';
+import AsyncSelect from 'react-select/lib/Async'
 
 class IQueryForm extends React.Component{
   constructor(){
@@ -12,8 +13,11 @@ class IQueryForm extends React.Component{
   }
 
   componentDidMount(){
-    if(this.props.registro!=undefined){
-      this.props.cargarQuery(this.props.registro.idquery)
+    //this.props.cargarComboEscenariosEnQuerys()
+
+    if(this.props.params && this.props.params.idquery){
+      this.props.cargarQuery(this.props.params.idquery)
+      
     }else{
       this.props.limpiarFormQuery()
     }
@@ -35,11 +39,29 @@ class IQueryForm extends React.Component{
     this.props.updConciliacionQuerys(0)
   }
 
+  loadOptions(inputValue, callback) {
+    let realInput = inputValue || ''
+    if(realInput.length < 3) {
+      callback( [{value: 0, label: 'Capture al menos 3 caracteres'}])
+      return
+    }else{
+      this.props.cargarComboEscenariosEnQuerysByName(realInput, callback)
+    }
+  };
+  
+  cambioEscenarioSelect(newValue){
+    if(newValue.value == 0 ){
+      this.props.updateEscenarioFormQuerys(null, null)
+    }else{
+      this.props.updateEscenarioFormQuerys(newValue.value, newValue.label)
+    }
+  }
+
   render(){
     return(
       <div className="container">
       <Choose>
-        <When condition={this.props.registro}>
+        <When condition={this.props.params}>
           <div className="form-wrapper">
             <header className="head-table">
               <div className="form-group">
@@ -67,14 +89,14 @@ class IQueryForm extends React.Component{
             </div>
             <div className="form-group">
               <label htmlFor='escenario'>* Escenario</label>
-              <select id="idEscenario" name="idEscenario" className='form-control' value={this.props.state.idEscenario} onChange={this.handleInput.bind(this)}>
-                <option value='0'>Seleccione uno</option>
-                {this.props.state.escenarios.map(function(currentValue,index,array){
-                  return(
-                    <option key={currentValue.id} value={currentValue.id}>{currentValue.nombre}</option>
-                  );
-                })}
-              </select>
+              <AsyncSelect
+                cacheOptions
+                loadOptions={this.loadOptions.bind(this)}
+                defaultOptions
+                onInputChange={this.handleInputChange}
+                value={{value: this.props.state.idEscenario, label: this.props.state.nombreEscenario }}
+                onChange={this.cambioEscenarioSelect.bind(this)}
+              />
               <small id="nombreHelp" className="form-text text-muted">Para crear query</small>
             </div>
             <div className="form-group">
@@ -117,14 +139,14 @@ class IQueryForm extends React.Component{
                     </div>
                     <div className="form-group">
                       <label htmlFor='escenario'>* Escenario</label>
-                      <select id="idEscenario" name="idEscenario" className='form-control' value={this.props.state.idEscenario} onChange={this.handleInput.bind(this)}>
-                        <option value='0'>Seleccione uno</option>
-                        {this.props.state.escenarios.map(function(currentValue,index,array){
-                          return(
-                            <option key={currentValue.id} value={currentValue.id}>{currentValue.nombre}</option>
-                          );
-                        })}
-                      </select>
+                      <AsyncSelect
+                        cacheOptions
+                        loadOptions={this.loadOptions.bind(this)}
+                        defaultOptions
+                        onInputChange={this.handleInputChange}
+                        //value={{value: this.props.state.politica.id, label: this.props.state.politica.nombre }}
+                        onChange={this.cambioEscenarioSelect.bind(this)}
+                      />
                       <small id="nombreHelp" className="form-text text-muted">Para crear query</small>
                     </div>
                   </div>
@@ -167,5 +189,5 @@ const mapStateToProps = (state) =>{
   }
 }
 export default connect (mapStateToProps,{
-  updateFormQuerys, saveQuery, cargarQuery, limpiarFormQuery, cargarComboEscenariosEnQuerys, updConciliacionQuerys, refreshListQuery
+  updateEscenarioFormQuerys, updateFormQuerys, saveQuery, cargarQuery, limpiarFormQuery, cargarComboEscenariosEnQuerysByName, updConciliacionQuerys, refreshListQuery
 })(IQueryForm)

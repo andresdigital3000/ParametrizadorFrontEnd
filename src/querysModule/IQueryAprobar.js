@@ -5,29 +5,79 @@ import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { Link } from 'react-router';
 import { connect } from 'react-redux'
 import { cambioConciliacionesQuery, cargarConciliacionesQuery, rechazarConciliacion, aprobarConciliacion, updateFormAprobQuerys } from '../actions/Actions';
+import update from 'react-addons-update'
+import {  ToastContainer,  toast,  dismiss} from 'react-toastify';
 
 class IQueryAprobar extends React.Component{
   constructor(){
     super(...arguments)
+    this.state = {
+      load: false,
+      conciliacion: null,
+      mensaje: ""
+    }
+  }
+
+  componentWillMount(){
+    APIInvoker.invokeGET(`/conciliaciones/${this.props.params.idconciliacion}`, response => {
+      console.log("response", response)
+      this.setState(update(this.state, {
+        load: { $set: true},
+        conciliacion: {$set: {
+          id: response.id,
+          name: response.nombrePolitica
+        }}
+      }))
+    }, error => {
+      toast.error("Error al cargar la página", {
+        position: toast.POSITION.BOTTOM_RIGHT
+      })
+    })
   }
 
   //Detecta cambios de estado en textbox
   handleInput(e){
-      this.props.updateFormAprobQuerys(e.target.id, e.target.value)
+    this.setState(update(this.state, {
+      [e.target.name]: {$set: e.target.value}
+    }))
   }
 
   cambioConciliacionesQuery(){
     this.props.cambioConciliacionesQuery()
   }
 
-  //Rechazar
-  rechazar(){
-    this.props.rechazarConciliacion()
-  }
+  aprobarRechazar(estado){
 
-  //aprobar
-  aprobar(){
-    this.props.aprobarConciliacion()
+    let request = {
+      idConciliacion: this.state.conciliacion.id,
+      mensaje: this.state.mensaje,
+      estadoAprobacion: estado,
+      username: window.localStorage.getItem("nombreUsuario")
+    }
+
+    let message = estado == '0' ? 'rechazar' : 'aprobar'
+
+    APIInvoker.invokePOST('/queryaprobacion', request, response => {
+        if (response.nombreConciliacion != undefined) {
+          toast.success(`Se ${message} los querys de la conciliación ${request.idConciliacion}` , {
+            position: toast.POSITION.BOTTOM_RIGHT
+          })
+          browserHistory.push('/conciliaciones')
+        } else {
+            if (response.mensaje == "CTRAINT_UQ_TBL_GAI_QUERIES_ESCENARIOS_COD_ESCENARIO") {
+                //console.log("Error :"+response.codigo+" "+response.mensaje+", "+response.descripcion)
+                toast.error("Ya existe una aprobación igual", {
+                    position: toast.POSITION.BOTTOM_RIGHT
+                })
+            } else {
+                toast.error(`Error general al intentar ${message} queries de una conciliación`, {
+                    position: toast.POSITION.BOTTOM_RIGHT
+                })
+            }
+        }
+    }, error => {
+        console.log(`No se ha podido crear el ${message} de queries para una conciliación`)
+    })
   }
 
   render(){
@@ -45,32 +95,26 @@ class IQueryAprobar extends React.Component{
           </header>
           <div className="form-group">
             <label htmlFor='conciliacion'>Conciliación</label>
-            <select id="conciliacion" name="conciliacion" className='form-control form-control-lg' value={this.props.state.conciliacion.id} readOnly>
-              {this.props.state.conciliaciones.map(function(currentValue,index,array){
-                return(
-                  <option key={currentValue.id} value={currentValue.id}>{currentValue.nombre}</option>
-                );
-              })}
-            </select>
+            <input type="text" className='form-control form-control-lg' disabled value={this.state.load ? `${this.state.conciliacion.id} : ${this.state.conciliacion.name}` : 'Cargando...'}/>
           </div>
           <div className="form-group">
             <label htmlFor='mensaje'>Mensaje</label>
             <div className="col-sm-12">
-              <textarea id="mensaje" name="mensaje" rows="10" className='form-control form-control-lg' value={this.props.state.mensaje} onChange={this.handleInput.bind(this)}/>
+              <textarea id="mensaje" name="mensaje" rows="10" className='form-control form-control-lg' value={this.state.mensaje} onChange={this.handleInput.bind(this)}/>
             </div>
           </div>
           <div className="form-group">
             <div className="row">
               <div className="col-sm-2">
-                <Link to="/querys" className="btn btn-warning">Regresar</Link>
+                <Link to="/conciliaciones" className="btn btn-warning">Regresar</Link>
               </div>
               <div className="col-sm-6">
               </div>
               <div className="col-sm-2">
-                <input type="button" className="btn btn-danger" value="No Aprobar" onClick={this.rechazar.bind(this)}/>
+                <input type="button" className="btn btn-danger" value="No Aprobar" onClick={() => this.aprobarRechazar(0)}/>
               </div>
               <div className="col-sm-2">
-                <input type="button" className="btn btn-success" value="Aprobar" onClick={this.aprobar.bind(this)}/>
+                <input type="button" className="btn btn-success" value="Aprobar" onClick={() => this.aprobarRechazar(1)}/>
               </div>
             </div>
           </div>

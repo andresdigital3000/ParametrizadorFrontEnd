@@ -22,7 +22,9 @@ module.exports = {
         presets:['es2015','react','react-hmre'],
         plugins: ["jsx-control-statements"]
       }
-    }]
+    },
+    { test: /\.css$/, loader: "style-loader!css-loader" },
+  ]
   },
   plugins: [
     new webpack.optimize.OccurenceOrderPlugin(),

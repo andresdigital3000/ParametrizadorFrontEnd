@@ -13,8 +13,8 @@ class IEscenarioDelete extends React.Component{
   }
 
   componentDidMount(){
-    if(this.props.registro){
-      this.props.cargarEscenario(this.props.registro.idescenariodelete)
+    if(this.props.params && this.props.params.idescenario){
+      this.props.cargarEscenario(this.props.params.idescenario)
     }
   }
 
@@ -50,7 +50,7 @@ class IEscenarioDelete extends React.Component{
             <div className="row">
               <div className="col-sm-12">
                 <Choose>
-                  <When condition={this.props.registro}>
+                  <When condition={this.props.params}>
                       <input id='id' ref='id' type='hidden' value={this.props.state.id}/>
                       <div className="form-group">
                         <label htmlFor='nombre'>Nombre</label>

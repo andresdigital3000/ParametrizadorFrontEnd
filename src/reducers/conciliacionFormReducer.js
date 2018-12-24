@@ -18,14 +18,14 @@ const initialState = {
 }
 
 export const conciliacionFormReducer = (state = initialState,action) =>{
+  
   switch (action.type) {
     case UPDATE_CONCILIACIONES_FORM_REQUEST:
         return update(state,{
           [action.field] : {$set: action.value}
         })
     case CARGAR_CONCILIACION_FORM:
-        console.log("conciliacion en reducer ==>")
-        console.log(action.conciliacion[0])
+        console.log('CARGAR_CONCILIACION_FORM =>',action)
         if(action.conciliacion[0].transformaciones.length!=0){
           return update(state,{
               id : {$set: action.conciliacion[0].id},
@@ -36,7 +36,7 @@ export const conciliacionFormReducer = (state = initialState,action) =>{
               requiereAprobacion : {$set: action.conciliacion[0].requiereAprobacion},
               idPolitica : {$set: action.conciliacion[0].idPolitica},
               nombrePolitica : {$set: action.conciliacion[0].nombrePolitica},
-              tablaDestino : {$set: action.conciliacion[0].tablaDestino}
+              tablaDestino : {$set: action.conciliacion[0].tablaDestino},
             })
         }else{
           return update(state,{

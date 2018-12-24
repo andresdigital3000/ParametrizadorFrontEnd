@@ -19,8 +19,8 @@ class IIndicadorForm extends React.Component{
   componentDidMount(){
     //console.log("PROPS en EditarIndicadores ==>>")
     //console.log(this.props)
-    if(this.props.registro!=undefined){
-      this.props.cargarIndicador(this.props.registro.idindicador)
+    if(this.props.params && this.props.params.idindicador){
+      this.props.cargarIndicador(this.props.params.idindicador)
     }else{
       this.props.limpiarFormIndicador()
     }
@@ -67,7 +67,7 @@ class IIndicadorForm extends React.Component{
     return(
       <div className="container">
       <Choose>
-        <When condition={this.props.registro}>
+        <When condition={this.props.params}>
           <div className="form-wrapper">
             <header className="head-table">
               <div className="form-group">

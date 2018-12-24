@@ -4,9 +4,12 @@ import APIInvoker from '../utils/APIInvoker'
 import IEscenarioList from './IEscenarioList'
 import IEscenarioFinder from './IEscenarioFinder'
 import IEscenarioPaginador from './IEscenarioPaginador'
+import IEscenarioForm from './IEscenarioForm'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { connect } from 'react-redux'
 import { updConciliacion,findTextEscenario,refreshListEscenario,cargarComboConciliaciones,calculaPaginadorEscenarios, cambioConciliacionesEscenario, cargarConciliacionesEscenario, cargarImpactos } from '../actions/Actions';
+import ReactTable from "react-table"
+import {Link} from 'react-router'
 
 class IEscenario extends React.Component{
   constructor(){
@@ -14,8 +17,21 @@ class IEscenario extends React.Component{
   }
 
   componentWillMount(){
-    this.props.cargarImpactos()
-    this.props.cargarConciliacionesEscenario()
+    
+    //this.props.cargarImpactos()
+
+    if(this.props.params.id){
+      this.props.updConciliacion(this.props.params.id)
+    }else if(this.props.params.idescenario){
+      this.props.refreshListEscenario(this.props.params.idescenario)
+    }else{
+      this.props.refreshListEscenario()
+    }
+    
+
+
+    /*
+    
     if(this.props.escenario != undefined){
       this.props.refreshListEscenario(this.props.escenario)
     }else if(this.props.conciliacion != undefined && this.props.conciliacion != 0){
@@ -24,7 +40,7 @@ class IEscenario extends React.Component{
       this.props.updConciliacion(this.props.registro)
     }else{
       this.props.updConciliacion(0)
-    }
+    }*/
   }
 
   cambioConciliacionesEscenario(e){
@@ -34,6 +50,7 @@ class IEscenario extends React.Component{
   render(){
     return(
         <div className="container">
+          <IEscenarioForm/>
           <header className="head-table">
             <div className="row">
                 <br/>
@@ -50,44 +67,107 @@ class IEscenario extends React.Component{
                 </center>
               </div>
               <div className="col-sm-4">
-                  <If condition={this.props.registro==undefined}>
-                      <IEscenarioFinder/>
-                  </If>
               </div>
             </div>
             <div className="row">
               <div className="col-sm-4">
-                <label htmlFor='conciliacion'>Conciliación</label>
-                <select id="conciliacion" name="conciliacion" className='form-control' value={this.props.state.conciliacion.id} onChange={this.cambioConciliacionesEscenario.bind(this)}>
-                  <option key="0" value="0">Todas</option>
-                  {this.props.state.conciliaciones.map(function(currentValue,index,array){
-                    return(
-                      <option key={currentValue.id} value={currentValue.id}>{currentValue.nombre}</option>
-                    );
-                  })}
-                </select>
               </div>
             </div>
-            <hr/>
-            <Choose>
-            <When condition={this.props.registro != undefined}>
-              <IEscenarioList conciliacion={this.props.registro}/>
-            </When>
-            <When condition={this.props.conciliacion != undefined}>
-              <IEscenarioList conciliacion={this.props.conciliacion}/>
-            </When>
-            <Otherwise>
-              <IEscenarioList conciliacion={0}/>
-            </Otherwise>
-            </Choose>
-            <hr/>
+
+            <ReactTable
+              data={this.props.state.escenarios}
+              previousText= {'Anterior'}
+              nextText= {'Siguiente'}
+              loadingText= {'Cargando...'}
+              noDataText= {'Sin registros'}
+              pageText= {'Página'}
+              ofText= {'de'}
+              rowsText= {'Registros'}
+              filterable
+              defaultFilterMethod={(filter, row) => String(row[filter.id]) === filter.value}
+              defaultSorted={[{id: "registDate", desc: true }]}
+              columns={[
+                  {
+                      Header: "CÓDIGO",
+                      accessor: "nombre",
+                      filterMethod: (filter, row) =>
+                          row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
+                  },
+                  {
+                      Header: "NOMBRE",
+                      accessor: "descripcion",
+                      filterMethod: (filter, row) =>
+                          row[filter.id].toLowerCase().includes(filter.value.toLowerCase()) 
+                  },
+                  {
+                      Header: "IMPACTO",
+                      accessor: 'impacto',
+                      filterMethod: (filter, row) =>
+                          row[filter.id].toLowerCase().includes(filter.value.toLowerCase()) 
+                  },
+                  {
+                    Header: "CONCILIACIÓN",
+                    accessor: 'nombreConciliacion',
+                    Cell: row => (
+                      <div>
+                        <If condition={row.row._original.idConciliacion!=undefined}>
+                          <Link to={"/conciliaciones/"+row.row._original.idConciliacion}>{row.value}</Link>
+                        </If>
+                        <If condition={row.row._original.idConciliacion==undefined}>
+                          No tiene
+                        </If>
+                      </div>
+                    ),
+                    filterMethod: (filter, row) =>
+                        row[filter.id].toLowerCase().includes(filter.value.toLowerCase()) 
+                  },
+                  {
+                    Header: "QUERY",
+                    filterable: false,
+                    accessor: 'id',
+                    Cell: row => (
+                      <div>
+                        <center>
+                          <Link to={"/querys/escenario/"+row.value}><i className="fa fa-2x fa-file-text-o"/></Link>
+                        </center>
+                      </div>
+                    ),
+                    filterMethod: (filter, row) =>
+                        row[filter.id].toLowerCase().includes(filter.value.toLowerCase()) 
+                  },
+                  {
+                    Header: "PARÁMETROS",
+                    accessor: 'id',
+                    filterable: false,
+                    Cell: row => (
+                      <div>
+                        <center>
+                          <Link to={"/parametros/"+row.value}><i className="fa fa-2x fa-pencil-square-o"/></Link>
+                        </center>
+                      </div>
+                    ),
+                    filterMethod: (filter, row) =>
+                        row[filter.id].toLowerCase().includes(filter.value.toLowerCase()) 
+                  },
+                  {
+                    Header: "ACCIONES",
+                    accessor: 'id',
+                    filterable: false,
+                    Cell: row => (
+                        <div style={{textAlign: 'center'}}>
+                          <Link to={"/escenarios/edit/"+row.value} className="btn btn-info"  style={{marginRight: '10px'}}><i className="fa fa-pencil"/></Link>
+                          <Link to={"/escenarios/delete/"+row.value} className="btn btn-danger"><i className="fa fa-trash-o"/></Link>
+                        </div>
+                    )
+                  }
+              ]}
+              defaultPageSize={10}
+              className="-striped -highlight"
+            />
             <div className="row">
               <div className="col-sm-1">
               </div>
               <div className="col-sm-4">
-                <center>
-                  <IEscenarioPaginador/>
-                </center>
               </div>
               <div className="col-sm-1">
               </div>
@@ -102,7 +182,8 @@ const mapStateToProps = (state) =>{
   return{
     state: {
       conciliacion: state.escenarioReducer.conciliacion,
-      conciliaciones: state.escenarioReducer.conciliaciones
+      conciliaciones: state.escenarioReducer.conciliaciones,
+      escenarios: state.escenarioReducer.escenarios
     }
   }
 }

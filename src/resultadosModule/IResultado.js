@@ -6,7 +6,9 @@ import IResultadoFinder from './IResultadoFinder'
 import IResultadoPaginador from './IResultadoPaginador'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { connect } from 'react-redux'
-import { refreshListResultado,cargarComboConciliaciones,calculaPaginadorResultados, cambioConciliacionesResultado, cargarConciliacionesResultado } from '../actions/Actions';
+import { aprobarRenglonResultado, rechazarRenglonResultado,refreshListResultado,cargarComboConciliaciones, cambioConciliacionesResultado, cargarConciliacionesResultado } from '../actions/Actions';
+import ReactTable from "react-table"
+import {Link} from 'react-router'
 
 class IResultado extends React.Component{
   constructor(){
@@ -15,6 +17,14 @@ class IResultado extends React.Component{
 
   componentWillMount(){
     this.props.refreshListResultado()
+  }
+
+  aprobarRenglon(id){
+    this.props.aprobarRenglonResultado(id)
+  }
+
+  rechazarRenglon(id){
+    this.props.rechazarRenglonResultado(id)
   }
 
   render(){
@@ -34,24 +44,97 @@ class IResultado extends React.Component{
                 </center>
               </div>
               <div className="col-sm-4">
-                  <If condition={this.props.registro==undefined}>
-                      <IResultadoFinder ref="buscador"/>
-                  </If>
               </div>
             </div>
-            <hr/>
-            <Choose>
-            <When condition={this.props.registro != undefined}>
-              <IResultadoList conciliacion={this.props.registro}/>
-            </When>
-            <When condition={this.props.conciliacion != undefined}>
-              <IResultadoList conciliacion={this.props.conciliacion}/>
-            </When>
-            <Otherwise>
-              <IResultadoList conciliacion={0}/>
-            </Otherwise>
-            </Choose>
-            <hr/>
+
+            <ReactTable
+              data={this.props.state.items}
+              previousText= {'Anterior'}
+              nextText= {'Siguiente'}
+              loadingText= {'Cargando...'}
+              noDataText= {'Sin registros'}
+              pageText= {'Página'}
+              ofText= {'de'}
+              rowsText= {'Registros'}
+              filterable
+              defaultFilterMethod={(filter, row) => String(row[filter.id]) === filter.value}
+              defaultSorted={[{id: "registDate", desc: true }]}
+              columns={[
+                  {
+                      Header: "CONCILIACIÓN",
+                      accessor: "codConciliacion",
+                      filterMethod: (filter, row) =>
+                          row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
+                  },
+                  {
+                    Header: "ESCENARIO",
+                    accessor: "codEscenario",
+                    filterMethod: (filter, row) =>
+                        row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
+                  },
+                  {
+                    Header: "ESTADO",
+                    accessor: "estado",
+                    filterMethod: (filter, row) =>
+                        row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
+                  },
+                  {
+                    Header: "FECHA INICIO",
+                    accessor: "fecInicio",
+                    filterMethod: (filter, row) =>
+                        row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
+                  },
+                  {
+                    Header: "FECHA FIN",
+                    accessor: "fecFin",
+                    filterMethod: (filter, row) =>
+                        row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
+                  },
+                  {
+                    Header: "VALOR BENEFICIO",
+                    accessor: "valBeneficio",
+                    filterMethod: (filter, row) =>
+                      new String(row[filter.id]).toLowerCase().includes(filter.value.toLowerCase())
+                  },
+                  {
+                    Header: "VALOR INCONSISTENCIAS",
+                    accessor: "valInconsistencias",
+                    filterMethod: (filter, row) =>
+                      new String(row[filter.id]).toLowerCase().includes(filter.value.toLowerCase())
+                  },
+                  {
+                    Header: "VALOR INCONSISTENCIAS MES ANTERIOR",
+                    accessor: "valInconsistenciasMesAnt",
+                    filterMethod: (filter, row) =>
+                      new String(row[filter.id]).toLowerCase().includes(filter.value.toLowerCase())
+                  },
+                  {
+                    Header: "VALOR PQR",
+                    accessor: "valPqr",
+                    filterMethod: (filter, row) =>
+                      new String(row[filter.id]).toLowerCase().includes(filter.value.toLowerCase())
+                  },
+                  {
+                    Header: "VALOR REINCIDENCIAS",
+                    accessor: "valReincidencias",
+                    filterMethod: (filter, row) =>
+                        new String(row[filter.id]).toLowerCase().includes(filter.value.toLowerCase())
+                  },
+                  {
+                    Header: "ACCIONES",
+                    accessor: 'id',
+                    filterable: false,
+                    Cell: row => (
+                        <div style={{textAlign: 'center'}}>
+                          <a href="#" onClick={this.aprobarRenglon.bind(this,row.value)} className="btn btn-info" style={{marginRight: '10px'}}><i className="fa fa-check"/></a>
+                          <a href="#" onClick={this.rechazarRenglon.bind(this,row.value)} className="btn btn-danger"><i className="fa fa-close"/></a>
+                        </div>
+                    )
+                  }
+              ]}
+              defaultPageSize={10}
+              className="-striped -highlight"
+            />
             <div className="row">
               <div className="col-sm-1">
               </div>
@@ -73,11 +156,12 @@ const mapStateToProps = (state) =>{
   return{
     state: {
       conciliacion: state.resultadoReducer.conciliacion,
-      conciliaciones: state.resultadoReducer.conciliaciones
+      conciliaciones: state.resultadoReducer.conciliaciones,
+      items: state.resultadoReducer.resultados
     }
   }
 }
 
 export default connect (mapStateToProps,{
-  refreshListResultado, cargarComboConciliaciones, calculaPaginadorResultados, cambioConciliacionesResultado, cargarConciliacionesResultado
+  aprobarRenglonResultado, rechazarRenglonResultado, refreshListResultado, cambioConciliacionesResultado, cargarConciliacionesResultado
 })(IResultado)

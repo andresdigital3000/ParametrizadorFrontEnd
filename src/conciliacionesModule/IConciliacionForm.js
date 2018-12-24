@@ -5,6 +5,10 @@ import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { Link } from 'react-router';
 import { connect } from 'react-redux'
 import { updateFormConciliaciones, saveConciliacion, cargarConciliacion, limpiarFormConciliacion, cargarComboPoliticas, updPolitica, calculaPaginadorConciliaciones,refreshListConciliacion } from '../actions/Actions';
+import AsyncSelect from 'react-select/lib/Async'
+
+
+
 
 class IConciliacionForm extends React.Component{
   constructor(){
@@ -12,11 +16,11 @@ class IConciliacionForm extends React.Component{
   }
 
   componentWillMount(){
-    this.props.cargarComboPoliticas()
+    //this.props.cargarComboPoliticas()
   }
   componentDidMount(){
-    if(this.props.registro){
-      this.props.cargarConciliacion(this.props.registro.idconciliacion)
+    if(this.props.params && this.props.params.idconciliacion){
+      this.props.cargarConciliacion(this.props.params.idconciliacion)
     }
   }
 
@@ -31,6 +35,26 @@ class IConciliacionForm extends React.Component{
     this.props.updPolitica(e.target.value)
     this.props.cargarComboPoliticas()
   }
+
+  loadOptions(inputValue, callback) {
+    let realInput = inputValue || ''
+    if(realInput.length < 3) {
+      callback( [{value: 0, label: 'Capture al menos 3 caracteres'}])
+      return
+    }else{
+      this.props.cargarComboPoliticas(realInput, callback)
+    }
+  };
+
+  cambioPoliticaSelect(newValue){
+    if(newValue.value == 0 ){
+      this.props.updPolitica(null)
+    }else{
+      this.props.updPolitica(newValue.value)
+      //this.props.cargarComboPoliticas()
+    }
+  }
+
 
   //Salvar el nuevo registro
   grabarConciliacion(e){
@@ -48,7 +72,7 @@ class IConciliacionForm extends React.Component{
     return(
       <div className="container">
       <Choose>
-        <When condition={this.props.registro}>
+        <When condition={this.props.params}>
           <div className="form-wrapper">
             <header className="head-table">
               <div className="form-group">
@@ -84,18 +108,22 @@ class IConciliacionForm extends React.Component{
               <input id='tablaDestino' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.tablaDestino} onChange={this.handleInput.bind(this)} placeholder='Digite la tabla de destino' maxLength='50' autoComplete='off'/>
               <small id="destinoHelp" className="form-text text-muted">Defina la tabla de destino</small>
             </div>
+            
+
             <div className="form-group">
               <label htmlFor='politica'>* Política</label>
-              <select id="politica" name="politica" className='form-control' value={this.props.state.politica.id} onChange={this.cambioPolitica.bind(this)}>
-                <option key={this.props.state.idPolitica} value={this.props.state.idPolitica}>{this.props.state.nombrePolitica}</option>
-                {this.props.state.politicas.map(function(currentValue,index,array){
-                  return(
-                    <option key={currentValue.id} value={currentValue.id}>{currentValue.nombre}</option>
-                  );
-                })}
-              </select>
+              <AsyncSelect
+                cacheOptions
+                loadOptions={this.loadOptions.bind(this)}
+                defaultOptions
+                onInputChange={this.handleInputChange}
+                value={{value: this.props.state.politica.id, label: this.props.state.politica.nombre }}
+                onChange={this.cambioPoliticaSelect.bind(this)}
+              />
               <small id="nombreHelp" className="form-text text-muted">Para crear conciliación</small>
             </div>
+
+
             <div className="form-group">
               <label htmlFor='requiereAprobacion'>* Requiere Aprobación</label>
               <select id="requiereAprobacion" name="requiereAprobacion" className='form-control' value={this.props.state.requiereAprobacion} onChange={this.handleInput.bind(this)}>
@@ -154,16 +182,19 @@ class IConciliacionForm extends React.Component{
                     </div>
                     <div className="form-group">
                       <label htmlFor='politica'>* Política</label>
-                      <select id="politica" name="politica" className='form-control' value={this.props.state.politica.id} onChange={this.cambioPolitica.bind(this)}>
-                        <option value='0'>Seleccione una</option>
-                        {this.props.state.politicas.map(function(currentValue,index,array){
-                          return(
-                            <option key={currentValue.id} value={currentValue.id}>{currentValue.nombre}</option>
-                          );
-                        })}
-                      </select>
+                      <AsyncSelect
+                        cacheOptions
+                        loadOptions={this.loadOptions.bind(this)}
+                        defaultOptions
+                        onInputChange={this.handleInputChange}
+                        //value={this.props.state.idPolitica}
+                        onChange={this.cambioPoliticaSelect.bind(this)}
+                        
+                      />
                       <small id="nombreHelp" className="form-text text-muted">Para crear conciliación</small>
                     </div>
+
+                    
                     <div className="form-group">
                       <label htmlFor='requiereAprobacion'>* Requiere Aprobación</label>
                       <select id="requiereAprobacion" name="requiereAprobacion" className='form-control' value={this.props.state.requiereAprobacion} onChange={this.handleInput.bind(this)}>
