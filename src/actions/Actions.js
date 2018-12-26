@@ -148,7 +148,6 @@ export const loginRequest = () => (dispatch, getState) => {
                       if (Array.isArray(responsetime) == true) {
                         window.localStorage.setItem("tiempoexpirasesion", (responsetime[0].tipo === "SISTEMA" ? decryptJS(responsetime[0].valor) : responsetime[0].valor))
                         response.json().then(function(result) {
-                          window.localStorage.setItem("token",result.token)
                           //if result.userExist
                           if (result.id != undefined){
                             window.localStorage.setItem("userid", result.id)
@@ -206,7 +205,6 @@ export const loginRequest = () => (dispatch, getState) => {
                       if (Array.isArray(responsetime) == true) {
                         window.localStorage.setItem("tiempoexpirasesion", (responsetime[0].tipo === "SISTEMA" ? decryptJS(responsetime[0].valor) : responsetime[0].valor))
                         response.json().then(function(result) {
-                            window.localStorage.setItem("token",result.token)
                           //if result.userExist
                           if (result.id != undefined){
                             window.localStorage.setItem("userid", result.id)
