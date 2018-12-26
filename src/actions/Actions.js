@@ -3891,7 +3891,7 @@ export const saveUsuario = () => (dispatch, getState) => {
         usuario: getState().usuarioFormReducer.usuario,
         email: getState().usuarioFormReducer.email,
         nombreUsuario: getState().usuarioFormReducer.nombreUsuario,
-        rol: getState().usuarioFormReducer.rol,
+        idrol: getState().usuarioFormReducer.rol,
         username: window.localStorage.getItem("nombreUsuario")
     }
     APIInvoker.invokePUT('/usuarios', usuario_salvar, response => {
