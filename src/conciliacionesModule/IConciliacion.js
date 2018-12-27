@@ -1,10 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import APIInvoker from '../utils/APIInvoker'
-import IConciliacionList from './IConciliacionList'
-import IConciliacionFinder from './IConciliacionFinder'
-import IConciliacionPaginador from './IConciliacionPaginador'
-import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { connect } from 'react-redux'
 import { updPolitica,calculaPaginadorConciliaciones,limpiarFormConciliacion, refreshListConciliacion } from '../actions/Actions';
 import IConciliacionForm from './IConciliacionForm';
@@ -34,6 +28,10 @@ class IConciliacion extends React.Component{
     this.props.limpiarFormConciliacion();
   }
 
+  clearFilters(){
+    window.location = '/conciliaciones';  
+  }
+
   render(){
     return(
         <div className="container">
@@ -54,6 +52,11 @@ class IConciliacion extends React.Component{
                 </center>
               </div>
               <div className="col-sm-4">
+                <If condition={this.props.params.idconciliacion} >
+                  <div style={{textAlign: 'right'}}>
+                  <button className="btn btn-primary" data-toggle="modal" onClick={() => this.clearFilters()}><i className="fa fa-eraser"/> Limpiar filtros</button>
+                  </div>
+                </If>
               </div>
             </div>
             <ReactTable
@@ -110,7 +113,7 @@ class IConciliacion extends React.Component{
                               row[filter.id].toLowerCase().includes(filter.value.toLowerCase()) 
                       },
                       {
-                        Header: "REQUIERE APROBACIÓN",
+                        Header: "REQUIERE APROBACIÓN RESULTADO",
                         accessor: 'requiereAprobacion',
                         Cell: row => (
                           <center>{row.value}</center>
@@ -124,11 +127,11 @@ class IConciliacion extends React.Component{
                         filterable: false,
                         sortable: false,
                         Cell: row => (
-                          <div style={{textAlign: 'center'}}>
+                          <div style={{textAlign: 'left'}}>
                             <Link to={"/conciliaciones/edit/"+row.row._original.id} className="btn btn-info" style={{marginRight: '10px'}}><i className="fa fa-pencil"/></Link>
                             <Link to={"/conciliaciones/delete/"+row.row._original.id} className="btn btn-danger" style={{marginRight: '10px'}}><i className="fa fa-trash-o"/></Link>
                             <If condition={row.value == 'SI'} >
-                              <Link to={"/conciliaciones/aprobar/"+row.row._original.id} className="btn btn-success"><i className="fa fa-check"/></Link>
+                              <Link title="Aprobar Queries" to={"/conciliaciones/aprobar/"+row.row._original.id} className="btn btn-success" ><i className="fa fa-check"/></Link>
                             </If>
                           </div>
                         )

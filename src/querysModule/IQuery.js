@@ -1,9 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import APIInvoker from '../utils/APIInvoker'
-import IQueryList from './IQueryList'
-import IQueryFinder from './IQueryFinder'
-import IQueryPaginador from './IQueryPaginador'
 import { Router, Route, browserHistory, IndexRoute, Link } from "react-router";
 import { connect } from 'react-redux'
 import { updConciliacionQuerys,calculaPaginadorQuerys, cambioConciliacionesQuery, cargarConciliacionesQuery, updEscenariosQuerys, updEscenarioQuerys } from '../actions/Actions';
@@ -27,8 +22,10 @@ class IQuery extends React.Component{
       }
     }else if(this.props.escenario!=undefined){
       this.props.updEscenarioQuerys(this.props.escenario)
+    }else if(this.props.params.idEscenario){
+      this.props.updEscenarioQuerys(this.props.params.idEscenario)
     }else{
-      this.props.updEscenarioQuerys(0)
+      this.props.updEscenarioQuerys()
     }
   }
 
@@ -40,6 +37,11 @@ class IQuery extends React.Component{
   cambioEscenariosQuery(e){
     this.props.updEscenariosQuerys(e.target.value)
   }
+
+  clearFilters(){
+    window.location = '/querys';  
+  }
+  
 
   render(){
     return(
@@ -61,6 +63,11 @@ class IQuery extends React.Component{
                 </center>
               </div>
               <div className="col-sm-4">
+                <If condition={this.props.params.idquery} >
+                  <div style={{textAlign: 'right'}}>
+                  <button className="btn btn-primary" data-toggle="modal" onClick={() => this.clearFilters()}><i className="fa fa-eraser"/> Limpiar filtros</button>
+                  </div>
+                </If>
               </div>
             </div>
             <div className="row">
@@ -141,6 +148,7 @@ class IQuery extends React.Component{
                     Header: "ACCIONES",
                     accessor: 'id',
                     filterable: false,
+                    sortable: false,
                     Cell: row => (
                       <div style={{textAlign: 'center'}}>
                         <Link to={"/querys/edit/"+row.value} className="btn btn-info" style={{marginRight: '10px'}}><i className="fa fa-pencil"/></Link>

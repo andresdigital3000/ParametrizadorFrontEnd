@@ -117,7 +117,7 @@ class IConciliacionForm extends React.Component{
               <small id="nombreHelp" className="form-text text-muted">Para crear conciliación</small>
             </div>
             <div className="form-group">
-              <label htmlFor='requiereAprobacion'>* Requiere Aprobación</label>
+              <label htmlFor='requiereAprobacion'>* Requiere Aprobación Resultado</label>
               <select id="requiereAprobacion" name="requiereAprobacion" className='form-control' value={this.props.state.requiereAprobacion} onChange={this.handleInput.bind(this)}>
                 <option value="NO">NO</option>
                 <option value="SI">SI</option>
@@ -187,7 +187,7 @@ class IConciliacionForm extends React.Component{
 
 
                     <div className="form-group">
-                      <label htmlFor='requiereAprobacion'>* Requiere Aprobación</label>
+                      <label htmlFor='requiereAprobacion'>* Requiere Aprobación Resultado</label>
                       <select id="requiereAprobacion" name="requiereAprobacion" className='form-control' value={this.props.state.requiereAprobacion} onChange={this.handleInput.bind(this)}>
                         <option value="NO">NO</option>
                         <option value="SI">SI</option>

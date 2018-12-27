@@ -84,15 +84,13 @@ class APIInvoker {
       fetch(`${configuration.server.host}:${configuration.server.port}${url}`,params)
         .then((response)=>{
         if(debug){
-          console.log("Response => ");
-          console.log(response);
+          console.log("Response ==>",response);
         }
         return response.json()
       })
       .then((responseData)=>{
         if(debug){
-          console.log("Response Data =>")
-          console.log(responseData)
+          console.log("Response Data =>", responseData)
         }
         if(responseData){
           okCallback(responseData)

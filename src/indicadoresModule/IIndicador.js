@@ -1,10 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import APIInvoker from '../utils/APIInvoker'
-import IIndicadorList from './IIndicadorList'
-import IIndicadorFinder from './IIndicadorFinder'
-import IIndicadorPaginador from './IIndicadorPaginador'
-import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import IIndicadorForm from './IIndicadorForm'
 import ReactTable from "react-table"
 import {connect} from 'react-redux'
@@ -95,6 +89,7 @@ class IIndicador extends React.Component{
                         Header: "ACCIONES",
                         accessor: 'id',
                         filterable: false,
+                        sortable: false,
                         Cell: row => (
                             <div style={{textAlign: 'center'}}>
                               <Link to={"/indicadores/edit/"+row.value} className="btn btn-info" style={{marginRight: '10px'}}><i className="fa fa-pencil"/></Link>

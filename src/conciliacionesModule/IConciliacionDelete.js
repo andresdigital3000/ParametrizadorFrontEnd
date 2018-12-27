@@ -31,58 +31,60 @@ class IConciliacionDelete extends React.Component{
   render(){
     return(
         <div className="container">
-          <div className="form-wrapper">
-            <header className="head-table">
-              <div className="form-group">
-                <div className="col-sm-12">
-                  <center>
-                      <h2>Eliminando Conciliación</h2>
-                  </center>
+          <Choose>
+            <When condition={this.props.state.id}>
+              <div className="form-wrapper">
+                <header className="head-table">
+                  <div className="form-group">
+                    <div className="col-sm-12">
+                      <center>
+                          <h2>Eliminando Conciliación</h2>
+                      </center>
+                    </div>
+                  </div>
+                </header>
+                <div className="row">
+                  <div className="col-sm-12">
+                      <center>
+                        Está seguro de eliminar la conciliación?
+                      </center>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-sm-12">
+                    
+                          <input id='id' ref='id' type='hidden' value={this.props.state.id} />
+                          <div className="form-group">
+                            <label htmlFor='nombre'>Nombre</label>
+                            <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} disabled />
+                          </div>
+                          <div className="form-group">
+                            <label htmlFor='descripcion'>Descripción</label>
+                            <input id='descripcion' type='text' className='form-control form-control-lg' value={this.props.state.descripcion} disabled />
+                          </div>
+                      
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-sm-3"></div>
+                  <div className="col-sm-3">
+                      <center>
+                        <Link to={"/conciliaciones"} onClick={this.props.limpiarFormConciliacion.bind(this)} className="btn btn-success">&nbsp;&nbsp;&nbsp;No&nbsp;&nbsp;&nbsp;</Link>&nbsp;&nbsp;&nbsp;
+                      </center>
+                  </div>
+                  <div className="col-sm-3">
+                      <center>
+                        <button onClick={this.props.borrarConciliacion.bind(this)} className="btn btn-danger">&nbsp;&nbsp;&nbsp;Sí&nbsp;&nbsp;&nbsp;</button>
+                      </center>
+                  </div>
+                  <div className="col-sm-3"></div>
                 </div>
               </div>
-            </header>
-            <div className="row">
-              <div className="col-sm-12">
-                  <center>
-                    Está seguro de eliminar la conciliación?
-                  </center>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-sm-12">
-                <Choose>
-                  <When condition={this.props.registro}>
-                      <input id='id' ref='id' type='hidden' value={this.props.state.id} />
-                      <div className="form-group">
-                        <label htmlFor='nombre'>Nombre</label>
-                        <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} disabled />
-                      </div>
-                      <div className="form-group">
-                        <label htmlFor='descripcion'>Descripción</label>
-                        <input id='descripcion' type='text' className='form-control form-control-lg' value={this.props.state.descripcion} disabled />
-                      </div>
-                  </When>
-                  <Otherwise>
-                    <div>No se encuentra la información del registro</div>
-                  </Otherwise>
-                </Choose>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-sm-3"></div>
-              <div className="col-sm-3">
-                  <center>
-                    <Link to={"/conciliaciones"} onClick={this.props.limpiarFormConciliacion.bind(this)} className="btn btn-success">&nbsp;&nbsp;&nbsp;No&nbsp;&nbsp;&nbsp;</Link>&nbsp;&nbsp;&nbsp;
-                  </center>
-              </div>
-              <div className="col-sm-3">
-                  <center>
-                    <button onClick={this.props.borrarConciliacion.bind(this)} className="btn btn-danger">&nbsp;&nbsp;&nbsp;Sí&nbsp;&nbsp;&nbsp;</button>
-                  </center>
-              </div>
-              <div className="col-sm-3"></div>
-            </div>
-          </div>
+            </When>
+            <Otherwise>
+              <div>No se encuentra la información del registro</div>
+            </Otherwise>
+          </Choose>
         </div>
     )
   }
