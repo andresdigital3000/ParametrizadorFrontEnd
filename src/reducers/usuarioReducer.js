@@ -6,7 +6,8 @@ import {
   MOVE_PAGE_LAST,
   CARGAR_USUARIOS,
   ACTUALIZA_PAGINADOR_USUARIOS,
-  IR_PAGINA_USUARIOS
+  IR_PAGINA_USUARIOS,
+  CARGA_ROLES
 } from '../actions/const'
 import update from 'react-addons-update'
 
@@ -16,6 +17,7 @@ const initialState = {
   totalRegistros:1,
   textoBuscarUsuarios:"",
   usuarios:[],
+  roles:[],
   paginador: []
 }
 
@@ -36,10 +38,13 @@ export const usuarioReducer = (state = initialState,action) =>{
           paginaActual : {$set: action.pagina}
         })
     case CARGAR_USUARIOS:
-        //console.log("Lista de usuarios: "+ JSON.stringify(action.lista))
         return update(state,{
           usuarios : {$set: action.lista}
         })
+    case CARGA_ROLES:
+      return update(state,{
+        roles: {$set: action.lista}
+      })
     default:
       return state
   }

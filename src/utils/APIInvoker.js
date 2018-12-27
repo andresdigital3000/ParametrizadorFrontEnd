@@ -49,8 +49,7 @@ class APIInvoker {
         "Content-Type":"application/json",
         "Access-Control-Allow-Headers":"*",
         "Access-Control-Allow-Origin":"*",
-        "Access-Control-Allow-Methods":"*",
-        authorization : "Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlcyI6IiIsInN1YiI6ImFkbWluIiwiaXNzIjoicGFyYW1ldHJpemFkb3JDbGFybyIsImlhdCI6MTU0NDIwMDEwOX0.bhMpR7muO6ebXzuKOdnY3s1UfQPiIRWOpLkvjZbkEybFs_n3ZboquLUHc-jt2ErVNFj9de6TnjLQvc5XQWeXlQ"
+        "Access-Control-Allow-Methods":"*"
       },
       body: JSON.stringify(body)
     };

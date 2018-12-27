@@ -20,7 +20,6 @@ const initialState = {
 export const parametroFormReducer = (state = initialState,action) =>{
   switch (action.type) {
     case UPDATE_PARAMETROS_ESCENARIO_FORM_REQUEST:
-        console.log("display 2",action )
         return update(state,{
           escenario: {$set: action.idEscenario},
           escenarioDescripcion: {$set: action.descEscenario}

@@ -18,14 +18,12 @@ const initialState = {
 }
 
 export const conciliacionFormReducer = (state = initialState,action) =>{
-  
   switch (action.type) {
     case UPDATE_CONCILIACIONES_FORM_REQUEST:
         return update(state,{
           [action.field] : {$set: action.value}
         })
     case CARGAR_CONCILIACION_FORM:
-        console.log('CARGAR_CONCILIACION_FORM =>',action)
         if(action.conciliacion[0].transformaciones.length!=0){
           return update(state,{
               id : {$set: action.conciliacion[0].id},

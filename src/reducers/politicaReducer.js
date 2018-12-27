@@ -36,7 +36,6 @@ export const politicaReducer = (state = initialState,action) =>{
           paginaActual : {$set: action.pagina}
         })
     case CARGAR_POLITICAS:
-        //console.log("Lista de politicas: "+ JSON.stringify(action.lista))
         return update(state,{
           politicas : {$set: action.lista}
         })

@@ -42,7 +42,6 @@ export const parametroReducer = (state = initialState,action) =>{
           paginaActual : {$set: action.pagina}
         })
     case CARGAR_PARAMETROS:
-      //console.log("Lista de parametros: "+ JSON.stringify(action.lista))
       return update(state,{
         parametros : {$set: action.lista}
       })

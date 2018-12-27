@@ -49,7 +49,6 @@ export const conciliacionReducer = (state = initialState,action) =>{
           conciliaciones : {$set: action.lista}
         })
       case UPDATE_POLITICA_EN_CONCILIACIONES:
-        console.log("UPDATE_POLITICA_EN_CONCILIACIONES", action)
         return update(state,{
           politica: {$set: action.value}
         })
@@ -57,7 +56,7 @@ export const conciliacionReducer = (state = initialState,action) =>{
         return update(state,{
           politicas: {$set: action.lista}
         })
-        case CARGAR_POLITICA_EN_CONCILIACION:
+      case CARGAR_POLITICA_EN_CONCILIACION:
         return update(state,{
           politica:{$set: action.value}
         })

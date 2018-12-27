@@ -4,6 +4,7 @@ import Toolbar from './Toolbar'
 
 
 import IModal from '../IModal'
+import IModalLoad from '../IModalLoad'
 import Loading from '../politicasModule/Loading.js'
 import { connect } from 'react-redux'
 import { relogin } from '../actions/Actions'
@@ -35,8 +36,6 @@ class AdminThemplete extends React.Component{
 
   initListener() {
     document.body.addEventListener('click', () => this.reset());
-    //document.body.addEventListener('mouseover',()=> this.reset());
-    //document.body.addEventListener('mouseout',() => this.reset());
     document.body.addEventListener('keydown',() => this.reset());
     document.body.addEventListener('keyup',() => this.reset());
     document.body.addEventListener('keypress',() => this.reset());
@@ -65,7 +64,6 @@ class AdminThemplete extends React.Component{
     //console.log("Diferencia " + diff);
     //console.log("Booleano " + isTimeout);
     if (isTimeout) {
-
       // Call here logout function, expire session
       localStorage.clear();
       window.location = '/';
@@ -92,11 +90,12 @@ class AdminThemplete extends React.Component{
     return(
       <div data-reactroot="" className="container-fluid">
           <ToastContainer modal={true} zIndex={9999} hideProgressBar={true} autoClose={5000}/>
+          <IModalLoad/>
           <IModal/>
           <Choose>
             <When condition={this.props.load}>
                 <Toolbar/>
-                {childrenWithProps} 
+                {childrenWithProps}
             </When>
             <Otherwise>
               <Loading/>

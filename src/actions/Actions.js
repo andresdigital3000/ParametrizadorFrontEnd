@@ -1,6 +1,7 @@
 import {
     LOGIN_SUCCESS,
     LOGIN_ERROR,
+    LIMPIAR_FORM_LOGIN,
     SHOW_MODAL,
     HIDE_MODAL,
     UPDATE_LOGIN_FORM_REQUEST,
@@ -79,6 +80,7 @@ import {
     IR_PAGINA_RESULTADOS,
     CARGAR_CONCILIACIONES_RESULTADO,
     CARGAR_USUARIOS,
+    CARGA_ROLES,
     SAVE_USUARIOS,
     UPDATE_USUARIOS_FORM_REQUEST,
     CARGAR_USUARIO_FORM,
@@ -99,16 +101,11 @@ import APIInvoker from '../utils/APIInvoker'
 import { browserHistory } from 'react-router'
 import update from 'react-addons-update'
 import config from '../../config'
-import {
-    ToastContainer,
-    toast,
-    dismiss
-} from 'react-toastify';
+import { ToastContainer, toast, dismiss } from 'react-toastify'
 import IMsg from '../ejecucionModule/IMsg'
 import CryptoJS from 'crypto-js'
 
 var configuration = require('../../config');
-const usarJsonServer = configuration.usarJsonServer
 
 /*
  * A C C I O N E S   D E L   C O M P O N E N T E  L O G I N  F O R M  ILogin
@@ -118,11 +115,17 @@ export const updateLoginForm = (field, value) => (dispatch, getState) => {
 }
 
 export const loginRequest = () => (dispatch, getState) => {
-      
       //Con json server
       if (getState().loginFormReducer.username == "" || getState().loginFormReducer.password == "") {
-        dispatch(loginFailForm('Campos vacíos, verifique'))
+        toast.error("Campos vacíos, verifique", {
+            position: toast.POSITION.BOTTOM_CENTER
+        })
       }else{
+        dispatch(mostrarModalLoad())
+        APIInvoker.invokeGET('/parametros/returnSeed', responseS => {
+          window.localStorage.setItem("seed", responseS.valor)
+        })
+
         if (getState().loginFormReducer.dominio === "Claro"){
           APIInvoker.invokeGET('/parametros/findByAny?texto=LDAPClaro', responseClaro => {
             if (Array.isArray(responseClaro) == true){
@@ -130,35 +133,31 @@ export const loginRequest = () => (dispatch, getState) => {
                 userName : getState().loginFormReducer.username,
                 passWord : getState().loginFormReducer.password,
                 domain : getState().loginFormReducer.dominio,
-                ip : decryptJS(responseClaro[0].valor),
-                port : decryptJS(responseClaro[1].valor),
-                commonName : decryptJS(responseClaro[2].valor),
-                domainGroup : decryptJS(responseClaro[3].valor),
-                organization : decryptJS(responseClaro[4].valor)
+                ip : (responseClaro[0].tipo === "SISTEMA" ? decryptJS(responseClaro[0].valor) : responseClaro[0].valor),
+                port : (responseClaro[1].tipo === "SISTEMA" ? decryptJS(responseClaro[1].valor) : responseClaro[1].valor),
+                commonName : (responseClaro[2].tipo === "SISTEMA" ? decryptJS(responseClaro[2].valor) : responseClaro[2].valor),
+                domainGroup : (responseClaro[3].tipo === "SISTEMA" ? decryptJS(responseClaro[3].valor) : responseClaro[3].valor),
+                organization : (responseClaro[4].tipo === "SISTEMA" ? decryptJS(responseClaro[4].valor) : responseClaro[4].valor)
               }
               APIInvoker.invokePOST_Login('/usuarios/login', credentials, response => {
                 if(response.ok){
+                  dispatch(cerrarModalLoad())
                   window.localStorage.setItem("token",response.headers.get("authorization"))
                   //Obtiene el valor parametrizado del tiempo para cierre de sesion automático
                   APIInvoker.invokeGET('/parametros/findByAny?texto=V_tiempoExpiraSesion', responsetime => {
                       if (Array.isArray(responsetime) == true) {
-                        window.localStorage.setItem("tiempoexpirasesion", decryptJS(responsetime[0].valor))
+                        window.localStorage.setItem("tiempoexpirasesion", (responsetime[0].tipo === "SISTEMA" ? decryptJS(responsetime[0].valor) : responsetime[0].valor))
                         response.json().then(function(result) {
-
-                            window.localStorage.setItem("token",result.token)
-                            console.log("token =>", result.token)
                           //if result.userExist
                           if (result.id != undefined){
                             window.localStorage.setItem("userid", result.id)
                             window.localStorage.setItem("username", result.usuario)
                             window.localStorage.setItem("useremail", result.email)
                             window.localStorage.setItem("nombreUsuario", result.nombreUsuario)
-                            //Roles 0=SinRol 1=Consultor - 2=Ejecutor - 3=Administrador
+                            //Roles SinRol - Consultor - Ejecutor - Administrador
                             if (result.roles.length > 0) {
-                              window.localStorage.setItem("userrol", result.roles[0].id)
                               window.localStorage.setItem("userrolname", result.roles[0].nombre)
                             }else{
-                              window.localStorage.setItem("userrol", "0")
                               window.localStorage.setItem("userrolname", "null")
                             }
 
@@ -171,11 +170,16 @@ export const loginRequest = () => (dispatch, getState) => {
                       }
                   })
                 }else{
-                  localStorage.clear();
-                  dispatch(loginFailForm('Nombre de usuario o contraseña errados'))
+                  dispatch(cerrarModalLoad())
+                  toast.error("Nombre de usuario o contraseña incorrectos, verifique", {
+                      position: toast.POSITION.BOTTOM_CENTER
+                  })
                 }
               }, error => {
-                  dispatch(loginFailForm('NO SE LOGUEO'))
+                  dispatch(cerrarModalLoad())
+                  toast.error("NO SE LOGUEO", {
+                      position: toast.POSITION.BOTTOM_CENTER
+                  })
               })
             }
           })
@@ -186,33 +190,31 @@ export const loginRequest = () => (dispatch, getState) => {
                 userName : getState().loginFormReducer.username,
                 passWord : getState().loginFormReducer.password,
                 domain : getState().loginFormReducer.dominio,
-                ip : decryptJS(responseTelmex[0].valor),
-                port : decryptJS(responseTelmex[1].valor),
-                commonName : decryptJS(responseTelmex[2].valor),
-                domainGroup : decryptJS(responseTelmex[3].valor),
-                organization : decryptJS(responseTelmex[4].valor)
+                ip : (responseTelmex[0].tipo === "SISTEMA" ? decryptJS(responseTelmex[0].valor) : responseTelmex[0].valor),
+                port : (responseTelmex[1].tipo === "SISTEMA" ? decryptJS(responseTelmex[1].valor) : responseTelmex[1].valor),
+                commonName : (responseTelmex[2].tipo === "SISTEMA" ? decryptJS(responseTelmex[2].valor) : responseTelmex[2].valor),
+                domainGroup : (responseTelmex[3].tipo === "SISTEMA" ? decryptJS(responseTelmex[3].valor) : responseTelmex[3].valor),
+                organization : (responseTelmex[4].tipo === "SISTEMA" ? decryptJS(responseTelmex[4].valor) : responseTelmex[4].valor)
               }
               APIInvoker.invokePOST_Login('/usuarios/login', credentials, response => {
                 if(response.ok){
+                  dispatch(cerrarModalLoad())
                   window.localStorage.setItem("token",response.headers.get("authorization"))
                   //Obtiene el valor parametrizado del tiempo para cierre de sesion automático
                   APIInvoker.invokeGET('/parametros/findByAny?texto=V_tiempoExpiraSesion', responsetime => {
                       if (Array.isArray(responsetime) == true) {
-                        window.localStorage.setItem("tiempoexpirasesion", decryptJS(responsetime[0].valor))
+                        window.localStorage.setItem("tiempoexpirasesion", (responsetime[0].tipo === "SISTEMA" ? decryptJS(responsetime[0].valor) : responsetime[0].valor))
                         response.json().then(function(result) {
-                            window.localStorage.setItem("token",result.token)
                           //if result.userExist
                           if (result.id != undefined){
                             window.localStorage.setItem("userid", result.id)
                             window.localStorage.setItem("username", result.usuario)
                             window.localStorage.setItem("useremail", result.email)
                             window.localStorage.setItem("nombreUsuario", result.nombreUsuario)
-                            //Roles 0=SinRol 1=Consultor - 2=Ejecutor - 3=Administrador
+                            //Roles SinRol - Consultor - Ejecutor - Administrador
                             if (result.roles.length > 0) {
-                              window.localStorage.setItem("userrol", result.roles[0].id)
                               window.localStorage.setItem("userrolname", result.roles[0].nombre)
                             }else{
-                              window.localStorage.setItem("userrol", "0")
                               window.localStorage.setItem("userrolname", "null")
                             }
 
@@ -225,11 +227,16 @@ export const loginRequest = () => (dispatch, getState) => {
                       }
                   })
                 }else{
-                  localStorage.clear();
-                  dispatch(loginFailForm('Nombre de usuario o contraseña errados'))
+                  dispatch(cerrarModalLoad())
+                  toast.error("Nombre de usuario o contraseña incorrectos, verifique", {
+                      position: toast.POSITION.BOTTOM_CENTER
+                  })
                 }
               }, error => {
-                  dispatch(loginFailForm('NO SE LOGUEO'))
+                dispatch(cerrarModalLoad())
+                toast.error("NO SE LOGUEO", {
+                    position: toast.POSITION.BOTTOM_CENTER
+                })
               })
             }
           })
@@ -247,6 +254,18 @@ const loginFailForm = (loginMessage) => ({
     type: LOGIN_ERROR,
     loginMessage: loginMessage
 })
+
+export const limpiarFormLogin = () => ({
+  type:LIMPIAR_FORM_LOGIN
+})
+
+export const mostrarModalLoad = () => (dispatch, getState) => {
+    $('#modalLoad').modal('show')
+}
+
+export const cerrarModalLoad = () => (dispatch, getState) => {
+    $('#modalLoad').modal('hide')
+}
 
 export const mostrarModalRegisterUser = () => (dispatch, getState) => {
     $('#modalRegisterUser').modal('show');
@@ -275,7 +294,7 @@ export const ocultarModal = () => ({
 export const getLinkResultados = () => (dispatch, getState) => {
     APIInvoker.invokeGET('/parametros/findByAny?texto=V_Link Resultados', response => {
         if (Array.isArray(response) == true) {
-            dispatch(extraerLinkResultados(decryptJS(response[0].valor)))
+            dispatch(extraerLinkResultados((response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor)))
         }
     })
 }
@@ -314,8 +333,8 @@ export const relogin = () => (dispatch, getState) => {
             window.localStorage.setItem("username", window.localStorage.getItem("username"))
             window.localStorage.setItem("useremail", window.localStorage.getItem("useremail"))
             window.localStorage.setItem("nombreUsuario", window.localStorage.getItem("nombreUsuario"))
-            //Roles 1=Consultor - 2=Ejecutor - 3=Administrador
-            window.localStorage.setItem("userrol", window.localStorage.getItem("userrol"))
+            //Roles SinRol - Consultor - Ejecutor - Administrador
+            //window.localStorage.setItem("userrol", window.localStorage.getItem("userrol"))
             window.localStorage.setItem("userrolname", window.localStorage.getItem("userrolname"))
             dispatch(loginSuccess({"username": window.localStorage.getItem("username")}))
         }
@@ -335,13 +354,13 @@ const logoutRequest = () => ({
 
 //Funcion para encriptar dato
 function encryptJS(dato) {
-  let ciphertext = CryptoJS.AES.encrypt(dato,'ParametrizadorClaro2018_Nitolo').toString()
+  let ciphertext = CryptoJS.AES.encrypt(dato, window.localStorage.getItem("seed")).toString()
   return ciphertext
 }
 
 //Funcion para desencriptar dato
 function decryptJS(ciphertext) {
-  let bytes = CryptoJS.AES.decrypt(ciphertext, 'ParametrizadorClaro2018_Nitolo')
+  let bytes = CryptoJS.AES.decrypt(ciphertext, window.localStorage.getItem("seed"))
   let dato = bytes.toString(CryptoJS.enc.Utf8)
   return dato
 }
@@ -420,17 +439,17 @@ export const updateFormPoliticas = (field, value) => (dispatch, getState) => {
     if (field == "nombre") {
         APIInvoker.invokeGET('/parametros/findByAny?texto=V_Prefijo para politicas', response => {
             if (response[0].valor != undefined) {
-                let long_parametro = decryptJS(response[0].valor).length;
+                let long_parametro = (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor).length;
                 let long_value = value.length;
                 if (long_value == long_parametro + 1) {
                     if (long_parametro >= long_value) {
-                        if (value.substr(0, long_value).toUpperCase() != decryptJS(response[0].valor).substr(0, long_value).toUpperCase()) {
+                        if (value.substr(0, long_value).toUpperCase() != (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor).substr(0, long_value).toUpperCase()) {
                             //toast.error("El nombre de la política debe tener el prefijo - '" + response[0].valor.toUpperCase() + "'", {
                             //    position: toast.POSITION.BOTTOM_RIGHT
                             //})
                         }
                     } else {
-                        if (value.substr(0, long_parametro).toUpperCase() != decryptJS(response[0].valor).substr(0, long_parametro).toUpperCase()) {
+                        if (value.substr(0, long_parametro).toUpperCase() != (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor).substr(0, long_parametro).toUpperCase()) {
                             //toast.error("El nombre de la política debe tener el prefijo - '" + response[0].valor.toUpperCase() + "'", {
                             //    position: toast.POSITION.BOTTOM_RIGHT
                             //})
@@ -456,7 +475,7 @@ export const savePolitica = () => (dispatch, getState) => {
     APIInvoker.invokeGET('/parametros/findByAny?texto=V_Prefijo para politicas', responseval => {
         let politica_salvar = {
             id: getState().politicaFormReducer.id,
-            nombre: decryptJS(responseval[0].valor).toUpperCase() + getState().politicaFormReducer.nombre,
+            nombre: (responseval[0].tipo === "SISTEMA" ? decryptJS(responseval[0].valor) : responseval[0].valor).toUpperCase() + getState().politicaFormReducer.nombre,
             descripcion: getState().politicaFormReducer.descripcion,
             objetivo: getState().politicaFormReducer.objetivo,
             fecha_creacion: '',
@@ -464,7 +483,7 @@ export const savePolitica = () => (dispatch, getState) => {
             username: window.localStorage.getItem("nombreUsuario")
         }
         if (responseval[0].valor != undefined) {
-            let long_parametro = decryptJS(responseval[0].valor).length;
+            let long_parametro = (responseval[0].tipo === "SISTEMA" ? decryptJS(responseval[0].valor) : responseval[0].valor).length;
             if (id_politica == 0 || id_politica == undefined) {
                 APIInvoker.invokePOST('/politicas', politica_salvar, response => {
                     if (response.ok) {
@@ -485,7 +504,7 @@ export const savePolitica = () => (dispatch, getState) => {
             } else {
                     let politica_salvar = {
                         id: getState().politicaFormReducer.id,
-                        nombre: decryptJS(responseval[0].valor).toUpperCase() + getState().politicaFormReducer.nombre,
+                        nombre: (responseval[0].tipo === "SISTEMA" ? decryptJS(responseval[0].valor) : responseval[0].valor).toUpperCase() + getState().politicaFormReducer.nombre,
                         descripcion: getState().politicaFormReducer.descripcion,
                         objetivo: getState().politicaFormReducer.objetivo,
                         fecha_creacion: '',
@@ -844,17 +863,17 @@ export const updateFormConciliaciones = (field, value) => (dispatch, getState) =
     if (field == "nombre") {
         APIInvoker.invokeGET('/parametros/findByAny?texto=V_Prefijo para conciliaciones', response => {
             if (response[0].valor != undefined) {
-                let long_parametro = decryptJS(response[0].valor).length;
+                let long_parametro = (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor).length;
                 let long_value = value.length;
                 if (long_value == long_parametro + 1) {
                     if (long_parametro >= long_value) {
-                        if (value.substr(0, long_value).toUpperCase() != decryptJS(response[0].valor).substr(0, long_value).toUpperCase()) {
+                        if (value.substr(0, long_value).toUpperCase() != (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor).substr(0, long_value).toUpperCase()) {
                             //toast.error("El nombre de la conciliación debe tener el prefijo - '" + response[0].valor.toUpperCase() + "'", {
                             //    position: toast.POSITION.BOTTOM_RIGHT
                             //})
                         }
                     } else {
-                        if (value.substr(0, long_parametro).toUpperCase() != decryptJS(response[0].valor).substr(0, long_parametro).toUpperCase()) {
+                        if (value.substr(0, long_parametro).toUpperCase() != (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor).substr(0, long_parametro).toUpperCase()) {
                             //toast.error("El nombre de la conciliación debe tener el prefijo - '" + response[0].valor.toUpperCase() + "'", {
                             //    position: toast.POSITION.BOTTOM_RIGHT
                             //})
@@ -881,12 +900,12 @@ export const saveConciliacion = () => (dispatch, getState) => {
     if (emailRegex.test(email)) {
         APIInvoker.invokeGET('/parametros/findByAny?texto=V_Prefijo para conciliaciones', responseval => {
             if (responseval[0].valor != undefined) {
-                let long_parametro = decryptJS(responseval[0].valor).length;
+                let long_parametro = (responseval[0].tipo === "SISTEMA" ? decryptJS(responseval[0].valor) : responseval[0].valor).length;
                 if (id_conciliacion == 0 || id_conciliacion == undefined) {
                     //Si es un registro nuevo
                     let conciliacion_salvar = {
                         id: getState().conciliacionFormReducer.id,
-                        nombre: decryptJS(responseval[0].valor).toUpperCase() + getState().conciliacionFormReducer.nombre,
+                        nombre: (responseval[0].tipo === "SISTEMA" ? decryptJS(responseval[0].valor) : responseval[0].valor).toUpperCase() + getState().conciliacionFormReducer.nombre,
                         descripcion: getState().conciliacionFormReducer.descripcion,
                         usuarioAsignado: getState().conciliacionFormReducer.emailasignado,
                         requiereAprobacion: getState().conciliacionFormReducer.requiereAprobacion,
@@ -913,29 +932,29 @@ export const saveConciliacion = () => (dispatch, getState) => {
                     })
                     //dispatch(antesLimpiarFormConciliacion())
                 } else {
-                    //Si es un registro existente
-                    let idPoliticaGrabar = 0
-                    let nombrePoliticaGrabar = "Ninguna"
-                    if (getState().conciliacionReducer.politica.id == 0) {
-                        idPoliticaGrabar = getState().conciliacionFormReducer.idPolitica
-                        nombrePoliticaGrabar = getState().conciliacionFormReducer.nombrePolitica
-                    } else {
-                        idPoliticaGrabar = getState().conciliacionReducer.politica.id
-                        nombrePoliticaGrabar = getState().conciliacionReducer.politica.nombre
-                    }
-                    let conciliacion_salvar = {
-                        id: getState().conciliacionFormReducer.id,
-                        nombre: decryptJS(responseval[0].valor).toUpperCase() + getState().conciliacionFormReducer.nombre,
-                        descripcion: getState().conciliacionFormReducer.descripcion,
-                        usuarioAsignado: getState().conciliacionFormReducer.emailasignado,
-                        requiereAprobacion: getState().conciliacionFormReducer.requiereAprobacion,
-                        idPolitica: idPoliticaGrabar,
-                        nombrePolitica: nombrePoliticaGrabar,
-                        paquete: getState().conciliacionFormReducer.webservice,
-                        tablaDestino: getState().conciliacionFormReducer.tablaDestino,
-                        username: window.localStorage.getItem("nombreUsuario")
-                    }
-                    APIInvoker.invokePUT('/conciliaciones', conciliacion_salvar, response => {
+                        //Si es un registro existente
+                        let idPoliticaGrabar = 0
+                        let nombrePoliticaGrabar = "Ninguna"
+                        if (getState().conciliacionReducer.politica.id == 0) {
+                            idPoliticaGrabar = getState().conciliacionFormReducer.idPolitica
+                            nombrePoliticaGrabar = getState().conciliacionFormReducer.nombrePolitica
+                        } else {
+                            idPoliticaGrabar = getState().conciliacionReducer.politica.id
+                            nombrePoliticaGrabar = getState().conciliacionReducer.politica.nombre
+                        }
+                        let conciliacion_salvar = {
+                            id: getState().conciliacionFormReducer.id,
+                            nombre: (responseval[0].tipo === "SISTEMA" ? decryptJS(responseval[0].valor) : responseval[0].valor).toUpperCase() + getState().conciliacionFormReducer.nombre,
+                            descripcion: getState().conciliacionFormReducer.descripcion,
+                            usuarioAsignado: getState().conciliacionFormReducer.emailasignado,
+                            requiereAprobacion: getState().conciliacionFormReducer.requiereAprobacion,
+                            idPolitica: idPoliticaGrabar,
+                            nombrePolitica: nombrePoliticaGrabar,
+                            paquete: getState().conciliacionFormReducer.webservice,
+                            tablaDestino: getState().conciliacionFormReducer.tablaDestino,
+                            username: window.localStorage.getItem("nombreUsuario")
+                        }
+                        APIInvoker.invokePUT('/conciliaciones', conciliacion_salvar, response => {
                         if(response.ok){
                             dispatch(limpiarFormConciliacion())
                             dispatch(refreshListConciliacion())
@@ -945,10 +964,7 @@ export const saveConciliacion = () => (dispatch, getState) => {
                             toast.error(response.description, {
                                 position: toast.POSITION.BOTTOM_RIGHT
                             })
-                        }
-                    }, error => {
-                        console.log('No se ha podido actualizar la conciliacion')
-                    })
+                   
                 }
             }
         })
@@ -1220,17 +1236,17 @@ export const updateFormEscenarios = (field, value) => (dispatch, getState) => {
     if (field == "nombre") {
         APIInvoker.invokeGET('/parametros/findByAny?texto=V_Prefijo para escenarios', response => {
             if (response[0].valor != undefined) {
-                let long_parametro = decryptJS(response[0].valor).length;
+                let long_parametro = (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor).length;
                 let long_value = value.length;
                 if (long_value == long_parametro + 1) {
                     if (long_parametro >= long_value) {
-                        if (value.substr(0, long_value).toUpperCase() != decryptJS(response[0].valor).substr(0, long_value).toUpperCase()) {
+                        if (value.substr(0, long_value).toUpperCase() != (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor).substr(0, long_value).toUpperCase()) {
                             //toast.error("El nombre del escenario debe tener el prefijo -'" + response[0].valor.toUpperCase() + "'", {
                             //    position: toast.POSITION.BOTTOM_RIGHT
                             //})
                         }
                     } else {
-                        if (value.substr(0, long_parametro).toUpperCase() != decryptJS(response[0].valor).substr(0, long_parametro).toUpperCase()) {
+                        if (value.substr(0, long_parametro).toUpperCase() != (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor).substr(0, long_parametro).toUpperCase()) {
                             //toast.error("El nombre del escenario debe tener el prefijo -'" + response[0].valor.toUpperCase() + "'", {
                             //    position: toast.POSITION.BOTTOM_RIGHT
                             //})
@@ -1253,11 +1269,11 @@ export const saveEscenario = () => (dispatch, getState) => {
     let id_escenario = getState().escenarioFormReducer.id
     APIInvoker.invokeGET('/parametros/findByAny?texto=V_Prefijo para escenarios', responseval => {
         if (responseval[0].valor != undefined) {
-            let long_parametro = decryptJS(responseval[0].valor).length;
+            let long_parametro = (responseval[0].tipo === "SISTEMA" ? decryptJS(responseval[0].valor) : responseval[0].valor).length;
                 if (id_escenario == 0 || id_escenario == undefined) {
                     //Si es un escenario nuevo
                     let escenario_salvar = {
-                        nombre: decryptJS(responseval[0].valor).toUpperCase() + getState().escenarioFormReducer.nombre,
+                        nombre: (responseval[0].tipo === "SISTEMA" ? decryptJS(responseval[0].valor) : responseval[0].valor).toUpperCase() + getState().escenarioFormReducer.nombre,
                         impacto: getState().escenarioFormReducer.impacto,
                         idConciliacion: getState().escenarioFormReducer.conciliacion,
                         descripcion: getState().escenarioFormReducer.descripcion,
@@ -1281,7 +1297,7 @@ export const saveEscenario = () => (dispatch, getState) => {
                 } else {
                     let escenario_salvar = {
                         id: getState().escenarioFormReducer.id,
-                        nombre: decryptJS(responseval[0].valor).toUpperCase() + getState().escenarioFormReducer.nombre,
+                        nombre: (responseval[0].tipo === "SISTEMA" ? decryptJS(responseval[0].valor) : responseval[0].valor).toUpperCase() + getState().escenarioFormReducer.nombre,
                         impacto: getState().escenarioFormReducer.impacto,
                         idConciliacion: getState().escenarioFormReducer.conciliacion,
                         nombreConciliacion: getState().escenarioFormReducer.nombreConciliacion,
@@ -1351,7 +1367,7 @@ export const cargarImpactos = () => (dispatch, getState) => {
     APIInvoker.invokeGET('/parametros/findByAny?texto=V_Impacto', response => {
         let array_opciones = new Array()
         if (response[0].valor != undefined) {
-            array_opciones = decryptJS(response[0].valor).split(';');
+            array_opciones = (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor).split(';');
             dispatch(cargarImpactosCombo(array_opciones))
         }
     })
@@ -1460,11 +1476,11 @@ export const doEjecutarConciliacion = () => (dispatch, getState) => {
       if (idPlanInstancia == 0) {
           //Construir petición json para Backend
           let startEjecucion = {
-              "odiUser": decryptJS(responseOdi[1].valor),
-              "odiPassword": decryptJS(responseOdi[2].valor),
-              "workRepository": decryptJS(responseOdi[3].valor),
+              "odiUser": (responseOdi[1].tipo === "SISTEMA" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
+              "odiPassword": (responseOdi[2].tipo === "SISTEMA" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
+              "workRepository": (responseOdi[3].tipo === "SISTEMA" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
               "loadPlanName": paqueteAsociado,
-              "contexto": decryptJS(responseOdi[4].valor),
+              "contexto": (responseOdi[4].tipo === "SISTEMA" ? decryptJS(responseOdi[4].valor) : responseOdi[4].valor),
               "params": [{
                       "nombre": "GLOBAL.V_CTL_PAQUETE",
                       "valor": "JP_NO_EXISTE"
@@ -1536,9 +1552,9 @@ export const doEjecutarConciliacion = () => (dispatch, getState) => {
       } else {
           //Consultar ejecución actual
           let consultarEjecucion = {
-              "odiUser": decryptJS(responseOdi[1].valor),
-              "odiPassword": decryptJS(responseOdi[2].valor),
-              "workRepository": decryptJS(responseOdi[3].valor),
+              "odiUser": (responseOdi[1].tipo === "SISTEMA" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
+              "odiPassword": (responseOdi[2].tipo === "SISTEMA" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
+              "workRepository": (responseOdi[3].tipo === "SISTEMA" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
               "loadPlans": [{
                   "loadPlanInstanceId": idPlanInstancia,
                   "loadPlanRunNumber": configuration.webService.runCount
@@ -1554,11 +1570,11 @@ export const doEjecutarConciliacion = () => (dispatch, getState) => {
                   if (response[0].LoadPlanStatus != "R") {
                       //Construir petición json para Backend
                       let startEjecucion = {
-                          "odiUser": decryptJS(responseOdi[1].valor),
-                          "odiPassword": decryptJS(responseOdi[2].valor),
-                          "workRepository": decryptJS(responseOdi[3].valor),
+                          "odiUser": (responseOdi[1].tipo === "SISTEMA" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
+                          "odiPassword": (responseOdi[2].tipo === "SISTEMA" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
+                          "workRepository": (responseOdi[3].tipo === "SISTEMA" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
                           "loadPlanName": paqueteAsociado,
-                          "contexto": decryptJS(responseOdi[4].valor),
+                          "contexto": (responseOdi[4].tipo === "SISTEMA" ? decryptJS(responseOdi[4].valor) : responseOdi[4].valor),
                           "params": [{
                                   "nombre": "GLOBAL.V_CTL_PAQUETE",
                                   "valor": "JP_NO_EXISTE"
@@ -1658,9 +1674,9 @@ export const doCancelarConciliacion = () => (dispatch, getState) => {
     if (idPlanInstancia && idPlanInstancia != 0) {
         //Construir petición json para Backend
         let consultarEjecucion = {
-            "odiUser": decryptJS(responseOdi[1].valor),
-            "odiPassword": decryptJS(responseOdi[2].valor),
-            "workRepository": decryptJS(responseOdi[3].valor),
+            "odiUser": (responseOdi[1].tipo === "SISTEMA" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
+            "odiPassword": (responseOdi[2].tipo === "SISTEMA" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
+            "workRepository": (responseOdi[3].tipo === "SISTEMA" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
             "loadPlans": [{
                 "loadPlanInstanceId": idPlanInstancia,
                 "loadPlanRunNumber": configuration.webService.runCount
@@ -1679,9 +1695,9 @@ export const doCancelarConciliacion = () => (dispatch, getState) => {
                 if (response[0].LoadPlanStatus == "R") {
                     //Construir petición json para Backend
                     let stopEjecucion = {
-                        "odiUser": decryptJS(responseOdi[1].valor),
-                        "odiPassword": decryptJS(responseOdi[2].valor),
-                        "workRepository": decryptJS(responseOdi[3].valor),
+                        "odiUser": (responseOdi[1].tipo === "SISTEMA" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
+                        "odiPassword": (responseOdi[2].tipo === "SISTEMA" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
+                        "workRepository": (responseOdi[3].tipo === "SISTEMA" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
                         "loadPlanInstance": idPlanInstancia,
                         "stopLevel": configuration.webService.stopLevel
                     }
@@ -1931,7 +1947,7 @@ export const aprobarRenglonResultado = (idRenglon) => (dispatch, getState) => {
     let paqueteAsociado = 0
     APIInvoker.invokeGET('/parametros/findByAny?texto=V_Paquete aprobado', response => {
         if (response[0].valor != undefined) {
-            let paqueteAsociado = decryptJS(response[0].valor)
+            let paqueteAsociado = (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor)
 
             //Obtiene los valores ODI de tabla Parametros
             APIInvoker.invokeGET('/odiRest/getOdiParametros', responseOdi => {
@@ -1941,11 +1957,11 @@ export const aprobarRenglonResultado = (idRenglon) => (dispatch, getState) => {
                       let paramCodConciliacion = responseResConciliacion.codConciliacion
                       let paramIdEjecucion = responseResConciliacion.idEjecucion
                       let startEjecucion = {
-                          "odiUser": decryptJS(responseOdi[1].valor),
-                          "odiPassword": decryptJS(responseOdi[2].valor),
-                          "workRepository": decryptJS(responseOdi[3].valor),
+                        "odiUser": (responseOdi[1].tipo === "SISTEMA" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
+                        "odiPassword": (responseOdi[2].tipo === "SISTEMA" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
+                        "workRepository": (responseOdi[3].tipo === "SISTEMA" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
                           "loadPlanName": paqueteAsociado,
-                          "contexto": decryptJS(responseOdi[4].valor),
+                          "contexto": (responseOdi[4].tipo === "SISTEMA" ? decryptJS(responseOdi[4].valor) : responseOdi[4].valor),
                           "params": [{
                                   "nombre": "PRY_GAI.V_0553_COD_CONCILIACION",
                                   "valor": paramCodConciliacion
@@ -2008,27 +2024,27 @@ export const rechazarRenglonResultado = (idRenglon) => (dispatch, getState) => {
     let paqueteAsociado = 0
     APIInvoker.invokeGET('/parametros/findByAny?texto=V_Paquete no aprobado', response => {
         if (response[0].valor != undefined) {
-            let paqueteAsociado = decryptJS(response[0].valor)
+            let paqueteAsociado = (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor)
             //Obtiene los valores ODI de tabla Parametros
             APIInvoker.invokeGET('/odiRest/getOdiParametros', responseOdi => {
               //Construir petición json para Backend
               let startEjecucion = {
-                  "odiUser": decryptJS(responseOdi[1].valor),
-                  "odiPassword": decryptJS(responseOdi[2].valor),
-                  "workRepository": decryptJS(responseOdi[3].valor),
+                  "odiUser": (responseOdi[1].tipo === "SISTEMA" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
+                  "odiPassword": (responseOdi[2].tipo === "SISTEMA" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
+                  "workRepository": (responseOdi[3].tipo === "SISTEMA" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
                   "loadPlanName": paqueteAsociado,
-                  "contexto": decryptJS(responseOdi[4].valor)
+                  "contexto": (responseOdi[4].tipo === "SISTEMA" ? decryptJS(responseOdi[4].valor) : responseOdi[4].valor),
               }
               if (paqueteAsociado != 0) {
                   APIInvoker.invokeGET('/resconciliacion/' + idRenglon, responseResConciliacion => {
                       let paramCodConciliacion = responseResConciliacion.codConciliacion
                       let paramIdEjecucion = responseResConciliacion.idEjecucion
                       let startEjecucion = {
-                          "odiUser": decryptJS(responseOdi[1].valor),
-                          "odiPassword": decryptJS(responseOdi[2].valor),
-                          "workRepository": decryptJS(responseOdi[3].valor),
+                          "odiUser": (responseOdi[1].tipo === "SISTEMA" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
+                          "odiPassword": (responseOdi[2].tipo === "SISTEMA" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
+                          "workRepository": (responseOdi[3].tipo === "SISTEMA" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
                           "loadPlanName": paqueteAsociado,
-                          "contexto": decryptJS(responseOdi[4].valor),
+                          "contexto": (responseOdi[4].tipo === "SISTEMA" ? decryptJS(responseOdi[4].valor) : responseOdi[4].valor),
                           "params": [{
                                   "nombre": "PRY_GAI.V_0553_COD_CONCILIACION",
                                   "valor": paramCodConciliacion
@@ -2315,7 +2331,6 @@ export const cargarIndicador = (idindicador) => (dispatch, getState) => {
         if (Array.isArray(response) == true) {
             if (response[0].id != undefined) {
                 //if(response[0].idEscenario!=undefined){
-                console.log("CARGAR PARAMETROS ==> de escenario" + response[0].idEscenario)
                 dispatch(cargarComboParametros(response[0].idEscenario))
                 //}
                 dispatch(cargarIndicadorEnForm(response[0]))
@@ -2328,7 +2343,6 @@ export const cargarIndicador = (idindicador) => (dispatch, getState) => {
         } else {
             if (response.id != undefined) {
                 if (response.idEscenario != undefined) {
-                    console.log("CARGAR PARAMETROS ==> de escenario" + response.idEscenario)
                     dispatch(cargarComboParametros(response.idEscenario))
                 }
                 dispatch(cargarIndicadorEnForm([response]))
@@ -2475,7 +2489,7 @@ export const findTextParametro = () => (dispatch, getState) => {
                       id: responseI.id,
                       parametro: responseI.parametro,
                       tipo: responseI.tipo,
-                      valor: decryptJS(responseI.valor)
+                      valor: (responseI.tipo === "SISTEMA" ? decryptJS(responseI.valor) : responseI.valor)
                     }
                     return devolver;
                 });
@@ -2496,7 +2510,7 @@ export const findTextParametro = () => (dispatch, getState) => {
                     id: response.id,
                     parametro: response.parametro,
                     tipo: response.tipo,
-                    valor: decryptJS(response.valor)
+                    valor: (response.tipo === "SISTEMA" ? decryptJS(response.valor) : response.valor)
                   }
                   dispatch(verParametros(responseDecrypt))
               } else {
@@ -2605,7 +2619,7 @@ export const refreshListParametro = (resp) => (dispatch, getState) => {
                           id: response.id,
                           parametro: response.parametro,
                           tipo: response.tipo,
-                          valor: decryptJS(response.valor)
+                          valor: (response.tipo === "SISTEMA" ? decryptJS(response.valor) : response.valor)
                         }
                         return devolver;
                     });
@@ -2626,7 +2640,7 @@ export const refreshListParametro = (resp) => (dispatch, getState) => {
                       id: response1.id,
                       parametro: response1.parametro,
                       tipo: response1.tipo,
-                      valor: decryptJS(response1.valor)
+                      valor: (response1.tipo === "SISTEMA" ? decryptJS(response1.valor) : response1.valor)
                     }
                     dispatch(antesVerParametros([response1Decrypt]))
                 } else {
@@ -2651,7 +2665,7 @@ export const refreshListParametro = (resp) => (dispatch, getState) => {
                           id: responseI.id,
                           parametro: responseI.parametro,
                           tipo: responseI.tipo,
-                          valor: decryptJS(responseI.valor)
+                          valor: (responseI.tipo === "SISTEMA" ? decryptJS(responseI.valor) : responseI.valor)
                         }
                         return devolver;
                     });
@@ -2670,7 +2684,7 @@ export const refreshListParametro = (resp) => (dispatch, getState) => {
                       id: response.id,
                       parametro: response.parametro,
                       tipo: response.tipo,
-                      valor: decryptJS(response.valor)
+                      valor: (response.tipo === "SISTEMA" ? decryptJS(response.valor) : response.valor)
                     }
                     dispatch(verParametros([responseDecrypt]))
                 } else {
@@ -2722,8 +2736,8 @@ export const saveParametro = () => (dispatch, getState) => {
     APIInvoker.invokeGET('/parametros/findByAny?texto=V_Prefijo para parametros', responseval => {
         let parametro_salvar = {
             id: getState().parametroFormReducer.id,
-            parametro: decryptJS(responseval[0].valor).toUpperCase() + getState().parametroFormReducer.parametro,
-            valor: encryptJS(getState().parametroFormReducer.valor),
+            parametro: (responseval[0].tipo === "SISTEMA" ? decryptJS(responseval[0].valor) : responseval[0].valor).toUpperCase() + getState().parametroFormReducer.parametro,
+            valor: (getState().parametroFormReducer.tipo === "SISTEMA" ? encryptJS(getState().parametroFormReducer.valor) : getState().parametroFormReducer.valor),
             descripcion: getState().parametroFormReducer.descripcion,
             tipo: getState().parametroFormReducer.tipo,
             codPadre: codPadre,
@@ -2783,7 +2797,7 @@ export const cargarParametro = (idparametro) => (dispatch, getState) => {
                       id: responseI.id,
                       parametro: responseI.parametro,
                       tipo: responseI.tipo,
-                      valor: decryptJS(responseI.valor)
+                      valor: (responseI.tipo === "SISTEMA" ? decryptJS(responseI.valor) : responseI.valor)
                     }
                     return devolver;
                 });
@@ -2804,7 +2818,7 @@ export const cargarParametro = (idparametro) => (dispatch, getState) => {
                   id: response.id,
                   parametro: response.parametro,
                   tipo: response.tipo,
-                  valor: decryptJS(response.valor)
+                  valor: (response.tipo === "SISTEMA" ? decryptJS(response.valor) : response.valor)
                 }
                 dispatch(cargarParametroEnForm([responseDecrypt]))
             } else {
@@ -3104,7 +3118,7 @@ export const updateFormQuerys = (field, value) => (dispatch, getState) => {
     if (field == "query") {
         APIInvoker.invokeGET('/parametros/findByAny?texto=V_Palabras restringidas en queries', response => {
             if (response[0].valor != undefined) {
-                let array_restringidas = decryptJS(response[0].valor).split(';');
+                let array_restringidas = (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor).split(';');
                 let palabras_usadas = value.split(' ');
                 let palabras_prohibidas = 0;
                 for (var i = 0; i < array_restringidas.length; i++) {
@@ -3116,7 +3130,7 @@ export const updateFormQuerys = (field, value) => (dispatch, getState) => {
                 }
                 if (palabras_prohibidas > 0) {
                     toast.dismiss()
-                    toast.error("No use : '" + decryptJS(response[0].valor) + "'", {
+                    toast.error("No use : '" + (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor) + "'", {
                         position: toast.POSITION.BOTTOM_RIGHT
                     })
                 }
@@ -3145,7 +3159,7 @@ export const saveQuery = () => (dispatch, getState) => {
     let id_query = getState().queryFormReducer.id
     APIInvoker.invokeGET('/parametros/findByAny?texto=V_Palabras restringidas en queries', response => {
         if (response[0].valor != undefined) {
-            let array_restringidas = decryptJS(response[0].valor).split(';');
+            let array_restringidas = (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor).split(';');
             let palabras_usadas = getState().queryFormReducer.query.split(' ');
             let palabras_prohibidas = 0;
             for (var i = 0; i < array_restringidas.length; i++) {
@@ -3156,7 +3170,7 @@ export const saveQuery = () => (dispatch, getState) => {
                 }
             }
             if (palabras_prohibidas > 0) {
-                toast.error("Está usando palabras prohibidas en el query : '" + decryptJS(response[0].valor) + "'", {
+                toast.error("Está usando palabras prohibidas en el query : '" + (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor) + "'", {
                     position: toast.POSITION.BOTTOM_RIGHT
                 })
             } else {
@@ -3454,6 +3468,26 @@ export const findTextUsuario = () => (dispatch, getState) => {
   }
 }
 
+//Funcion que carga el combo de roles
+export const cargarComboRoles = () => (dispatch, getState) => {
+    APIInvoker.invokeGET('/usuarios/getRoles', response => {
+        if (Array.isArray(response) == true) {
+            if (response[0].id != undefined) {
+                dispatch(cargarRoles(response))
+            } else {
+                toast.info("No se encuentran Roles", {
+                    position: toast.POSITION.BOTTOM_RIGHT
+                })
+            }
+        }
+    })
+}
+//Envia resultado para llenar el combo a UsuarioReducer
+const cargarRoles = (arrayRoles) => ({
+    type: CARGA_ROLES,
+    lista: arrayRoles
+})
+
 //Recalcular el paginador de usuario
 export const calculaPaginadorUsuarios = () => (dispatch, getState) => {
     let numregs = 0
@@ -3478,8 +3512,6 @@ export const calculaPaginadorUsuarios = () => (dispatch, getState) => {
                 })
                 offset = regfin + 1
             }
-            //console.log("Variable de paginador ==>")
-            //console.log(array_paginador)
             //preparar variable para Enviar
             let update_paginador = {
                 totalRegistros: numregs,
@@ -3500,6 +3532,7 @@ const actualizarPaginadorUsuarios = (array_paginador) => ({
 
 //Actualizar el listado de usuarios
 export const refreshListUsuario = (resp) => (dispatch, getState) => {
+  dispatch(cargarComboRoles())
     //Igual para jsonserver o API
     let objetoVacio = new Object()
     if (resp == null) {
@@ -3582,13 +3615,18 @@ export const saveUsuario = () => (dispatch, getState) => {
           usuario: getState().loginFormReducer.username,
           email: getState().usuarioFormReducer.email,
           nombreUsuario: getState().usuarioFormReducer.nombreUsuario,
-          fechaCreacion: '',
-          fechaActualizacion: '',
+          fecha_creacion: '',
+          fecha_actualizacion: '',
           username: getState().loginFormReducer.username
       }
       APIInvoker.invokePOST('/usuarios', usuario_salvar, response => {
-          if (response.id != undefined) {
-              $('#modalRegisterUser').modal('hide');
+          if (response.fechaCreacion != undefined) {
+              $('#modalRegisterUser').modal('hide')
+              $('#modalLoad').modal('hide')
+              dispatch(limpiarFormUsuario())
+              dispatch(limpiarFormLogin())
+              localStorage.clear();
+              browserHistory.push('/admin')
               dispatch(mostrarModal("alert alert-success", "Registro Exitoso. Bienvenido Usuario " + usuario_salvar.usuario + ". Por favor solicite asignación de rol a un administrador y vuelva a ingresar "))
           } else {
               //Enviar error específico a la consola
@@ -3619,8 +3657,6 @@ export const saveUsuario = () => (dispatch, getState) => {
         email: getState().usuarioFormReducer.email,
         nombreUsuario: getState().usuarioFormReducer.nombreUsuario,
         idrol: getState().usuarioFormReducer.rol,
-        fechaCreacion: '',
-        fechaActualizacion: '',
         username: window.localStorage.getItem("nombreUsuario")
     }
     APIInvoker.invokePUT('/usuarios', usuario_salvar, response => {
