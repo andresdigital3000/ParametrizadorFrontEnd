@@ -1,9 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import APIInvoker from '../utils/APIInvoker'
-import IPoliticaList from './IPoliticaList'
-import IPoliticaFinder from './IPoliticaFinder'
-import IPoliticaPaginador from './IPoliticaPaginador'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import IPoliticaForm from './IPoliticaForm'
 import ReactTable from "react-table"
@@ -25,6 +22,10 @@ class IPolitica extends React.Component{
     }
   }
 
+  clearFilters(){
+    window.location = '/politicas';  
+  }
+
   render(){
     return(
         <div className="container">
@@ -35,9 +36,7 @@ class IPolitica extends React.Component{
             </div>
             <div className="row">
               <div className="col-sm-4">
-                <If condition={this.props.registro==undefined}>
-                    <button className="btn btn-primary" data-toggle="modal" data-target="#modalAdd"><i className="fa fa-plus-circle"/> Adicionar</button>
-                </If>
+                  <button className="btn btn-primary" data-toggle="modal" data-target="#modalAdd"><i className="fa fa-plus-circle"/> Adicionar</button>
               </div>
               <div className="col-sm-4">
                 <center>
@@ -45,6 +44,11 @@ class IPolitica extends React.Component{
                 </center>
               </div>
               <div className="col-sm-4">
+                <If condition={this.props.params.idpolitica} >
+                  <div style={{textAlign: 'right'}}>
+                    <button className="btn btn-primary" data-toggle="modal" onClick={() => this.clearFilters()}><i className="fa fa-eraser"/> Limpiar filtros</button>
+                  </div>
+                </If>
               </div>
             </div>
             <div className="row-fluid">
@@ -100,6 +104,7 @@ class IPolitica extends React.Component{
                       Header: "ACCIONES",
                       accessor: 'id',
                       filterable: false,
+                      sortable: false,
                       Cell: row => (
                           <div style={{textAlign: 'center'}}>
                             <Link to={`/politicas/edit/${row.value}`} className="btn btn-info" style={{marginRight: '10px'}}><i className="fa fa-pencil"/></Link>

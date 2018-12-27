@@ -1,11 +1,5 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import APIInvoker from '../utils/APIInvoker'
-import IEscenarioList from './IEscenarioList'
-import IEscenarioFinder from './IEscenarioFinder'
-import IEscenarioPaginador from './IEscenarioPaginador'
 import IEscenarioForm from './IEscenarioForm'
-import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { connect } from 'react-redux'
 import { updConciliacion,findTextEscenario,refreshListEscenario,cargarComboConciliaciones,calculaPaginadorEscenarios, cambioConciliacionesEscenario, cargarConciliacionesEscenario, cargarImpactos } from '../actions/Actions';
 import ReactTable from "react-table"
@@ -47,6 +41,10 @@ class IEscenario extends React.Component{
     this.props.updConciliacion(e.target.value)
   }
 
+  clearFilters(){
+    window.location = '/escenarios';  
+  }
+
   render(){
     return(
         <div className="container">
@@ -67,10 +65,16 @@ class IEscenario extends React.Component{
                 </center>
               </div>
               <div className="col-sm-4">
+                <If condition={this.props.params.id} >
+                  <div style={{textAlign: 'right'}}>
+                  <button className="btn btn-primary" data-toggle="modal" onClick={() => this.clearFilters()}><i className="fa fa-eraser"/> Limpiar filtros</button>
+                  </div>
+                </If>
               </div>
             </div>
             <div className="row">
               <div className="col-sm-4">
+                
               </div>
             </div>
 
@@ -153,6 +157,7 @@ class IEscenario extends React.Component{
                     Header: "ACCIONES",
                     accessor: 'id',
                     filterable: false,
+                    sortable: false,
                     Cell: row => (
                         <div style={{textAlign: 'center'}}>
                           <Link to={"/escenarios/edit/"+row.value} className="btn btn-info"  style={{marginRight: '10px'}}><i className="fa fa-pencil"/></Link>

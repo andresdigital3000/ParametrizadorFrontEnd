@@ -1,14 +1,7 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import APIInvoker from '../utils/APIInvoker'
-import IResultadoList from './IResultadoList'
-import IResultadoFinder from './IResultadoFinder'
-import IResultadoPaginador from './IResultadoPaginador'
-import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { connect } from 'react-redux'
 import { aprobarRenglonResultado, rechazarRenglonResultado,refreshListResultado,cargarComboConciliaciones, cambioConciliacionesResultado, cargarConciliacionesResultado } from '../actions/Actions';
 import ReactTable from "react-table"
-import {Link} from 'react-router'
 
 class IResultado extends React.Component{
   constructor(){
@@ -124,10 +117,11 @@ class IResultado extends React.Component{
                     Header: "ACCIONES",
                     accessor: 'id',
                     filterable: false,
+                    sortable: false,
                     Cell: row => (
                         <div style={{textAlign: 'center'}}>
-                          <a href="#" onClick={this.aprobarRenglon.bind(this,row.value)} className="btn btn-info" style={{marginRight: '10px'}}><i className="fa fa-check"/></a>
-                          <a href="#" onClick={this.rechazarRenglon.bind(this,row.value)} className="btn btn-danger"><i className="fa fa-close"/></a>
+                          <a title="Aprobar" href="#" onClick={this.aprobarRenglon.bind(this,row.value)} className="btn btn-info" style={{marginRight: '10px'}}><i className="fa fa-check"/></a>
+                          <a title="Rechazar" href="#" onClick={this.rechazarRenglon.bind(this,row.value)} className="btn btn-danger"><i className="fa fa-close"/></a>
                         </div>
                     )
                   }
@@ -139,9 +133,6 @@ class IResultado extends React.Component{
               <div className="col-sm-1">
               </div>
               <div className="col-sm-4">
-                <center>
-                  <IResultadoPaginador/>
-                </center>
               </div>
               <div className="col-sm-1">
               </div>

@@ -22,7 +22,6 @@ const initialState = {
 }
 
 export const conciliacionReducer = (state = initialState,action) =>{
-  console.log('conciliacionReducer => ', action)
   switch (action.type) {
       case CARGAR_CONCILIACION_FORM_2:
       return update(state,{

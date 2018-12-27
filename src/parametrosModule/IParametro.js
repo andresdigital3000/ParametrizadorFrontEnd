@@ -1,10 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import APIInvoker from '../utils/APIInvoker'
-import IParametroList from './IParametroList'
-import IParametroFinder from './IParametroFinder'
-import IParametroPaginador from './IParametroPaginador'
-import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { connect } from 'react-redux'
 import { refreshListParametro, updTipoParametros } from '../actions/Actions';
 import IParametroForm from './IParametroForm'
@@ -28,6 +22,10 @@ class IParametro extends React.Component{
     this.props.updTipoParametros(e.target.value);
   }
 
+  clearFilters(){
+    window.location = '/parametros';  
+  }
+
   render(){
     return(
         <div className="container">
@@ -48,6 +46,11 @@ class IParametro extends React.Component{
                   </center>
                 </div>
                 <div className="col-sm-4">
+                  <If condition={this.props.params.idparametro} >
+                    <div style={{textAlign: 'right'}}>
+                    <button className="btn btn-primary" data-toggle="modal" onClick={() => this.clearFilters()}><i className="fa fa-eraser"/> Limpiar filtros</button>
+                    </div>
+                  </If>
                 </div>
               </div>
               <div className="row">
@@ -93,11 +96,12 @@ class IParametro extends React.Component{
                             row[filter.id].toLowerCase().includes(filter.value.toLowerCase()) 
                       },
                       {
-                        Header: "REQUIERE APROBACIÓN",
+                        Header: "ACCIONES",
                         accessor: 'tipo',
                         filterable: false,
+                        sortable: false,
                         Cell: row => (
-                          <div style={{textAlign: 'center'}}>
+                          <div style={{textAlign: 'left'}}>
                             <Link to={"/parametros/edit/"+row.row._original.id} className="btn btn-info" style={{marginRight: '10px'}}><i className="fa fa-pencil"/></Link>
                             <If condition={row.value=="SISTEMA"}>
                               &nbsp;

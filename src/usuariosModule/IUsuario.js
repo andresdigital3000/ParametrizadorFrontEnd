@@ -1,10 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import APIInvoker from '../utils/APIInvoker'
-import IUsuarioList from './IUsuarioList'
-import IUsuarioFinder from './IUsuarioFinder'
-import IUsuarioPaginador from './IUsuarioPaginador'
-import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import IUsuarioForm from './IUsuarioForm'
 import ReactTable from "react-table";
 import {Link} from 'react-router'
@@ -83,6 +77,7 @@ class IUsuario extends React.Component{
                         Header: "ACCIONES",
                         accessor: 'id',
                         filterable: false,
+                        sortable: false,
                         Cell: row => (
                           <div style={{textAlign: 'center'}}>
                             <Link to={"/usuarios/edit/"+row.value} className="btn btn-info" style={{marginRight: '10px'}}><i className="fa fa-pencil"/></Link>

@@ -10,37 +10,30 @@ import reducers from './reducers'
 import AdminThemplete from './teachers/AdminThemplete'
 import ILogin from './ILogin'
 import IPolitica from './politicasModule/IPolitica'
-import IPoliticaList from './politicasModule/IPoliticaList'
 import IPoliticaForm from './politicasModule/IPoliticaForm'
 import IPoliticaDelete from './politicasModule/IPoliticaDelete'
 import IConciliacion from './conciliacionesModule/IConciliacion'
-import IConciliacionList from './conciliacionesModule/IConciliacionList'
 import IConciliacionForm from './conciliacionesModule/IConciliacionForm'
 import IConciliacionDelete from './conciliacionesModule/IConciliacionDelete'
 import IEscenario from './escenariosModule/IEscenario'
-import IEscenarioList from './escenariosModule/IEscenarioList'
 import IEscenarioForm from './escenariosModule/IEscenarioForm'
 import IEscenarioDelete from './escenariosModule/IEscenarioDelete'
 import IEjecucion from './ejecucionModule/IEjecucion'
 import IProgramar from './ejecucionModule/IProgramar'
 import IResultado from './resultadosModule/IResultado'
 import IIndicador from './indicadoresModule/IIndicador'
-import IIndicadorList from './indicadoresModule/IIndicadorList'
 import IIndicadorForm from './indicadoresModule/IIndicadorForm'
 import IIndicadorDelete from './indicadoresModule/IIndicadorDelete'
 import IParametro from './parametrosModule/IParametro'
-import IParametroList from './parametrosModule/IParametroList'
 import IParametroForm from './parametrosModule/IParametroForm'
 import IParametroDelete from './parametrosModule/IParametroDelete'
 import IQuery from './querysModule/IQuery'
-import IQueryList from './querysModule/IQueryList'
 import IQueryForm from './querysModule/IQueryForm'
 import IQueryDelete from './querysModule/IQueryDelete'
 import IQueryAprobar from './querysModule/IQueryAprobar'
 import IUsuario from './usuariosModule/IUsuario'
-import IUsuarioList from './usuariosModule/IUsuarioList'
-import IUsuarioForm from './usuariosModule/IUsuarioForm'
 import IUsuarioDelete from './usuariosModule/IUsuarioDelete'
+import IUsuarioForm from './usuariosModule/IUsuarioForm'
 
 import IUnderConstruction from './IUnderConstruction'
 import IPaginaNoExiste from './IPaginaNoExiste';
@@ -61,7 +54,6 @@ render((
     <Provider store={ store }>
       <Router history={ browserHistory }>
           <Route path="/" component={ILogin}></Route>
-          <Route path="/politicas/edit/:idpolitica" component={IPoliticaForm}></Route>
           <Route path="/admin" component={ AdminThemplete } >
             <Choose>
               <When condition = {window.localStorage.getItem("userrol") == 1}>
@@ -111,7 +103,7 @@ render((
                   <Route path="/querys/:idquery" component={IQuery}></Route>
                   <Route path="/querys/edit/:idquery" component={IQueryForm}></Route>
                   <Route path="/querys/delete/:idquery" component={IQueryDelete}></Route>
-                  <Route path="/querys/escenario/:idquery" component={IQuery}></Route>
+                  <Route path="/querys/escenario/:idEscenario" component={IQuery}></Route>
                   <Route path="/usuarios" component={IUsuario}></Route>
                   <Route path="/usuarios/:idusuario" component={IUsuario}></Route>
                   <Route path="/usuarios/edit/:idusuario" component={IUsuarioForm}></Route>

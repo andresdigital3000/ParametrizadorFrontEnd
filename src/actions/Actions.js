@@ -360,76 +360,7 @@ const updateTextPoliticaFindRequest = (field, value) => ({
     field: field,
     value: value
 })
-//Realizar la búsqueda
-export const findTextPolitica = () => (dispatch, getState) => {
-  let objetoVacio = new Object()
-  let txtBuscar = getState().politicaReducer.textoBuscarPoliticas
-  if (txtBuscar != '') {
-      APIInvoker.invokeGET('/politicas/findByAny?texto=' + txtBuscar, response => {
-          if (Array.isArray(response) == true) {
-              if (response[0].id != undefined) {
-                  dispatch(verPoliticas(response))
-              } else {
-                  console.log("Error " + response[0].codigo + " : " + response[0].mensaje)
-                  toast.warn("No se encontraron registros que satisfagan el criterio de búsqueda", {
-                      position: toast.POSITION.BOTTOM_RIGHT
-                  })
-              }
-          } else {
-              if (response.id != undefined) {
-                  dispatch(verPoliticas(response))
-              } else {
-                  console.log("Error " + response.codigo + " : " + response.mensaje)
-                  toast.warn("No se encontraron registros que satisfagan el criterio de búsqueda", {
-                      position: toast.POSITION.BOTTOM_RIGHT
-                  })
-                  //dispatch(verPoliticas(objetoVacio))
-              }
-          }
-      })
-  } else {
-      dispatch(moverPaginaPoliticas(1));
-  }
-}
 
-//Recalcular el paginador de politica
-export const calculaPaginadorPoliticas = () => (dispatch, getState) => {
-    let numregs = 0
-    //Obtener el numero total de registros antes de filtrar
-    APIInvoker.invokeGET('/politicas/count', response => {
-        if (!isNaN(response)) {
-            numregs = response
-            //Recalcula el paginador
-            let totRegistros = numregs
-            let regPagina = getState().politicaReducer.registrosPorPagina
-            let totPaginas = Math.ceil(totRegistros / regPagina)
-            let array_paginador = new Array()
-            let offset = 0
-            let regfin = 0
-            //console.log("TotRegistros ==")
-            //console.log(totRegistros)
-            for (let i = 1; i <= totPaginas; i++) {
-                regfin = offset + regPagina - 1
-                array_paginador.push({
-                    "id": i,
-                    "offset": offset
-                })
-                offset = regfin + 1
-            }
-            //console.log("Variable de paginador ==>")
-            //console.log(array_paginador)
-            //preparar variable para Enviar
-            let update_paginador = {
-                totalRegistros: numregs,
-                registrosPorPagina: regPagina,
-                paginador: array_paginador
-            }
-            dispatch(actualizarPaginadorPoliticas(update_paginador))
-        } else {
-            console.log("Conteo de Registros de politica no válido")
-        }
-    })
-}
 //Envia las variables al store
 const actualizarPaginadorPoliticas = (array_paginador) => ({
     type: ACTUALIZA_PAGINADOR_POLITICAS,
@@ -440,59 +371,18 @@ const actualizarPaginadorPoliticas = (array_paginador) => ({
 export const refreshListPolitica = (resp) => (dispatch, getState) => {
     //Igual para jsonserver o API
     let objetoVacio = new Object()
-    if (resp == null) {
-        let regInicial = 0
-        //Todos los registros de politicas
-        let pagActual = getState().politicaReducer.paginaActual
-        if (getState().politicaReducer.paginador.length > 0) {
-            regInicial = getState().politicaReducer.paginador[pagActual - 1].offset
+    APIInvoker.invokeGET(`/politicas${resp ? '/'+resp : ''}`, response => {
+        if(response.ok){
+            dispatch(antesVerPoliticas(Array.isArray(response.body) ? response.body : [response.body]))
+        }else{
+            toast.error(response.description, {
+                position: toast.POSITION.BOTTOM_RIGHT
+            })
         }
-        let regPagina = getState().politicaReducer.registrosPorPagina
-        APIInvoker.invokeGET('/politicas', response1 => {
-            if (Array.isArray(response1) == true) {
-                //Array con todos los registros
-                if (response1[0].id != undefined) {
-                    dispatch(antesVerPoliticas(response1))
-                } else {
-                    dispatch(antesVerPoliticas(objetoVacio))
-                    console.log("Error : " + response1[0].codigo + " Mensaje: " + response1[0].mensaje + ": " + response1[0].descripcion)
-                }
-            } else {
-                //Cuando el response no es un array, es decir, un solo registro
-                if (response1.id != undefined) {
-                    dispatch(antesVerPoliticas([response1]))
-                } else {
-                    dispatch(antesVerPoliticas(objetoVacio))
-                    console.log("Error : " + response1.codigo + " Mensaje: " + response1.mensaje + ": " + response1.descripcion)
-                }
-            }
-        })
-    } else {
-        //Buscando un registro en especifico por id o por un response
-        APIInvoker.invokeGET('/politicas/' + resp, response => {
-            if (Array.isArray(response) == true) {
-                //si el response contiene varios registros
-                if (response[0].id != undefined) {
-                    dispatch(antesVerPoliticas(response))
-                } else {
-                    dispatch(antesVerPoliticas(objetoVacio))
-                    console.log("Error : " + response[0].codigo + " Mensaje: " + response[0].mensaje + ": " + response[0].descripcion)
-                }
-            } else {
-                //si el response es un solo registro
-                if (response.id != undefined) {
-                    dispatch(antesVerPoliticas([response]))
-                } else {
-                    dispatch(antesVerPoliticas(objetoVacio))
-                    console.log("Error : " + response.codigo + " Mensaje: " + response.mensaje + ": " + response.descripcion)
-                }
-            }
-        })
-    }
+    })
 }
 
 const antesVerPoliticas = (resp) => (dispatch, getState) => {
-    //dispatch(calculaPaginadorPoliticas())
     dispatch(verPoliticas(resp))
 }
 //Enviar la accion de ver politicas al Reducer STORE
@@ -558,7 +448,7 @@ const updateFormPoliticasRequest = (field, value) => ({
     field: field,
     value: value
 })
-//Funcion para guardar o actualizar la politica
+
 export const savePolitica = () => (dispatch, getState) => {
     let id_politica = getState().politicaFormReducer.id
     //Si es un registro nuevo
@@ -569,35 +459,25 @@ export const savePolitica = () => (dispatch, getState) => {
             nombre: decryptJS(responseval[0].valor).toUpperCase() + getState().politicaFormReducer.nombre,
             descripcion: getState().politicaFormReducer.descripcion,
             objetivo: getState().politicaFormReducer.objetivo,
-            //fecha_creacion: '',
-            //fecha_actualizacion: '',
+            fecha_creacion: '',
+            fecha_actualizacion: '',
             username: window.localStorage.getItem("nombreUsuario")
         }
         if (responseval[0].valor != undefined) {
             let long_parametro = decryptJS(responseval[0].valor).length;
             if (id_politica == 0 || id_politica == undefined) {
                 APIInvoker.invokePOST('/politicas', politica_salvar, response => {
-                    if (response.id != undefined) {
+                    if (response.ok) {
                         $('#modalAdd').modal('hide');
-                        dispatch(mostrarModal("alert alert-success", "Se grabó la política " + politica_salvar.nombre))
+                        dispatch(mostrarModal("alert alert-success", response.description))
                         dispatch(limpiarFormPolitica())
                         dispatch(refreshListPolitica())
                         browserHistory.push('/politicas')
                     } else {
-                        //Enviar error específico a la consola
-                        console.log("Error : " + response.codigo + " Mensaje: " + response.mensaje + ": " + response.descripcion)
-                        if (response.mensaje == "CT_UQ_TBL_GAI_POLITICA_NOMBRE_POLITICA") {
-                            toast.error("Ya existe una política con el mismo nombre", {
-                                position: toast.POSITION.BOTTOM_RIGHT
-                            })
-                            dispatch(refreshListPolitica())
-                        } else {
-                            //Error sin tratamiento
-                            toast.error("Error general al adicionar política", {
-                                position: toast.POSITION.BOTTOM_RIGHT
-                            })
-                            dispatch(refreshListPolitica())
-                        }
+                        toast.error(response.description, {
+                            position: toast.POSITION.BOTTOM_RIGHT
+                        })
+                        dispatch(refreshListPolitica())
                     }
                 }, error => {
                     console.log("No se ha podido crear la politica con id" + id_politica)
@@ -608,28 +488,21 @@ export const savePolitica = () => (dispatch, getState) => {
                         nombre: decryptJS(responseval[0].valor).toUpperCase() + getState().politicaFormReducer.nombre,
                         descripcion: getState().politicaFormReducer.descripcion,
                         objetivo: getState().politicaFormReducer.objetivo,
-                        //fecha_creacion: '',
-                        //fecha_actualizacion: '',
+                        fecha_creacion: '',
+                        fecha_actualizacion: '',
                         username: window.localStorage.getItem("nombreUsuario")
                     }
                     //console.log('salvando...upd',politica_salvar)
                     APIInvoker.invokePUT('/politicas', politica_salvar, response => {
-                        if (response.id != undefined) {
-                            dispatch(mostrarModal("alert alert-success", "Se actualizó la política " + politica_salvar.nombre))
+                        if(response.ok){
+                            dispatch(mostrarModal("alert alert-success", response.description))
                             dispatch(limpiarFormPolitica())
                             dispatch(refreshListPolitica())
                             browserHistory.push('/politicas')
-                        } else {
-                            if (response.mensaje == "CT_UQ_TBL_GAI_POLITICA_NOMBRE_POLITICA") {
-                                toast.error("Ya existe una política con el mismo nombre", {
-                                    position: toast.POSITION.BOTTOM_RIGHT
-                                })
-                                //dispatch(refreshListPolitica())
-                            } else {
-                                toast.error("Error general al intentar actualizar politica", {
-                                    position: toast.POSITION.BOTTOM_RIGHT
-                                })
-                            }
+                        }else{
+                            toast.error(response.description, {
+                                position: toast.POSITION.BOTTOM_RIGHT
+                            })
                         }
                     }, error => {
                         console.log("No se ha podido actualizar la politica")
@@ -640,6 +513,7 @@ export const savePolitica = () => (dispatch, getState) => {
     })
 }
 
+
 //Funcion para limpiar los campos del formulario de Politicas
 export const limpiarFormPolitica = () => ({
     type: LIMPIAR_FORM_POLITICA
@@ -648,28 +522,33 @@ export const limpiarFormPolitica = () => ({
 //Funcion para cargar la politica en el formulario
 export const cargarPolitica = (idpolitica) => (dispatch, getState) => {
     APIInvoker.invokeGET('/politicas/' + idpolitica, response => {
-        if (Array.isArray(response) == true) {
-            if (response[0].id != undefined) {
-                dispatch(cargarPoliticaEnForm(response))
+        if(response.ok){
+            if (Array.isArray(response.body) == true) {
+                if (response.body[0].id != undefined) {
+                    dispatch(cargarPoliticaEnForm(response.body))
+                } else {
+                    toast.error("No se pudo cargar la politica en el formulario", {
+                        position: toast.POSITION.BOTTOM_RIGHT
+                    })
+                    console.log("Error " + response.body[0].codigo + " : " + response.body[0].mensaje + " " + response.body[0].descripcion)
+                }
             } else {
-                toast.error("No se pudo cargar la politica en el formulario", {
-                    position: toast.POSITION.BOTTOM_RIGHT
-                })
-                console.log("Error " + response[0].codigo + " : " + response[0].mensaje + " " + response[0].descripcion)
+                if (response.body.id != undefined) {
+                    dispatch(cargarPoliticaEnForm([response.body]))
+                } else {
+                    toast.error("No se pudo cargar la politica en el formulario", {
+                        position: toast.POSITION.BOTTOM_RIGHT
+                    })
+                    console.log("Error " + response.body.codigo + " : " + response.body.mensaje + " " + response.body.descripcion)
+                }
             }
-        } else {
-            if (response.id != undefined) {
-                dispatch(cargarPoliticaEnForm([response]))
-            } else {
-                toast.error("No se pudo cargar la politica en el formulario", {
-                    position: toast.POSITION.BOTTOM_RIGHT
-                })
-                console.log("Error " + response.codigo + " : " + response.mensaje + " " + response.descripcion)
-            }
+        }else{
+            alert('d')
+            toast.error(response.description, {
+                position: toast.POSITION.BOTTOM_RIGHT
+            })
         }
-    }, error => {
-        console.log('No se pudo actualizar los campos')
-    })
+    }, error => { })
 }
 
 //Enviar la acción de cargar la politica al reducer
@@ -682,23 +561,16 @@ const cargarPoliticaEnForm = (politica) => ({
 export const borrarPolitica = () => (dispatch, getState) => {
     let idpolitica = getState().politicaFormReducer.id
     let nompolitica = getState().politicaFormReducer.nombre
-    APIInvoker.invokeDELETE('/politicas/' + idpolitica + '/' + window.localStorage.getItem("nombreUsuario"), response => {}, error => {
-        if (error.codigo == 200) {
+    APIInvoker.invokeDELETE('/politicas/' + idpolitica + '/' + window.localStorage.getItem("nombreUsuario"), null, response => {
+        if(response.ok){
             dispatch(mostrarModal("alert alert-success", "Se eliminó la política " + nompolitica))
-        } else if (error.codigo == 409) {
-            toast.error("No es posible eliminar la política, revise que no tenga conciliación asociada", {
-                position: toast.POSITION.BOTTOM_RIGHT
-            })
-        } else {
-            toast.error("Error general al intentar eliminar una política", {
+            dispatch(limpiarFormPolitica(),browserHistory.push('/politicas'))
+        }else{
+            toast.error(response.description, {
                 position: toast.POSITION.BOTTOM_RIGHT
             })
         }
-        dispatch(
-            limpiarFormPolitica(),
-            browserHistory.push('/politicas')
-        )
-    })
+    }, error => {})
 }
 
 //Funcion de cambio de pagina
@@ -951,10 +823,9 @@ const verConciliaciones = (res) => ({
 //Cargar el id politica en reducer conciliaciones
 export const updPolitica = (idpolitica) => (dispatch, getState) => {
     APIInvoker.invokeGET('/politicas/' + idpolitica, response => {
-        if (response.id != undefined) {
-            dispatch(updPoliticaReducerConciliacion(response))
-        } else {
-            console.log('No se encuentra la politica')
+        if(response.ok){
+            dispatch(updPoliticaReducerConciliacion(response.body))
+        }else{
             dispatch(updPoliticaReducerConciliacion({
                 "id": 0
             }))
@@ -1026,71 +897,59 @@ export const saveConciliacion = () => (dispatch, getState) => {
                     }
                     let id_grabado = 0
                     APIInvoker.invokePOST('/conciliaciones', conciliacion_salvar, response => {
-                        if (response.id != undefined) {
+                        if(response.ok){
                             id_grabado = response.id
                             $('#modalAdd').modal('hide');
-                            dispatch(mostrarModal("alert alert-success", "Se grabó la conciliación " + conciliacion_salvar.nombre))
+                            dispatch(mostrarModal("alert alert-success", response.description))
                             dispatch(antesLimpiarFormConciliacion())
                             dispatch(limpiarFormConciliacion())
-                        } else {
-                            console.log("Error :" + response.codigo + " " + response.mensaje + ", " + response.descripcion)
-                            if (response.mensaje == "CT_UQ_TBL_GAI_CONCILIACION_NOMBRE_CONCILIACION") {
-                                toast.error("Ya existe otra conciliación con el mismo nombre", {
-                                    position: toast.POSITION.BOTTOM_RIGHT
-                                })
-                            } else if (response.descripcion == "El paquete ya esta siendo utilizado") {
-                                toast.error("El paquete ya esta siendo utilizado", {
-                                    position: toast.POSITION.BOTTOM_RIGHT
-                                })
-                            } else {
-                                toast.error("Error general al adicionar conciliación", {
-                                    position: toast.POSITION.BOTTOM_RIGHT
-                                })
-                            }
+                        }else{
+                            toast.error(response.description, {
+                                position: toast.POSITION.BOTTOM_RIGHT
+                            })
                         }
                     }, error => {
                         console.log('No se ha podido crear la conciliacion')
                     })
                     //dispatch(antesLimpiarFormConciliacion())
                 } else {
-                        //Si es un registro existente
-                        let idPoliticaGrabar = 0
-                        let nombrePoliticaGrabar = "Ninguna"
-                        if (getState().conciliacionReducer.politica.id == 0) {
-                            idPoliticaGrabar = getState().conciliacionFormReducer.idPolitica
-                            nombrePoliticaGrabar = getState().conciliacionFormReducer.nombrePolitica
-                        } else {
-                            idPoliticaGrabar = getState().conciliacionReducer.politica.id
-                            nombrePoliticaGrabar = getState().conciliacionReducer.politica.nombre
+                    //Si es un registro existente
+                    let idPoliticaGrabar = 0
+                    let nombrePoliticaGrabar = "Ninguna"
+                    if (getState().conciliacionReducer.politica.id == 0) {
+                        idPoliticaGrabar = getState().conciliacionFormReducer.idPolitica
+                        nombrePoliticaGrabar = getState().conciliacionFormReducer.nombrePolitica
+                    } else {
+                        idPoliticaGrabar = getState().conciliacionReducer.politica.id
+                        nombrePoliticaGrabar = getState().conciliacionReducer.politica.nombre
+                    }
+                    let conciliacion_salvar = {
+                        id: getState().conciliacionFormReducer.id,
+                        nombre: decryptJS(responseval[0].valor).toUpperCase() + getState().conciliacionFormReducer.nombre,
+                        descripcion: getState().conciliacionFormReducer.descripcion,
+                        usuarioAsignado: getState().conciliacionFormReducer.emailasignado,
+                        requiereAprobacion: getState().conciliacionFormReducer.requiereAprobacion,
+                        idPolitica: idPoliticaGrabar,
+                        nombrePolitica: nombrePoliticaGrabar,
+                        paquete: getState().conciliacionFormReducer.webservice,
+                        tablaDestino: getState().conciliacionFormReducer.tablaDestino,
+                        username: window.localStorage.getItem("nombreUsuario")
+                    }
+                    APIInvoker.invokePUT('/conciliaciones', conciliacion_salvar, response => {
+                        if(response.ok){
+                            dispatch(limpiarFormConciliacion())
+                            dispatch(refreshListConciliacion())
+                            browserHistory.push('/conciliaciones')
+                            dispatch(mostrarModal("alert alert-success", response.description))
+                        }else{
+                            toast.error(response.description, {
+                                position: toast.POSITION.BOTTOM_RIGHT
+                            })
                         }
-                        let conciliacion_salvar = {
-                            id: getState().conciliacionFormReducer.id,
-                            nombre: decryptJS(responseval[0].valor).toUpperCase() + getState().conciliacionFormReducer.nombre,
-                            descripcion: getState().conciliacionFormReducer.descripcion,
-                            usuarioAsignado: getState().conciliacionFormReducer.emailasignado,
-                            requiereAprobacion: getState().conciliacionFormReducer.requiereAprobacion,
-                            idPolitica: idPoliticaGrabar,
-                            nombrePolitica: nombrePoliticaGrabar,
-                            paquete: getState().conciliacionFormReducer.webservice,
-                            tablaDestino: getState().conciliacionFormReducer.tablaDestino,
-                            username: window.localStorage.getItem("nombreUsuario")
-                        }
-                        APIInvoker.invokePUT('/conciliaciones', conciliacion_salvar, response => {
-                            if (response.id != undefined) {
-                                dispatch(limpiarFormConciliacion())
-                                dispatch(refreshListConciliacion())
-                                browserHistory.push('/conciliaciones')
-                                dispatch(mostrarModal("alert alert-success", "Se actualizó la conciliación " + conciliacion_salvar.nombre))
-                            } else if (response.mensaje == "CT_UQ_TBL_GAI_CONCILIACION_NOMBRE_CONCILIACION") {
-                                toast.error("No se puede usar el nombre de otra conciliación existente", {
-                                    position: toast.POSITION.BOTTOM_RIGHT
-                                })
-                            }
-                        }, error => {
-                            console.log('No se ha podido actualizar la conciliacion')
-                        })
+                    }, error => {
+                        console.log('No se ha podido actualizar la conciliacion')
+                    })
                 }
-
             }
         })
     } else {
@@ -1144,27 +1003,22 @@ const cargarConciliacion2 = (conciliacion) => ({
 export const borrarConciliacion = () => (dispatch, getState) => {
     let idconciliacion = getState().conciliacionFormReducer.id
     let nomconciliacion = getState().conciliacionFormReducer.nombre
-    APIInvoker.invokeDELETE('/conciliaciones/' + idconciliacion + '/' + window.localStorage.getItem("nombreUsuario"), response2 => {}, error2 => {
-        if (error2.codigo == 200) {
-            //conciliacion_eliminada = true
+    APIInvoker.invokeDELETE('/conciliaciones/' + idconciliacion + '/' + window.localStorage.getItem("nombreUsuario"), null, response => {
+        if(response.ok){
             dispatch(
                 limpiarFormConciliacion(),
-                mostrarModal("alert alert-success", "Se eliminó la conciliación " + nomconciliacion)
+                mostrarModal("alert alert-success", response.description)
             )
-        } else if (error2.codigo == 409) {
-            toast.error("Error al intentar eliminar una conciliación asociada a uno o varios escenarios", {
-                position: toast.POSITION.BOTTOM_RIGHT
-            })
-        } else {
-            toast.error("Error general al intentar eliminar una conciliación", {
+            dispatch(
+                moverPaginaConciliaciones(1),
+                browserHistory.push('/conciliaciones')
+            )
+        }else{
+            toast.error(response.description, {
                 position: toast.POSITION.BOTTOM_RIGHT
             })
         }
-        dispatch(
-            moverPaginaConciliaciones(1),
-            browserHistory.push('/conciliaciones')
-        )
-    })
+    }, error => {})
 }
 
 //Funcion de cambio de pagina
@@ -1411,22 +1265,15 @@ export const saveEscenario = () => (dispatch, getState) => {
                     }
                     //, nombreConciliacion : getState().escenarioFormReducer.nombreConciliacion
                     APIInvoker.invokePOST('/escenarios', escenario_salvar, response => {
-                        console.log("/escenarios ==>", response)
-                        if (response.idConciliacion != undefined) {
+                        if (response.ok) {
                             $('#modalAdd').modal('hide');
-                            dispatch(mostrarModal("alert alert-success", "Se grabó el escenario " + escenario_salvar.nombre))
+                            dispatch(mostrarModal("alert alert-success", response.description))
                             dispatch(limpiarFormEscenario())
                             dispatch(refreshListEscenario())
                         } else {
-                            if (response.mensaje == "CT_UQ_TBL_GAI_ESCENARIO_NOMBRE_ESCENARIO") {
-                                toast.error("Ya existe un escenario con el mismo nombre", {
-                                    position: toast.POSITION.BOTTOM_RIGHT
-                                })
-                            } else {
-                                toast.error("Error general al intentar grabar un nuevo escenario", {
-                                    position: toast.POSITION.BOTTOM_RIGHT
-                                })
-                            }
+                            toast.error(response.description, {
+                                position: toast.POSITION.BOTTOM_RIGHT
+                            })
                         }
                     }, error => {
                         console.log('No se ha podido crear la escenario')
@@ -1442,22 +1289,15 @@ export const saveEscenario = () => (dispatch, getState) => {
                         username: window.localStorage.getItem("nombreUsuario")
                     }
                     APIInvoker.invokePUT('/escenarios', escenario_salvar, response => {
-                        if (response.id != undefined) {
+                        if (response.ok) {
                             dispatch(limpiarFormEscenario())
                             dispatch(refreshListEscenario())
                             browserHistory.push('/escenarios')
-                            dispatch(mostrarModal("alert alert-success", "Se actualizó el escenario " + escenario_salvar.nombre))
+                            dispatch(mostrarModal("alert alert-success", response.description))
                         } else {
-                            if (response.mensaje == "CT_UQ_TBL_GAI_ESCENARIO_NOMBRE_ESCENARIO") {
-                                toast.error("No se ha actualizó el escenario, el nombre de escenario que intenta guardar ya ha sido asignado", {
-                                    position: toast.POSITION.BOTTOM_RIGHT
-                                })
-                            } else {
-                                toast.error("Error general al intentar actualizar el escenario", {
-                                    position: toast.POSITION.BOTTOM_RIGHT
-                                })
-                            }
-                            //dispatch(limpiarFormEscenario(),browserHistory.push('/escenarios'))
+                            toast.error(response.description, {
+                                position: toast.POSITION.BOTTOM_RIGHT
+                            })
                         }
                     }, error => {
                         console.log('No se ha podido actualizar la escenario')
@@ -1493,24 +1333,17 @@ const cargarEscenarioEnForm = (escenario) => ({
 export const borrarEscenario = () => (dispatch, getState) => {
     let idescenario = getState().escenarioFormReducer.id
     let nomescenario = getState().escenarioFormReducer.nombre
-    APIInvoker.invokeDELETE('/escenarios/' + idescenario + '/' + window.localStorage.getItem("nombreUsuario"), response => {}, error => {
-        if (error.codigo == 200) {
-            dispatch(mostrarModal("alert alert-success", "Se eliminó el escenario " + nomescenario))
-        } else if (error.codigo == 500) {
-            toast.error("No es posible eliminar el escenario, revise que no tenga indicadores y/o parámetros asociados", {
-                position: toast.POSITION.BOTTOM_RIGHT
-            })
-        } else if (error.mensaje == "CT_TBL_GAI_QUERIES_ESCENARIOS_FK_ESCENARIO") {
-            toast.error("No es posible eliminar el escenario, tiene queries asociados", {
-                position: toast.POSITION.BOTTOM_RIGHT
-            })
+    APIInvoker.invokeDELETE('/escenarios/' + idescenario + '/' + window.localStorage.getItem("nombreUsuario"), null, response => {
+        if (response.ok) {
+            dispatch(mostrarModal("alert alert-success", response.description))
+            dispatch(limpiarFormEscenario(), browserHistory.push('/escenarios'))
         } else {
-            toast.error("Error general al intentar eliminar un escenario", {
+            toast.error(response.description, {
                 position: toast.POSITION.BOTTOM_RIGHT
             })
         }
-    })
-    dispatch(limpiarFormEscenario(), browserHistory.push('/escenarios'))
+    }, error => {})
+    
 }
 
 //Cargar el combo de impactos en escenarios
@@ -1716,11 +1549,8 @@ export const doEjecutarConciliacion = () => (dispatch, getState) => {
               console.log(consultarEjecucion)
           }
           APIInvoker.invokePOST('/odiRest/loadPlanStatus', consultarEjecucion, response => {
-              if (configuration.webService.debug == 1) {
-                  console.log("RESPONSE STATUS REST ==>")
-                  console.log(response)
-              }
-              if (response[0].LoadPlanStatus != undefined) {
+
+              if (response.ok) {
                   if (response[0].LoadPlanStatus != "R") {
                       //Construir petición json para Backend
                       let startEjecucion = {
@@ -1802,6 +1632,10 @@ export const doEjecutarConciliacion = () => (dispatch, getState) => {
                           position: toast.POSITION.BOTTOM_RIGHT
                       })
                   }
+              }else{
+                toast.error(response.description, {
+                    position: toast.POSITION.BOTTOM_RIGHT
+                })
               }
           })
       }
@@ -1820,7 +1654,8 @@ export const doCancelarConciliacion = () => (dispatch, getState) => {
     if (getState().ejecucionReducer.conciliacion.ejecucionesProceso.length > 0) {
         idPlanInstancia = getState().ejecucionReducer.conciliacion.ejecucionesProceso[0].idPlanInstance
     }
-    if (idPlanInstancia != 0) {
+    console.log('idPlanInstancia', idPlanInstancia)
+    if (idPlanInstancia && idPlanInstancia != 0) {
         //Construir petición json para Backend
         let consultarEjecucion = {
             "odiUser": decryptJS(responseOdi[1].valor),
@@ -1840,7 +1675,7 @@ export const doCancelarConciliacion = () => (dispatch, getState) => {
                 console.log("RESPONSE STATUS REST ==>")
                 console.log(response)
             }
-            if (response[0].LoadPlanStatus != undefined) {
+            if (response.ok) {
                 if (response[0].LoadPlanStatus == "R") {
                     //Construir petición json para Backend
                     let stopEjecucion = {
@@ -1935,15 +1770,16 @@ export const salvarProgramacion = () => (dispatch, getState) => {
     }
 
     APIInvoker.invokePOST('/conciliaciones/progEjecucion', progConciliacion, response => {
-        console.log('RESPONSE:', response);
-        if (response.id != undefined) {
+        if (response.ok) {
             //   id_grabado = response.id
             $('#modalAdd').modal('hide');
-            dispatch(mostrarModal("alert alert-success", "Se grabó la conciliación " + paraconciliacion))
+            dispatch(mostrarModal("alert alert-success", response.description))
             dispatch(antesLimpiarFormConciliacion())
             dispatch(limpiarFormConciliacion())
         } else {
-            console.log("Error :" + response.codigo + " " + response.mensaje + ", " + response.descripcion)
+            toast.error(response.description, {
+                position: toast.POSITION.BOTTOM_RIGHT
+            })
         }
     }, error => {
         console.log('No se ha podido crear la conciliacion')
@@ -2133,12 +1969,12 @@ export const aprobarRenglonResultado = (idRenglon) => (dispatch, getState) => {
                               console.log("RESPUESTA START REST ==>")
                               console.log(response)
                           }
-                          if (response.StartedRunInformation != undefined) {
+                          if (response.ok) {
                               let idInstance = 0
                               if (response.StartedRunInformation.OdiLoadPlanInstanceId != undefined) {
                                   idInstance = response.StartedRunInformation.OdiLoadPlanInstanceId
                                   console.log("Se recibió del WebService el idInstance : " + idInstance)
-                                  toast.success("Se envio la solicitud de aprobacion exitosamente")
+                                  toast.success(response.description)
                               }
                               if (idInstance != 0) {
                                   let salvar_aprobado = {
@@ -2151,16 +1987,9 @@ export const aprobarRenglonResultado = (idRenglon) => (dispatch, getState) => {
                                   })
                               }
                           } else {
-                              if (response.codigo != undefined) {
-                                  toast.error("Error ODI: " + response.descripcion, {
-                                      position: toast.POSITION.BOTTOM_RIGHT
-                                  })
-                              } else {
-                                  toast.error("Error General", {
-                                      position: toast.POSITION.BOTTOM_RIGHT
-                                  })
-                                  console.log(response)
-                              }
+                            toast.error(response.description, {
+                                position: toast.POSITION.BOTTOM_RIGHT
+                            })
                           }
                       })
                   })
@@ -2223,12 +2052,11 @@ export const rechazarRenglonResultado = (idRenglon) => (dispatch, getState) => {
                               console.log("RESPUESTA START REST ==>")
                               console.log(response)
                           }
-                          if (response.StartedRunInformation != undefined) {
+                          if (response.ok) {
                               let idInstance = 0
                               if (response.StartedRunInformation.OdiLoadPlanInstanceId != undefined) {
                                   idInstance = response.StartedRunInformation.OdiLoadPlanInstanceId
-                                  console.log("Se recibió del WebService el idInstance : " + idInstance)
-                                  toast.success("Se envio la solicitud de rechazo exitosamente")
+                                  toast.success(response.description)
                               }
                               if (idInstance != 0) {
                                   let salvar_aprobado = {
@@ -2237,16 +2065,9 @@ export const rechazarRenglonResultado = (idRenglon) => (dispatch, getState) => {
                                   }
                               }
                           } else {
-                              if (response.codigo != undefined) {
-                                  toast.error("Error ODI: " + response.descripcion, {
-                                      position: toast.POSITION.BOTTOM_RIGHT
-                                  })
-                              } else {
-                                  toast.error("Error General", {
-                                      position: toast.POSITION.BOTTOM_RIGHT
-                                  })
-                                  console.log(response)
-                              }
+                            toast.error(response.description, {
+                                position: toast.POSITION.BOTTOM_RIGHT
+                            })
                           }
                       })
                   })
@@ -2442,29 +2263,16 @@ export const saveIndicador = () => (dispatch, getState) => {
             username: window.localStorage.getItem("nombreUsuario")
         }
         APIInvoker.invokePOST('/indicadores', indicador_salvar, response => {
-            if (response.id != undefined) {
+            if (response.ok) {
                 $('#modalAdd').modal('hide');
-                dispatch(mostrarModal("alert alert-success", "Se grabó el indicador " + indicador_salvar.nombreFormula));
+                dispatch(mostrarModal("alert alert-success", response.description));
                 dispatch(limpiarFormIndicador())
                 dispatch(refreshListIndicador())
-                //toast.success("Se grabó el indicador", {
-                //  position: toast.POSITION.BOTTOM_RIGHT
-                //})
             } else {
-                //Enviar error específico a la consola
-                console.log("Error : " + response.codigo + " Mensaje: " + response.mensaje + ": " + response.descripcion)
-                if (response.mensaje == "CT_UQ_TBL_GAI_INDICADORES_NOMBRE_FORMULA") {
-                    toast.error("Ya existe un indicador con el mismo nombre", {
-                        position: toast.POSITION.BOTTOM_RIGHT
-                    })
-                    dispatch(refreshListIndicador())
-                } else {
-                    //Error sin tratamiento
-                    toast.error("Error general al adicionar indicador", {
-                        position: toast.POSITION.BOTTOM_RIGHT
-                    })
-                    dispatch(refreshListIndicador())
-                }
+                toast.error(response.description, {
+                    position: toast.POSITION.BOTTOM_RIGHT
+                })
+                dispatch(refreshListIndicador())
             }
         }, error => {
             console.log("No se ha podido crear el indicador con id" + id_indicador)
@@ -2480,26 +2288,15 @@ export const saveIndicador = () => (dispatch, getState) => {
             username: window.localStorage.getItem("nombreUsuario")
         }
         APIInvoker.invokePUT('/indicadores', indicador_salvar, response => {
-            if (response.id != undefined) {
+            if (response.ok) {
                 dispatch(limpiarFormIndicador())
                 dispatch(refreshListIndicador())
                 browserHistory.push('/indicadores')
-                dispatch(mostrarModal("alert alert-success", "Se actualizó el indicador " + indicador_salvar.nombreFormula));
-                //toast.success("Se actualizó el indicador", {
-                //  position: toast.POSITION.BOTTOM_RIGHT
-                //})
-                //dispatch(limpiarFormIndicador(),browserHistory.push('/indicadores'))
+                dispatch(mostrarModal("alert alert-success", response.description));
             } else {
-                if (response.mensaje == "CT_UQ_TBL_GAI_INDICADORES_NOMBRE_FORMULA") {
-                    toast.error("Ya existe un indicador con el mismo nombre", {
-                        position: toast.POSITION.BOTTOM_RIGHT
-                    })
-                    //dispatch(refreshListIndicador())
-                } else {
-                    toast.error("Error general al intentar actualizar indicador", {
-                        position: toast.POSITION.BOTTOM_RIGHT
-                    })
-                }
+                toast.error(response.description, {
+                    position: toast.POSITION.BOTTOM_RIGHT
+                })
             }
         }, error => {
             console.log("No se ha podido actualizar el indicador")
@@ -2842,9 +2639,9 @@ export const refreshListParametro = (resp) => (dispatch, getState) => {
     } else {
         //Buscando un registro en especifico por id o por un response
         APIInvoker.invokeGET('/parametros/padre?tipo=escenario&codpadre=' + resp, response => {
-            if (Array.isArray(response) == true) {
+            if (Array.isArray(response)) {
                 //si el response contiene varios registros
-                if (response[0].id != undefined) {
+                if (response.length > 0 && response[0].id != undefined) {
                     let responseDecrypt = response.map(function (responseI, index, array) {
                         let devolver = {
                           codPadre: responseI.codPadre,
@@ -2860,8 +2657,7 @@ export const refreshListParametro = (resp) => (dispatch, getState) => {
                     });
                     dispatch(verParametros(responseDecrypt))
                 } else {
-                    dispatch(verParametros(objetoVacio))
-                    console.log("Error : " + response[0].codigo + " Mensaje: " + response[0].mensaje + ": " + response[0].descripcion)
+                    dispatch(verParametros([]))
                 }
             } else {
                 //si el response es un solo registro
@@ -2935,48 +2731,31 @@ export const saveParametro = () => (dispatch, getState) => {
         }
         if (id_parametro == 0 || id_parametro == undefined) {
             APIInvoker.invokePOST('/parametros', parametro_salvar, response => {
-                if (response.id != undefined) {
+                if (response.ok) {
                     $('#modalAdd').modal('hide');
-                    dispatch(mostrarModal("alert alert-success", "Se grabó el parámetro " + parametro_salvar.parametro))
+                    dispatch(mostrarModal("alert alert-success", response.description))
                     dispatch(limpiarFormParametro())
                     dispatch(refreshListParametro())
                 } else {
-                    //Enviar error específico a la consola
-                    console.log("Error : " + response.codigo + " Mensaje: " + response.mensaje + ": " + response.descripcion)
-                    if (response.mensaje == "CT_UQ_TBL_GAI_PARAMETROS") {
-                        toast.error("Ya existe un parámetro con el mismo nombre", {
-                            position: toast.POSITION.BOTTOM_RIGHT
-                        })
-                        dispatch(refreshListParametro())
-                    } else {
-                        //Error sin tratamiento
-                        toast.error("Error general al adicionar parámetro", {
-                            position: toast.POSITION.BOTTOM_RIGHT
-                        })
-                        dispatch(refreshListParametro())
-                    }
+                    toast.error(response.description, {
+                        position: toast.POSITION.BOTTOM_RIGHT
+                    })
+                    dispatch(refreshListParametro())
                 }
             }, error => {
                 console.log("No se ha podido crear el parámetro con id" + id_parametro)
             })
         } else {
             APIInvoker.invokePUT('/parametros', parametro_salvar, response => {
-                if (response.id != undefined) {
+                if (response.ok) {
                     dispatch(refreshListParametro())
                     dispatch(limpiarFormParametro())
                     browserHistory.push('/parametros')
-                    dispatch(mostrarModal("alert alert-success", "Se actualizó el parámetro " + parametro_salvar.parametro))
+                    dispatch(mostrarModal("alert alert-success", response.description))
                 } else {
-                    if (response.mensaje == "CT_UQ_TBL_GAI_PARAMETROS") {
-                        toast.error("Ya existe un parámetro con el mismo nombre", {
-                            position: toast.POSITION.BOTTOM_RIGHT
-                        })
-                        //dispatch(refreshListParametro())
-                    } else {
-                        toast.error("Error general al intentar actualizar parámetro", {
-                            position: toast.POSITION.BOTTOM_RIGHT
-                        })
-                    }
+                    toast.error(response.description, {
+                        position: toast.POSITION.BOTTOM_RIGHT
+                    })
                 }
             }, error => {
                 console.log("No se ha podido actualizar el parámetro")
@@ -3050,13 +2829,19 @@ const cargarParametroEnForm = (parametro) => ({
 export const borrarParametro = () => (dispatch, getState) => {
     let idparametro = getState().parametroFormReducer.id
     let nomparametro = getState().parametroFormReducer.parametro
-    APIInvoker.invokeDELETE('/parametros/' + idparametro + '/' + window.localStorage.getItem("nombreUsuario"), response => {}, error => {
-        dispatch(mostrarModal("alert alert-success", "Se eliminó el parámetro " + nomparametro))
-        dispatch(
-            limpiarFormParametro(),
-            browserHistory.push('/parametros')
-        )
-    })
+    APIInvoker.invokeDELETE('/parametros/' + idparametro + '/' + window.localStorage.getItem("nombreUsuario"), null,  response => {
+        if(response.ok){
+            dispatch(mostrarModal("alert alert-success", "Se eliminó el parámetro " + nomparametro))
+            dispatch(
+                limpiarFormParametro(),
+                browserHistory.push('/parametros')
+            )
+        }else{
+            toast.error(response.description, {
+                position: toast.POSITION.BOTTOM_RIGHT
+            })
+        }
+    }, error => {})
 }
 
 //Funcion de cambio de pagina
@@ -3190,12 +2975,12 @@ const actualizarPaginadorQuerys = (array_paginador) => ({
 })
 
 //Actualizar el listado de query
-export const refreshListQuery = () => (dispatch, getState) => {
+export const refreshListQuery = (idescenario) => (dispatch, getState) => {
     //console.log("EJECUTA REFRESH QUERY")
     let objetoVacio = new Object()
     //let escenarioActual = getState().queryReducer.escenario
     let conciliacionActual = getState().queryReducer.conciliacion.id
-    let escenarioActual = getState().queryReducer.escenario.id
+    let escenarioActual = getState().queryReducer.escenario.id || idescenario || ''
     if (escenarioActual != 0) {
         APIInvoker.invokeGET('/queryescenario/escenario/' + escenarioActual, response => {
             if (Array.isArray(response)) {
@@ -3385,21 +3170,15 @@ export const saveQuery = () => (dispatch, getState) => {
                         username: window.localStorage.getItem("nombreUsuario")
                     }
                     APIInvoker.invokePOST('/queryescenario', query_salvar, response => {
-                        if (response.nombreQuery != undefined) {
+                        if (response.ok) {
                             $('#modalAdd').modal('hide');
-                            dispatch(mostrarModal("alert alert-success", "Se grabó el query " + query_salvar.nombreQuery));
+                            dispatch(mostrarModal("alert alert-success", response.description));
                             dispatch(limpiarFormQuery());
                             dispatch(refreshListQuery());
                         } else {
-                            if (response.mensaje == "CTRAINT_UQ_TBL_GAI_QUERIES_ESCENARIOS_COD_ESCENARIO") {
-                                toast.error("Ya existe un query con el mismo nombre", {
-                                    position: toast.POSITION.BOTTOM_RIGHT
-                                })
-                            } else {
-                                toast.error("Error general al intentar grabar un nuevo query", {
-                                    position: toast.POSITION.BOTTOM_RIGHT
-                                })
-                            }
+                            toast.error(response.description, {
+                                position: toast.POSITION.BOTTOM_RIGHT
+                            })
                         }
                     }, error => {
                         console.log('No se ha podido crear la query')
@@ -3424,21 +3203,15 @@ export const saveQuery = () => (dispatch, getState) => {
                         username: window.localStorage.getItem("nombreUsuario")
                     }
                     APIInvoker.invokePUT('/queryescenario', query_salvar, response => {
-                        if (response.id != undefined) {
+                        if (response.ok) {
                             dispatch(limpiarFormQuery())
                             dispatch(refreshListQuery())
                             browserHistory.push('/querys')
-                            dispatch(mostrarModal("alert alert-success", "Se actualizó el query " + query_salvar.nombreQuery))
+                            dispatch(mostrarModal("alert alert-success", response.description))
                         } else {
-                            if (response.mensaje == "CTRAINT_UQ_TBL_GAI_QUERIES_ESCENARIOS_COD_ESCENARIO") {
-                                toast.error("No se ha actualizó el query, el nombre no puede asignarse", {
-                                    position: toast.POSITION.BOTTOM_RIGHT
-                                })
-                            } else {
-                                toast.error("Error general al intentar actualizar el query", {
-                                    position: toast.POSITION.BOTTOM_RIGHT
-                                })
-                            }
+                            toast.error(response.description, {
+                                position: toast.POSITION.BOTTOM_RIGHT
+                            })
                         }
                     }, error => {
                         console.log('No se ha podido actualizar la query')
@@ -3473,20 +3246,17 @@ const cargarQueryEnForm = (query) => ({
 export const borrarQuery = () => (dispatch, getState) => {
     let idquery = getState().queryFormReducer.id
     let nomquery = getState().queryFormReducer.nombre
-    APIInvoker.invokeDELETE('/queryescenario/' + idquery + '/' + window.localStorage.getItem("nombreUsuario"), response => {}, error => {
-        if (error.codigo == 200) {
-            dispatch(mostrarModal("alert alert-success", "Se eliminó el query " + nomquery))
-        } else if (error.codigo == 500) {
-            toast.error("No es posible eliminar el query, revise que no tenga indicadores y/o parámetros asociados", {
-                position: toast.POSITION.BOTTOM_RIGHT
-            })
+    APIInvoker.invokeDELETE('/queryescenario/' + idquery + '/' + window.localStorage.getItem("nombreUsuario"), null, response => {
+        if (response.ok) {
+            dispatch(mostrarModal("alert alert-success", response.description))
+            dispatch(limpiarFormQuery(), browserHistory.push('/querys'))
         } else {
-            toast.error("Error general al intentar eliminar un query", {
+            toast.error(response.description, {
                 position: toast.POSITION.BOTTOM_RIGHT
             })
         }
-    })
-    dispatch(limpiarFormQuery(), browserHistory.push('/querys'))
+    }, error => {})
+    
 }
 
 //Funcion de cambio de pagina
@@ -3532,15 +3302,14 @@ const cargarEscenariosenQuerys = (arrayEscenarios) => (
 
 //Funcion que actualiza el escenario seleccionado en queries
 export const updEscenarioQuerys = (idescenario) => (dispatch,getState) => {
-    console.log("Recibo escenario "+idescenario)
-    APIInvoker.invokeGET('/escenarios/' + idescenario, response => {
+    APIInvoker.invokeGET(`/escenarios${idescenario ? '/' + idescenario : ''}`, response => {
         if (response.id != undefined) {
             dispatch(asignarEscenarioSeleccionado(response))
         } else {
             console.log('No se encuentra el escenario')
             dispatch(limpiarEscenarioSeleccionado())
         }
-        dispatch(refreshListQuery())
+        dispatch(refreshListQuery(idescenario))
     }, error => {
         console.log('No se pudo cargar las Propiedades del escenario ' + idescenario + ' en querys listar')
     })
