@@ -891,7 +891,7 @@ const updateFormConciliacionesRequest = (field, value) => ({
     field: field,
     value: value
 })
-
+ 
 //Funcion para guardar o actualizar la conciliacion
 export const saveConciliacion = () => (dispatch, getState) => {
     let id_conciliacion = getState().conciliacionFormReducer.id
@@ -900,12 +900,12 @@ export const saveConciliacion = () => (dispatch, getState) => {
     if (emailRegex.test(email)) {
         APIInvoker.invokeGET('/parametros/findByAny?texto=V_Prefijo para conciliaciones', responseval => {
             if (responseval[0].valor != undefined) {
-                let long_parametro = (responseval[0].tipo === "SISTEMA" ? decryptJS(responseval[0].valor) : responseval[0].valor).length;
+                let long_parametro = decryptJS(responseval[0].valor).length;
                 if (id_conciliacion == 0 || id_conciliacion == undefined) {
                     //Si es un registro nuevo
                     let conciliacion_salvar = {
                         id: getState().conciliacionFormReducer.id,
-                        nombre: (responseval[0].tipo === "SISTEMA" ? decryptJS(responseval[0].valor) : responseval[0].valor).toUpperCase() + getState().conciliacionFormReducer.nombre,
+                        nombre: decryptJS(responseval[0].valor).toUpperCase() + getState().conciliacionFormReducer.nombre,
                         descripcion: getState().conciliacionFormReducer.descripcion,
                         usuarioAsignado: getState().conciliacionFormReducer.emailasignado,
                         requiereAprobacion: getState().conciliacionFormReducer.requiereAprobacion,
@@ -932,29 +932,29 @@ export const saveConciliacion = () => (dispatch, getState) => {
                     })
                     //dispatch(antesLimpiarFormConciliacion())
                 } else {
-                        //Si es un registro existente
-                        let idPoliticaGrabar = 0
-                        let nombrePoliticaGrabar = "Ninguna"
-                        if (getState().conciliacionReducer.politica.id == 0) {
-                            idPoliticaGrabar = getState().conciliacionFormReducer.idPolitica
-                            nombrePoliticaGrabar = getState().conciliacionFormReducer.nombrePolitica
-                        } else {
-                            idPoliticaGrabar = getState().conciliacionReducer.politica.id
-                            nombrePoliticaGrabar = getState().conciliacionReducer.politica.nombre
-                        }
-                        let conciliacion_salvar = {
-                            id: getState().conciliacionFormReducer.id,
-                            nombre: (responseval[0].tipo === "SISTEMA" ? decryptJS(responseval[0].valor) : responseval[0].valor).toUpperCase() + getState().conciliacionFormReducer.nombre,
-                            descripcion: getState().conciliacionFormReducer.descripcion,
-                            usuarioAsignado: getState().conciliacionFormReducer.emailasignado,
-                            requiereAprobacion: getState().conciliacionFormReducer.requiereAprobacion,
-                            idPolitica: idPoliticaGrabar,
-                            nombrePolitica: nombrePoliticaGrabar,
-                            paquete: getState().conciliacionFormReducer.webservice,
-                            tablaDestino: getState().conciliacionFormReducer.tablaDestino,
-                            username: window.localStorage.getItem("nombreUsuario")
-                        }
-                        APIInvoker.invokePUT('/conciliaciones', conciliacion_salvar, response => {
+                    //Si es un registro existente
+                    let idPoliticaGrabar = 0
+                    let nombrePoliticaGrabar = "Ninguna"
+                    if (getState().conciliacionReducer.politica.id == 0) {
+                        idPoliticaGrabar = getState().conciliacionFormReducer.idPolitica
+                        nombrePoliticaGrabar = getState().conciliacionFormReducer.nombrePolitica
+                    } else {
+                        idPoliticaGrabar = getState().conciliacionReducer.politica.id
+                        nombrePoliticaGrabar = getState().conciliacionReducer.politica.nombre
+                    }
+                    let conciliacion_salvar = {
+                        id: getState().conciliacionFormReducer.id,
+                        nombre: decryptJS(responseval[0].valor).toUpperCase() + getState().conciliacionFormReducer.nombre,
+                        descripcion: getState().conciliacionFormReducer.descripcion,
+                        usuarioAsignado: getState().conciliacionFormReducer.emailasignado,
+                        requiereAprobacion: getState().conciliacionFormReducer.requiereAprobacion,
+                        idPolitica: idPoliticaGrabar,
+                        nombrePolitica: nombrePoliticaGrabar,
+                        paquete: getState().conciliacionFormReducer.webservice,
+                        tablaDestino: getState().conciliacionFormReducer.tablaDestino,
+                        username: window.localStorage.getItem("nombreUsuario")
+                    }
+                    APIInvoker.invokePUT('/conciliaciones', conciliacion_salvar, response => {
                         if(response.ok){
                             dispatch(limpiarFormConciliacion())
                             dispatch(refreshListConciliacion())
@@ -964,7 +964,10 @@ export const saveConciliacion = () => (dispatch, getState) => {
                             toast.error(response.description, {
                                 position: toast.POSITION.BOTTOM_RIGHT
                             })
-                   
+                        }
+                    }, error => {
+                        console.log('No se ha podido actualizar la conciliacion')
+                    })
                 }
             }
         })
