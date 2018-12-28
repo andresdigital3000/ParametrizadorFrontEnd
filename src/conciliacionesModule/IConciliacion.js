@@ -113,7 +113,7 @@ class IConciliacion extends React.Component{
                               row[filter.id].toLowerCase().includes(filter.value.toLowerCase()) 
                       },
                       {
-                        Header: "REQUIERE APROBACIÓN RESULTADO",
+                        Header: "REQ. APROV. RESULTADO",
                         accessor: 'requiereAprobacion',
                         Cell: row => (
                           <center>{row.value}</center>

@@ -62,7 +62,7 @@ render((
                   <Route path="/indicadores" component={IIndicador}></Route>
                   <Route path="/indicadores/:idindicador" component={IIndicador}></Route>
                   <Route path="/indicadores/edit/:idindicador" component={IIndicadorForm}></Route>
-                  <Route path="/indicadores/delete/:idindicadordelete" component={IIndicadorDelete}></Route>
+                  <Route path="/indicadores/delete/:idindicador" component={IIndicadorDelete}></Route>
                 </div>
               </When>
               <When condition = {window.localStorage.getItem("userrolname") === "Ejecutor"}>

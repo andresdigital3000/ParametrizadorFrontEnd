@@ -3009,7 +3009,7 @@ export const refreshListQuery = (idescenario) => (dispatch, getState) => {
                 }
             } else {
                 console.log("Error : " + response.codigo + " Mensaje: " + response.mensaje + ": " + response.descripcion)
-                dispatch(antesVerQuerys(objetoVacio))
+                dispatch(antesVerQuerys([]))
             }
         })
     } else if (conciliacionActual != 0){
