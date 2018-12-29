@@ -89,13 +89,14 @@ class IParametroForm extends React.Component{
               </div>
             </header>
             <input id='id' ref='id' type='hidden' defaultValue={this.props.state.id}/>
-            <If condition={this.props.state.tipo!='SISTEMA'}>
+            <If condition={this.props.state.tipo!='SISTEMA' && this.props.state.tipo!='SEGURIDAD'}>
               <div className="form-group">
                 <label htmlFor='tipo'>* Tipo</label>
                 <select id='tipo' value={this.props.state.tipo} className='form-control form-control-lg' onChange={this.handleInput.bind(this)}>
                   <option value=''>Seleccione uno</option>
                   <option value='GENERAL'>GENERAL</option>
                   <option value='SISTEMA'>PARAMETROS SISTEMA</option>
+                  <option value='SEGURIDAD'>PARAMETROS SEGURIDAD</option>
                   <option value='CONCILIACION'>CONCILIACION</option>
                   <option value='ESCENARIO'>ESCENARIO</option>
                 </select>
@@ -103,12 +104,12 @@ class IParametroForm extends React.Component{
               </div>
               <div className="form-group">
                 {
-                  this.props.state.tipo!='' && this.props.state.tipo!='GENERAL' ?
+                  this.props.state.tipo!='' && this.props.state.tipo!='GENERAL' && this.props.state.tipo!='SISTEMA' && this.props.state.tipo!='SEGURIDAD' ?
                   <label htmlFor='escenario'>* Listado</label> :
                   <label htmlFor='escenario'>Listado</label>
                 }
                 {
-                  this.props.state.tipo!='' && this.props.state.tipo!='GENERAL' ?
+                  this.props.state.tipo!='' && this.props.state.tipo!='GENERAL' && this.props.state.tipo!='SISTEMA' && this.props.state.tipo!='SEGURIDAD' ?
                   <select id='escenario' className='form-control' value={this.props.state.escenario} onChange={this.handleInput.bind(this)}>
                     <option value="">Seleccione uno</option>
                     {this.props.state.escenarios.map(function(currentValue,index,array){
@@ -123,14 +124,14 @@ class IParametroForm extends React.Component{
                 }
               </div>
             </If>
-            <If condition={this.props.state.tipo!='SISTEMA'}>
+            <If condition={this.props.state.tipo!='SISTEMA' && this.props.state.tipo!='SEGURIDAD'}>
               <div className="form-group">
                 <label htmlFor='parametro'>* Parámetro</label>
                 <input id='parametro' type='text' className='form-control form-control-lg' value={this.props.state.parametro} onChange={this.handleInput.bind(this)} placeholder='Digite el nombre del parámetro' autoComplete='off' maxLength='100'/>
                 <small id="parametroHelp" className="form-text text-muted">Nombre del parámetro</small>
               </div>
             </If>
-            <If condition={this.props.state.tipo=='SISTEMA'}>
+            <If condition={this.props.state.tipo=='SISTEMA' || this.props.state.tipo=='SEGURIDAD'}>
               <div className="form-group">
                 <label htmlFor='parametro'>* Parámetro</label>
                 <input id='parametro' type='text' className='form-control form-control-lg' value={this.props.state.parametro} placeholder='Digite el nombre del parámetro' autoComplete='off' maxLength='100' readOnly/>
@@ -142,14 +143,14 @@ class IParametroForm extends React.Component{
               <textarea id='valor' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.valor} onChange={this.handleInput.bind(this)} placeholder='Qué valor posee el parámetro' maxLength='1000' autoComplete='off'/>
               <small id="valorHelp" className="form-text text-muted">Dé un valor al parámetro</small>
             </div>
-            <If condition={this.props.state.tipo!='SISTEMA'}>
+            <If condition={this.props.state.tipo!='SISTEMA' && this.props.state.tipo!='SEGURIDAD'}>
               <div className="form-group">
                 <label htmlFor='descripcion'>* Descripción</label>
                 <textarea id='descripcion' type='text' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Descripción' autoComplete='off' maxLength='200'/>
                 <small id="descripcionHelp" className="form-text text-muted">Describa de forma detallada</small>
               </div>
             </If>
-            <If condition={this.props.state.tipo=='SISTEMA'}>
+            <If condition={this.props.state.tipo=='SISTEMA' || this.props.state.tipo=='SEGURIDAD'}>
               <div className="form-group">
                 <label htmlFor='descripcion'>* Descripción</label>
                 <textarea id='descripcion' type='text' className='form-control form-control-lg' value={this.props.state.descripcion} placeholder='Descripción' autoComplete='off' maxLength='200' readOnly/>
@@ -195,6 +196,7 @@ class IParametroForm extends React.Component{
                         <option value=''>Seleccione uno</option>
                         <option value='GENERAL'>GENERAL</option>
                         <option value='SISTEMA'>PARAMETROS SISTEMA</option>
+                        <option value='SEGURIDAD'>PARAMETROS SEGURIDAD</option>
                         <option value='CONCILIACION'>CONCILIACION</option>
                         <option value='ESCENARIO'>ESCENARIO</option>
                       </select>
@@ -202,12 +204,12 @@ class IParametroForm extends React.Component{
                     </div>
                     <div className="form-group">
                       {
-                        this.props.state.tipo!='' && this.props.state.tipo!='GENERAL' ?
+                        this.props.state.tipo!='' && this.props.state.tipo!='GENERAL' && this.props.state.tipo!='SISTEMA' && this.props.state.tipo!='SEGURIDAD' ?
                         <label htmlFor='escenario'>* Listado</label> :
                         <label htmlFor='escenario'>Listado</label>
                       }
                       {
-                        this.props.state.tipo!='' && this.props.state.tipo!='GENERAL' ?
+                        this.props.state.tipo!='' && this.props.state.tipo!='GENERAL' && this.props.state.tipo!='SISTEMA' && this.props.state.tipo!='SEGURIDAD' ?
                         <AsyncSelect
                           cacheOptions
                           loadOptions={this.loadOptions.bind(this)}
@@ -221,7 +223,7 @@ class IParametroForm extends React.Component{
                         </select>
                       }
 
-                      
+
                     </div>
                     <div className="form-group">
                       <label htmlFor='parametro'>* Parámetro</label>

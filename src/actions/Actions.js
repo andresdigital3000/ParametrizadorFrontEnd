@@ -133,11 +133,11 @@ export const loginRequest = () => (dispatch, getState) => {
                 userName : getState().loginFormReducer.username,
                 passWord : getState().loginFormReducer.password,
                 domain : getState().loginFormReducer.dominio,
-                ip : (responseClaro[0].tipo === "SISTEMA" ? decryptJS(responseClaro[0].valor) : responseClaro[0].valor),
-                port : (responseClaro[1].tipo === "SISTEMA" ? decryptJS(responseClaro[1].valor) : responseClaro[1].valor),
-                commonName : (responseClaro[2].tipo === "SISTEMA" ? decryptJS(responseClaro[2].valor) : responseClaro[2].valor),
-                domainGroup : (responseClaro[3].tipo === "SISTEMA" ? decryptJS(responseClaro[3].valor) : responseClaro[3].valor),
-                organization : (responseClaro[4].tipo === "SISTEMA" ? decryptJS(responseClaro[4].valor) : responseClaro[4].valor)
+                ip : (responseClaro[0].tipo === "SEGURIDAD" ? decryptJS(responseClaro[0].valor) : responseClaro[0].valor),
+                port : (responseClaro[1].tipo === "SEGURIDAD" ? decryptJS(responseClaro[1].valor) : responseClaro[1].valor),
+                commonName : (responseClaro[2].tipo === "SEGURIDAD" ? decryptJS(responseClaro[2].valor) : responseClaro[2].valor),
+                domainGroup : (responseClaro[3].tipo === "SEGURIDAD" ? decryptJS(responseClaro[3].valor) : responseClaro[3].valor),
+                organization : (responseClaro[4].tipo === "SEGURIDAD" ? decryptJS(responseClaro[4].valor) : responseClaro[4].valor)
               }
               APIInvoker.invokePOST_Login('/usuarios/login', credentials, response => {
                 if(response.ok){
@@ -146,7 +146,7 @@ export const loginRequest = () => (dispatch, getState) => {
                   //Obtiene el valor parametrizado del tiempo para cierre de sesion automático
                   APIInvoker.invokeGET('/parametros/findByAny?texto=V_tiempoExpiraSesion', responsetime => {
                       if (Array.isArray(responsetime) == true) {
-                        window.localStorage.setItem("tiempoexpirasesion", (responsetime[0].tipo === "SISTEMA" ? decryptJS(responsetime[0].valor) : responsetime[0].valor))
+                        window.localStorage.setItem("tiempoexpirasesion", (responsetime[0].tipo === "SEGURIDAD" ? decryptJS(responsetime[0].valor) : responsetime[0].valor))
                         response.json().then(function(result) {
                           //if result.userExist
                           if (result.id != undefined){
@@ -190,11 +190,11 @@ export const loginRequest = () => (dispatch, getState) => {
                 userName : getState().loginFormReducer.username,
                 passWord : getState().loginFormReducer.password,
                 domain : getState().loginFormReducer.dominio,
-                ip : (responseTelmex[0].tipo === "SISTEMA" ? decryptJS(responseTelmex[0].valor) : responseTelmex[0].valor),
-                port : (responseTelmex[1].tipo === "SISTEMA" ? decryptJS(responseTelmex[1].valor) : responseTelmex[1].valor),
-                commonName : (responseTelmex[2].tipo === "SISTEMA" ? decryptJS(responseTelmex[2].valor) : responseTelmex[2].valor),
-                domainGroup : (responseTelmex[3].tipo === "SISTEMA" ? decryptJS(responseTelmex[3].valor) : responseTelmex[3].valor),
-                organization : (responseTelmex[4].tipo === "SISTEMA" ? decryptJS(responseTelmex[4].valor) : responseTelmex[4].valor)
+                ip : (responseTelmex[0].tipo === "SEGURIDAD" ? decryptJS(responseTelmex[0].valor) : responseTelmex[0].valor),
+                port : (responseTelmex[1].tipo === "SEGURIDAD" ? decryptJS(responseTelmex[1].valor) : responseTelmex[1].valor),
+                commonName : (responseTelmex[2].tipo === "SEGURIDAD" ? decryptJS(responseTelmex[2].valor) : responseTelmex[2].valor),
+                domainGroup : (responseTelmex[3].tipo === "SEGURIDAD" ? decryptJS(responseTelmex[3].valor) : responseTelmex[3].valor),
+                organization : (responseTelmex[4].tipo === "SEGURIDAD" ? decryptJS(responseTelmex[4].valor) : responseTelmex[4].valor)
               }
               APIInvoker.invokePOST_Login('/usuarios/login', credentials, response => {
                 if(response.ok){
@@ -203,7 +203,7 @@ export const loginRequest = () => (dispatch, getState) => {
                   //Obtiene el valor parametrizado del tiempo para cierre de sesion automático
                   APIInvoker.invokeGET('/parametros/findByAny?texto=V_tiempoExpiraSesion', responsetime => {
                       if (Array.isArray(responsetime) == true) {
-                        window.localStorage.setItem("tiempoexpirasesion", (responsetime[0].tipo === "SISTEMA" ? decryptJS(responsetime[0].valor) : responsetime[0].valor))
+                        window.localStorage.setItem("tiempoexpirasesion", (responsetime[0].tipo === "SEGURIDAD" ? decryptJS(responsetime[0].valor) : responsetime[0].valor))
                         response.json().then(function(result) {
                           //if result.userExist
                           if (result.id != undefined){
@@ -294,7 +294,7 @@ export const ocultarModal = () => ({
 export const getLinkResultados = () => (dispatch, getState) => {
     APIInvoker.invokeGET('/parametros/findByAny?texto=V_Link Resultados', response => {
         if (Array.isArray(response) == true) {
-            dispatch(extraerLinkResultados((response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor)))
+            dispatch(extraerLinkResultados((response[0].tipo === "SEGURIDAD" ? decryptJS(response[0].valor) : response[0].valor)))
         }
     })
 }
@@ -439,17 +439,17 @@ export const updateFormPoliticas = (field, value) => (dispatch, getState) => {
     if (field == "nombre") {
         APIInvoker.invokeGET('/parametros/findByAny?texto=V_Prefijo para politicas', response => {
             if (response[0].valor != undefined) {
-                let long_parametro = (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor).length;
+                let long_parametro = (response[0].tipo === "SEGURIDAD" ? decryptJS(response[0].valor) : response[0].valor).length;
                 let long_value = value.length;
                 if (long_value == long_parametro + 1) {
                     if (long_parametro >= long_value) {
-                        if (value.substr(0, long_value).toUpperCase() != (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor).substr(0, long_value).toUpperCase()) {
+                        if (value.substr(0, long_value).toUpperCase() != (response[0].tipo === "SEGURIDAD" ? decryptJS(response[0].valor) : response[0].valor).substr(0, long_value).toUpperCase()) {
                             //toast.error("El nombre de la política debe tener el prefijo - '" + response[0].valor.toUpperCase() + "'", {
                             //    position: toast.POSITION.BOTTOM_RIGHT
                             //})
                         }
                     } else {
-                        if (value.substr(0, long_parametro).toUpperCase() != (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor).substr(0, long_parametro).toUpperCase()) {
+                        if (value.substr(0, long_parametro).toUpperCase() != (response[0].tipo === "SEGURIDAD" ? decryptJS(response[0].valor) : response[0].valor).substr(0, long_parametro).toUpperCase()) {
                             //toast.error("El nombre de la política debe tener el prefijo - '" + response[0].valor.toUpperCase() + "'", {
                             //    position: toast.POSITION.BOTTOM_RIGHT
                             //})
@@ -475,7 +475,7 @@ export const savePolitica = () => (dispatch, getState) => {
     APIInvoker.invokeGET('/parametros/findByAny?texto=V_Prefijo para politicas', responseval => {
         let politica_salvar = {
             id: getState().politicaFormReducer.id,
-            nombre: (responseval[0].tipo === "SISTEMA" ? decryptJS(responseval[0].valor) : responseval[0].valor).toUpperCase() + getState().politicaFormReducer.nombre,
+            nombre: (responseval[0].tipo === "SEGURIDAD" ? decryptJS(responseval[0].valor) : responseval[0].valor).toUpperCase() + getState().politicaFormReducer.nombre,
             descripcion: getState().politicaFormReducer.descripcion,
             objetivo: getState().politicaFormReducer.objetivo,
             fecha_creacion: '',
@@ -483,7 +483,7 @@ export const savePolitica = () => (dispatch, getState) => {
             username: window.localStorage.getItem("nombreUsuario")
         }
         if (responseval[0].valor != undefined) {
-            let long_parametro = (responseval[0].tipo === "SISTEMA" ? decryptJS(responseval[0].valor) : responseval[0].valor).length;
+            let long_parametro = (responseval[0].tipo === "SEGURIDAD" ? decryptJS(responseval[0].valor) : responseval[0].valor).length;
             if (id_politica == 0 || id_politica == undefined) {
                 APIInvoker.invokePOST('/politicas', politica_salvar, response => {
                     if (response.ok) {
@@ -504,7 +504,7 @@ export const savePolitica = () => (dispatch, getState) => {
             } else {
                     let politica_salvar = {
                         id: getState().politicaFormReducer.id,
-                        nombre: (responseval[0].tipo === "SISTEMA" ? decryptJS(responseval[0].valor) : responseval[0].valor).toUpperCase() + getState().politicaFormReducer.nombre,
+                        nombre: (responseval[0].tipo === "SEGURIDAD" ? decryptJS(responseval[0].valor) : responseval[0].valor).toUpperCase() + getState().politicaFormReducer.nombre,
                         descripcion: getState().politicaFormReducer.descripcion,
                         objetivo: getState().politicaFormReducer.objetivo,
                         fecha_creacion: '',
@@ -863,17 +863,17 @@ export const updateFormConciliaciones = (field, value) => (dispatch, getState) =
     if (field == "nombre") {
         APIInvoker.invokeGET('/parametros/findByAny?texto=V_Prefijo para conciliaciones', response => {
             if (response[0].valor != undefined) {
-                let long_parametro = (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor).length;
+                let long_parametro = (response[0].tipo === "SEGURIDAD" ? decryptJS(response[0].valor) : response[0].valor).length;
                 let long_value = value.length;
                 if (long_value == long_parametro + 1) {
                     if (long_parametro >= long_value) {
-                        if (value.substr(0, long_value).toUpperCase() != (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor).substr(0, long_value).toUpperCase()) {
+                        if (value.substr(0, long_value).toUpperCase() != (response[0].tipo === "SEGURIDAD" ? decryptJS(response[0].valor) : response[0].valor).substr(0, long_value).toUpperCase()) {
                             //toast.error("El nombre de la conciliación debe tener el prefijo - '" + response[0].valor.toUpperCase() + "'", {
                             //    position: toast.POSITION.BOTTOM_RIGHT
                             //})
                         }
                     } else {
-                        if (value.substr(0, long_parametro).toUpperCase() != (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor).substr(0, long_parametro).toUpperCase()) {
+                        if (value.substr(0, long_parametro).toUpperCase() != (response[0].tipo === "SEGURIDAD" ? decryptJS(response[0].valor) : response[0].valor).substr(0, long_parametro).toUpperCase()) {
                             //toast.error("El nombre de la conciliación debe tener el prefijo - '" + response[0].valor.toUpperCase() + "'", {
                             //    position: toast.POSITION.BOTTOM_RIGHT
                             //})
@@ -891,7 +891,7 @@ const updateFormConciliacionesRequest = (field, value) => ({
     field: field,
     value: value
 })
- 
+
 //Funcion para guardar o actualizar la conciliacion
 export const saveConciliacion = () => (dispatch, getState) => {
     let id_conciliacion = getState().conciliacionFormReducer.id
@@ -1239,17 +1239,17 @@ export const updateFormEscenarios = (field, value) => (dispatch, getState) => {
     if (field == "nombre") {
         APIInvoker.invokeGET('/parametros/findByAny?texto=V_Prefijo para escenarios', response => {
             if (response[0].valor != undefined) {
-                let long_parametro = (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor).length;
+                let long_parametro = (response[0].tipo === "SEGURIDAD" ? decryptJS(response[0].valor) : response[0].valor).length;
                 let long_value = value.length;
                 if (long_value == long_parametro + 1) {
                     if (long_parametro >= long_value) {
-                        if (value.substr(0, long_value).toUpperCase() != (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor).substr(0, long_value).toUpperCase()) {
+                        if (value.substr(0, long_value).toUpperCase() != (response[0].tipo === "SEGURIDAD" ? decryptJS(response[0].valor) : response[0].valor).substr(0, long_value).toUpperCase()) {
                             //toast.error("El nombre del escenario debe tener el prefijo -'" + response[0].valor.toUpperCase() + "'", {
                             //    position: toast.POSITION.BOTTOM_RIGHT
                             //})
                         }
                     } else {
-                        if (value.substr(0, long_parametro).toUpperCase() != (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor).substr(0, long_parametro).toUpperCase()) {
+                        if (value.substr(0, long_parametro).toUpperCase() != (response[0].tipo === "SEGURIDAD" ? decryptJS(response[0].valor) : response[0].valor).substr(0, long_parametro).toUpperCase()) {
                             //toast.error("El nombre del escenario debe tener el prefijo -'" + response[0].valor.toUpperCase() + "'", {
                             //    position: toast.POSITION.BOTTOM_RIGHT
                             //})
@@ -1272,11 +1272,11 @@ export const saveEscenario = () => (dispatch, getState) => {
     let id_escenario = getState().escenarioFormReducer.id
     APIInvoker.invokeGET('/parametros/findByAny?texto=V_Prefijo para escenarios', responseval => {
         if (responseval[0].valor != undefined) {
-            let long_parametro = (responseval[0].tipo === "SISTEMA" ? decryptJS(responseval[0].valor) : responseval[0].valor).length;
+            let long_parametro = (responseval[0].tipo === "SEGURIDAD" ? decryptJS(responseval[0].valor) : responseval[0].valor).length;
                 if (id_escenario == 0 || id_escenario == undefined) {
                     //Si es un escenario nuevo
                     let escenario_salvar = {
-                        nombre: (responseval[0].tipo === "SISTEMA" ? decryptJS(responseval[0].valor) : responseval[0].valor).toUpperCase() + getState().escenarioFormReducer.nombre,
+                        nombre: (responseval[0].tipo === "SEGURIDAD" ? decryptJS(responseval[0].valor) : responseval[0].valor).toUpperCase() + getState().escenarioFormReducer.nombre,
                         impacto: getState().escenarioFormReducer.impacto,
                         idConciliacion: getState().escenarioFormReducer.conciliacion,
                         descripcion: getState().escenarioFormReducer.descripcion,
@@ -1300,7 +1300,7 @@ export const saveEscenario = () => (dispatch, getState) => {
                 } else {
                     let escenario_salvar = {
                         id: getState().escenarioFormReducer.id,
-                        nombre: (responseval[0].tipo === "SISTEMA" ? decryptJS(responseval[0].valor) : responseval[0].valor).toUpperCase() + getState().escenarioFormReducer.nombre,
+                        nombre: (responseval[0].tipo === "SEGURIDAD" ? decryptJS(responseval[0].valor) : responseval[0].valor).toUpperCase() + getState().escenarioFormReducer.nombre,
                         impacto: getState().escenarioFormReducer.impacto,
                         idConciliacion: getState().escenarioFormReducer.conciliacion,
                         nombreConciliacion: getState().escenarioFormReducer.nombreConciliacion,
@@ -1362,7 +1362,7 @@ export const borrarEscenario = () => (dispatch, getState) => {
             })
         }
     }, error => {})
-    
+
 }
 
 //Cargar el combo de impactos en escenarios
@@ -1370,7 +1370,7 @@ export const cargarImpactos = () => (dispatch, getState) => {
     APIInvoker.invokeGET('/parametros/findByAny?texto=V_Impacto', response => {
         let array_opciones = new Array()
         if (response[0].valor != undefined) {
-            array_opciones = (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor).split(';');
+            array_opciones = (response[0].tipo === "SEGURIDAD" ? decryptJS(response[0].valor) : response[0].valor).split(';');
             dispatch(cargarImpactosCombo(array_opciones))
         }
     })
@@ -1479,11 +1479,11 @@ export const doEjecutarConciliacion = () => (dispatch, getState) => {
       if (idPlanInstancia == 0) {
           //Construir petición json para Backend
           let startEjecucion = {
-              "odiUser": (responseOdi[1].tipo === "SISTEMA" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
-              "odiPassword": (responseOdi[2].tipo === "SISTEMA" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
-              "workRepository": (responseOdi[3].tipo === "SISTEMA" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
+              "odiUser": (responseOdi[1].tipo === "SEGURIDAD" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
+              "odiPassword": (responseOdi[2].tipo === "SEGURIDAD" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
+              "workRepository": (responseOdi[3].tipo === "SEGURIDAD" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
               "loadPlanName": paqueteAsociado,
-              "contexto": (responseOdi[4].tipo === "SISTEMA" ? decryptJS(responseOdi[4].valor) : responseOdi[4].valor),
+              "contexto": (responseOdi[4].tipo === "SEGURIDAD" ? decryptJS(responseOdi[4].valor) : responseOdi[4].valor),
               "params": [{
                       "nombre": "GLOBAL.V_CTL_PAQUETE",
                       "valor": "JP_NO_EXISTE"
@@ -1555,9 +1555,9 @@ export const doEjecutarConciliacion = () => (dispatch, getState) => {
       } else {
           //Consultar ejecución actual
           let consultarEjecucion = {
-              "odiUser": (responseOdi[1].tipo === "SISTEMA" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
-              "odiPassword": (responseOdi[2].tipo === "SISTEMA" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
-              "workRepository": (responseOdi[3].tipo === "SISTEMA" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
+              "odiUser": (responseOdi[1].tipo === "SEGURIDAD" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
+              "odiPassword": (responseOdi[2].tipo === "SEGURIDAD" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
+              "workRepository": (responseOdi[3].tipo === "SEGURIDAD" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
               "loadPlans": [{
                   "loadPlanInstanceId": idPlanInstancia,
                   "loadPlanRunNumber": configuration.webService.runCount
@@ -1573,11 +1573,11 @@ export const doEjecutarConciliacion = () => (dispatch, getState) => {
                   if (response[0].LoadPlanStatus != "R") {
                       //Construir petición json para Backend
                       let startEjecucion = {
-                          "odiUser": (responseOdi[1].tipo === "SISTEMA" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
-                          "odiPassword": (responseOdi[2].tipo === "SISTEMA" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
-                          "workRepository": (responseOdi[3].tipo === "SISTEMA" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
+                          "odiUser": (responseOdi[1].tipo === "SEGURIDAD" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
+                          "odiPassword": (responseOdi[2].tipo === "SEGURIDAD" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
+                          "workRepository": (responseOdi[3].tipo === "SEGURIDAD" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
                           "loadPlanName": paqueteAsociado,
-                          "contexto": (responseOdi[4].tipo === "SISTEMA" ? decryptJS(responseOdi[4].valor) : responseOdi[4].valor),
+                          "contexto": (responseOdi[4].tipo === "SEGURIDAD" ? decryptJS(responseOdi[4].valor) : responseOdi[4].valor),
                           "params": [{
                                   "nombre": "GLOBAL.V_CTL_PAQUETE",
                                   "valor": "JP_NO_EXISTE"
@@ -1677,9 +1677,9 @@ export const doCancelarConciliacion = () => (dispatch, getState) => {
     if (idPlanInstancia && idPlanInstancia != 0) {
         //Construir petición json para Backend
         let consultarEjecucion = {
-            "odiUser": (responseOdi[1].tipo === "SISTEMA" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
-            "odiPassword": (responseOdi[2].tipo === "SISTEMA" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
-            "workRepository": (responseOdi[3].tipo === "SISTEMA" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
+            "odiUser": (responseOdi[1].tipo === "SEGURIDAD" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
+            "odiPassword": (responseOdi[2].tipo === "SEGURIDAD" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
+            "workRepository": (responseOdi[3].tipo === "SEGURIDAD" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
             "loadPlans": [{
                 "loadPlanInstanceId": idPlanInstancia,
                 "loadPlanRunNumber": configuration.webService.runCount
@@ -1698,9 +1698,9 @@ export const doCancelarConciliacion = () => (dispatch, getState) => {
                 if (response[0].LoadPlanStatus == "R") {
                     //Construir petición json para Backend
                     let stopEjecucion = {
-                        "odiUser": (responseOdi[1].tipo === "SISTEMA" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
-                        "odiPassword": (responseOdi[2].tipo === "SISTEMA" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
-                        "workRepository": (responseOdi[3].tipo === "SISTEMA" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
+                        "odiUser": (responseOdi[1].tipo === "SEGURIDAD" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
+                        "odiPassword": (responseOdi[2].tipo === "SEGURIDAD" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
+                        "workRepository": (responseOdi[3].tipo === "SEGURIDAD" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
                         "loadPlanInstance": idPlanInstancia,
                         "stopLevel": configuration.webService.stopLevel
                     }
@@ -1950,7 +1950,7 @@ export const aprobarRenglonResultado = (idRenglon) => (dispatch, getState) => {
     let paqueteAsociado = 0
     APIInvoker.invokeGET('/parametros/findByAny?texto=V_Paquete aprobado', response => {
         if (response[0].valor != undefined) {
-            let paqueteAsociado = (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor)
+            let paqueteAsociado = (response[0].tipo === "SEGURIDAD" ? decryptJS(response[0].valor) : response[0].valor)
 
             //Obtiene los valores ODI de tabla Parametros
             APIInvoker.invokeGET('/odiRest/getOdiParametros', responseOdi => {
@@ -1960,11 +1960,11 @@ export const aprobarRenglonResultado = (idRenglon) => (dispatch, getState) => {
                       let paramCodConciliacion = responseResConciliacion.codConciliacion
                       let paramIdEjecucion = responseResConciliacion.idEjecucion
                       let startEjecucion = {
-                        "odiUser": (responseOdi[1].tipo === "SISTEMA" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
-                        "odiPassword": (responseOdi[2].tipo === "SISTEMA" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
-                        "workRepository": (responseOdi[3].tipo === "SISTEMA" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
+                        "odiUser": (responseOdi[1].tipo === "SEGURIDAD" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
+                        "odiPassword": (responseOdi[2].tipo === "SEGURIDAD" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
+                        "workRepository": (responseOdi[3].tipo === "SEGURIDAD" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
                           "loadPlanName": paqueteAsociado,
-                          "contexto": (responseOdi[4].tipo === "SISTEMA" ? decryptJS(responseOdi[4].valor) : responseOdi[4].valor),
+                          "contexto": (responseOdi[4].tipo === "SEGURIDAD" ? decryptJS(responseOdi[4].valor) : responseOdi[4].valor),
                           "params": [{
                                   "nombre": "PRY_GAI.V_0553_COD_CONCILIACION",
                                   "valor": paramCodConciliacion
@@ -2027,27 +2027,27 @@ export const rechazarRenglonResultado = (idRenglon) => (dispatch, getState) => {
     let paqueteAsociado = 0
     APIInvoker.invokeGET('/parametros/findByAny?texto=V_Paquete no aprobado', response => {
         if (response[0].valor != undefined) {
-            let paqueteAsociado = (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor)
+            let paqueteAsociado = (response[0].tipo === "SEGURIDAD" ? decryptJS(response[0].valor) : response[0].valor)
             //Obtiene los valores ODI de tabla Parametros
             APIInvoker.invokeGET('/odiRest/getOdiParametros', responseOdi => {
               //Construir petición json para Backend
               let startEjecucion = {
-                  "odiUser": (responseOdi[1].tipo === "SISTEMA" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
-                  "odiPassword": (responseOdi[2].tipo === "SISTEMA" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
-                  "workRepository": (responseOdi[3].tipo === "SISTEMA" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
+                  "odiUser": (responseOdi[1].tipo === "SEGURIDAD" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
+                  "odiPassword": (responseOdi[2].tipo === "SEGURIDAD" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
+                  "workRepository": (responseOdi[3].tipo === "SEGURIDAD" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
                   "loadPlanName": paqueteAsociado,
-                  "contexto": (responseOdi[4].tipo === "SISTEMA" ? decryptJS(responseOdi[4].valor) : responseOdi[4].valor),
+                  "contexto": (responseOdi[4].tipo === "SEGURIDAD" ? decryptJS(responseOdi[4].valor) : responseOdi[4].valor),
               }
               if (paqueteAsociado != 0) {
                   APIInvoker.invokeGET('/resconciliacion/' + idRenglon, responseResConciliacion => {
                       let paramCodConciliacion = responseResConciliacion.codConciliacion
                       let paramIdEjecucion = responseResConciliacion.idEjecucion
                       let startEjecucion = {
-                          "odiUser": (responseOdi[1].tipo === "SISTEMA" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
-                          "odiPassword": (responseOdi[2].tipo === "SISTEMA" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
-                          "workRepository": (responseOdi[3].tipo === "SISTEMA" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
+                          "odiUser": (responseOdi[1].tipo === "SEGURIDAD" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
+                          "odiPassword": (responseOdi[2].tipo === "SEGURIDAD" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
+                          "workRepository": (responseOdi[3].tipo === "SEGURIDAD" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
                           "loadPlanName": paqueteAsociado,
-                          "contexto": (responseOdi[4].tipo === "SISTEMA" ? decryptJS(responseOdi[4].valor) : responseOdi[4].valor),
+                          "contexto": (responseOdi[4].tipo === "SEGURIDAD" ? decryptJS(responseOdi[4].valor) : responseOdi[4].valor),
                           "params": [{
                                   "nombre": "PRY_GAI.V_0553_COD_CONCILIACION",
                                   "valor": paramCodConciliacion
@@ -2492,7 +2492,7 @@ export const findTextParametro = () => (dispatch, getState) => {
                       id: responseI.id,
                       parametro: responseI.parametro,
                       tipo: responseI.tipo,
-                      valor: (responseI.tipo === "SISTEMA" ? decryptJS(responseI.valor) : responseI.valor)
+                      valor: (responseI.tipo === "SEGURIDAD" ? decryptJS(responseI.valor) : responseI.valor)
                     }
                     return devolver;
                 });
@@ -2513,7 +2513,7 @@ export const findTextParametro = () => (dispatch, getState) => {
                     id: response.id,
                     parametro: response.parametro,
                     tipo: response.tipo,
-                    valor: (response.tipo === "SISTEMA" ? decryptJS(response.valor) : response.valor)
+                    valor: (response.tipo === "SEGURIDAD" ? decryptJS(response.valor) : response.valor)
                   }
                   dispatch(verParametros(responseDecrypt))
               } else {
@@ -2622,7 +2622,7 @@ export const refreshListParametro = (resp) => (dispatch, getState) => {
                           id: response.id,
                           parametro: response.parametro,
                           tipo: response.tipo,
-                          valor: (response.tipo === "SISTEMA" ? decryptJS(response.valor) : response.valor)
+                          valor: (response.tipo === "SEGURIDAD" ? decryptJS(response.valor) : response.valor)
                         }
                         return devolver;
                     });
@@ -2643,7 +2643,7 @@ export const refreshListParametro = (resp) => (dispatch, getState) => {
                       id: response1.id,
                       parametro: response1.parametro,
                       tipo: response1.tipo,
-                      valor: (response1.tipo === "SISTEMA" ? decryptJS(response1.valor) : response1.valor)
+                      valor: (response1.tipo === "SEGURIDAD" ? decryptJS(response1.valor) : response1.valor)
                     }
                     dispatch(antesVerParametros([response1Decrypt]))
                 } else {
@@ -2668,7 +2668,7 @@ export const refreshListParametro = (resp) => (dispatch, getState) => {
                           id: responseI.id,
                           parametro: responseI.parametro,
                           tipo: responseI.tipo,
-                          valor: (responseI.tipo === "SISTEMA" ? decryptJS(responseI.valor) : responseI.valor)
+                          valor: (responseI.tipo === "SEGURIDAD" ? decryptJS(responseI.valor) : responseI.valor)
                         }
                         return devolver;
                     });
@@ -2687,7 +2687,7 @@ export const refreshListParametro = (resp) => (dispatch, getState) => {
                       id: response.id,
                       parametro: response.parametro,
                       tipo: response.tipo,
-                      valor: (response.tipo === "SISTEMA" ? decryptJS(response.valor) : response.valor)
+                      valor: (response.tipo === "SEGURIDAD" ? decryptJS(response.valor) : response.valor)
                     }
                     dispatch(verParametros([responseDecrypt]))
                 } else {
@@ -2739,8 +2739,8 @@ export const saveParametro = () => (dispatch, getState) => {
     APIInvoker.invokeGET('/parametros/findByAny?texto=V_Prefijo para parametros', responseval => {
         let parametro_salvar = {
             id: getState().parametroFormReducer.id,
-            parametro: (responseval[0].tipo === "SISTEMA" ? decryptJS(responseval[0].valor) : responseval[0].valor).toUpperCase() + getState().parametroFormReducer.parametro,
-            valor: (getState().parametroFormReducer.tipo === "SISTEMA" ? encryptJS(getState().parametroFormReducer.valor) : getState().parametroFormReducer.valor),
+            parametro: (responseval[0].tipo === "SEGURIDAD" ? decryptJS(responseval[0].valor) : responseval[0].valor).toUpperCase() + getState().parametroFormReducer.parametro,
+            valor: (getState().parametroFormReducer.tipo === "SEGURIDAD" ? encryptJS(getState().parametroFormReducer.valor) : getState().parametroFormReducer.valor),
             descripcion: getState().parametroFormReducer.descripcion,
             tipo: getState().parametroFormReducer.tipo,
             codPadre: codPadre,
@@ -2800,7 +2800,7 @@ export const cargarParametro = (idparametro) => (dispatch, getState) => {
                       id: responseI.id,
                       parametro: responseI.parametro,
                       tipo: responseI.tipo,
-                      valor: (responseI.tipo === "SISTEMA" ? decryptJS(responseI.valor) : responseI.valor)
+                      valor: (responseI.tipo === "SEGURIDAD" ? decryptJS(responseI.valor) : responseI.valor)
                     }
                     return devolver;
                 });
@@ -2821,7 +2821,7 @@ export const cargarParametro = (idparametro) => (dispatch, getState) => {
                   id: response.id,
                   parametro: response.parametro,
                   tipo: response.tipo,
-                  valor: (response.tipo === "SISTEMA" ? decryptJS(response.valor) : response.valor)
+                  valor: (response.tipo === "SEGURIDAD" ? decryptJS(response.valor) : response.valor)
                 }
                 dispatch(cargarParametroEnForm([responseDecrypt]))
             } else {
@@ -3121,7 +3121,7 @@ export const updateFormQuerys = (field, value) => (dispatch, getState) => {
     if (field == "query") {
         APIInvoker.invokeGET('/parametros/findByAny?texto=V_Palabras restringidas en queries', response => {
             if (response[0].valor != undefined) {
-                let array_restringidas = (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor).split(';');
+                let array_restringidas = (response[0].tipo === "SEGURIDAD" ? decryptJS(response[0].valor) : response[0].valor).split(';');
                 let palabras_usadas = value.split(' ');
                 let palabras_prohibidas = 0;
                 for (var i = 0; i < array_restringidas.length; i++) {
@@ -3133,7 +3133,7 @@ export const updateFormQuerys = (field, value) => (dispatch, getState) => {
                 }
                 if (palabras_prohibidas > 0) {
                     toast.dismiss()
-                    toast.error("No use : '" + (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor) + "'", {
+                    toast.error("No use : '" + (response[0].tipo === "SEGURIDAD" ? decryptJS(response[0].valor) : response[0].valor) + "'", {
                         position: toast.POSITION.BOTTOM_RIGHT
                     })
                 }
@@ -3162,7 +3162,7 @@ export const saveQuery = () => (dispatch, getState) => {
     let id_query = getState().queryFormReducer.id
     APIInvoker.invokeGET('/parametros/findByAny?texto=V_Palabras restringidas en queries', response => {
         if (response[0].valor != undefined) {
-            let array_restringidas = (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor).split(';');
+            let array_restringidas = (response[0].tipo === "SEGURIDAD" ? decryptJS(response[0].valor) : response[0].valor).split(';');
             let palabras_usadas = getState().queryFormReducer.query.split(' ');
             let palabras_prohibidas = 0;
             for (var i = 0; i < array_restringidas.length; i++) {
@@ -3173,7 +3173,7 @@ export const saveQuery = () => (dispatch, getState) => {
                 }
             }
             if (palabras_prohibidas > 0) {
-                toast.error("Está usando palabras prohibidas en el query : '" + (response[0].tipo === "SISTEMA" ? decryptJS(response[0].valor) : response[0].valor) + "'", {
+                toast.error("Está usando palabras prohibidas en el query : '" + (response[0].tipo === "SEGURIDAD" ? decryptJS(response[0].valor) : response[0].valor) + "'", {
                     position: toast.POSITION.BOTTOM_RIGHT
                 })
             } else {
@@ -3273,7 +3273,7 @@ export const borrarQuery = () => (dispatch, getState) => {
             })
         }
     }, error => {})
-    
+
 }
 
 //Funcion de cambio de pagina
