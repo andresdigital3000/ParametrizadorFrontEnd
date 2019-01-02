@@ -85,7 +85,6 @@ class IPolitica extends React.Component{
                   },
                   {
                       Header: "CONCILIACIÓN",
-                      accessor: 'objetivo',
                       filterable: false,
                       Cell: row => (
                         <div>

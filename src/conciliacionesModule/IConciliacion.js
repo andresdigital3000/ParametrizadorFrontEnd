@@ -104,6 +104,7 @@ class IConciliacion extends React.Component{
                           Header: "ESCENARIO",
                           accessor: 'id',
                           filterable: false,
+                          sortable: false,
                           Cell: row => (
                             <center>
                               <Link to={"/escenarios/"+row.value}><i className="fa fa-2x fa-tasks"/></Link>
@@ -123,14 +124,13 @@ class IConciliacion extends React.Component{
                       },
                       {
                         Header: "ACCIONES",
-                        accessor: 'requiereAprobacion',
                         filterable: false,
                         sortable: false,
                         Cell: row => (
                           <div style={{textAlign: 'left'}}>
                             <Link to={"/conciliaciones/edit/"+row.row._original.id} className="btn btn-info" style={{marginRight: '10px'}}><i className="fa fa-pencil"/></Link>
                             <Link to={"/conciliaciones/delete/"+row.row._original.id} className="btn btn-danger" style={{marginRight: '10px'}}><i className="fa fa-trash-o"/></Link>
-                            <If condition={row.value == 'SI'} >
+                            <If condition={row.row._original.requiereAprobacion == 'SI'} >
                               <Link title="Aprobar Queries" to={"/conciliaciones/aprobar/"+row.row._original.id} className="btn btn-success" ><i className="fa fa-check"/></Link>
                             </If>
                           </div>

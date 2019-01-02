@@ -128,6 +128,7 @@ class IEscenario extends React.Component{
                   {
                     Header: "QUERY",
                     filterable: false,
+                    sortable: false,
                     accessor: 'id',
                     Cell: row => (
                       <div>
@@ -143,6 +144,7 @@ class IEscenario extends React.Component{
                     Header: "PARÁMETROS",
                     accessor: 'id',
                     filterable: false,
+                    sortable: false,
                     Cell: row => (
                       <div>
                         <center>
