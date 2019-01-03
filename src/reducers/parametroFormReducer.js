@@ -51,7 +51,7 @@ export const parametroFormReducer = (state = initialState,action) =>{
           conciliacion : {$set : tipo == 'CONCILIACION' ? action.parametro[0].codPadre : 0},
           conciliacionDescripcion : {$set : tipo == 'CONCILIACION' ? action.parametro[0].codPadreDesc : null}
         })
-        console.log("new state ==>", newState)
+        //console.log("new state ==>", newState)
         return newState
     case LIMPIAR_FORM_PARAMETRO:
         return update(state,{
@@ -74,7 +74,7 @@ export const parametroFormReducer = (state = initialState,action) =>{
       return update(state,{
         escenarios: {$set: action.lista}
       })
-        
+
     default:
         return state
   }
