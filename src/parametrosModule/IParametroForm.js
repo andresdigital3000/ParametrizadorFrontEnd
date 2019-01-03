@@ -4,7 +4,7 @@ import APIInvoker from '../utils/APIInvoker'
 import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { Link } from 'react-router';
 import { connect } from 'react-redux'
-import { updateFormParametros, updateFormEscenarioParametros, saveParametro, cargarParametro, limpiarFormParametro, refreshListParametro, cargarListadoEnParametros } from '../actions/Actions';
+import { updateFormParametros, updateFormConciliacionParametros, cargarListadoEscenarioEnParametros, updateFormEscenarioParametros, saveParametro, cargarParametro, limpiarFormParametro, refreshListParametro, cargarListadoConciliacionEnParametros } from '../actions/Actions';
 import AsyncSelect from 'react-select/lib/Async'
 
 //import Select from 'react-select';
@@ -30,7 +30,7 @@ class IParametroForm extends React.Component{
 
   //Detecta cambios de estado en textbox
   handleInput(e){
-      this.props.updateFormParametros(e.target.id, e.target.value)
+    this.props.updateFormParametros(e.target.id, e.target.value)
   }
 
   //Detecta cambio en el combo de Conciliaciones
@@ -51,21 +51,43 @@ class IParametroForm extends React.Component{
     this.props.limpiarFormParametro()
   }
 
-  loadOptions(inputValue, callback) {
+  loadOptionsConciliaciones(inputValue, callback) {
     let realInput = inputValue || ''
     if(realInput.length < 3) {
       callback( [{value: 0, label: 'Capture al menos 3 caracteres'}])
       return
     }else if(this.props.state.tipo!='' && this.props.state.tipo!='GENERAL'){
       //this.props.cargarComboConciliaciones(realInput, callback)
-      this.props.cargarListadoEnParametros(realInput, callback)
+      this.props.cargarListadoConciliacionEnParametros(realInput, callback)
     }else{
       callback( [{value: 0, label: 'No aplica'}])
       return
     }
   };
 
-  cambioListadoSelect(newValue){
+  loadOptionsEscenarios(inputValue, callback) {
+    let realInput = inputValue || ''
+    if(realInput.length < 3) {
+      callback( [{value: 0, label: 'Capture al menos 3 caracteres'}])
+      return
+    }else if(this.props.state.tipo!='' && this.props.state.tipo!='GENERAL'){
+      //this.props.cargarComboConciliaciones(realInput, callback)
+      this.props.cargarListadoEscenarioEnParametros(realInput, callback)
+    }else{
+      callback( [{value: 0, label: 'No aplica'}])
+      return
+    }
+  };
+
+  cambioListadoConciliacionSelect(newValue){
+    if(newValue.value == 0 ){
+      this.props.updateFormConciliacionParametros(null, null)
+    }else{
+      this.props.updateFormConciliacionParametros(newValue.value, newValue.label)
+    }
+  }
+
+  cambioListadoEscenarioSelect(newValue){
     if(newValue.value == 0 ){
       this.props.updateFormEscenarioParametros(null, null)
     }else{
@@ -108,7 +130,34 @@ class IParametroForm extends React.Component{
                   <label htmlFor='escenario'>* Listado</label> :
                   <label htmlFor='escenario'>Listado</label>
                 }
-                {
+                <Choose>
+                  <When condition={this.props.state.tipo == 'ESCENARIO'} >
+                    <AsyncSelect
+                      cacheOptions
+                      loadOptions={this.loadOptionsEscenarios.bind(this)}
+                      defaultOptions
+                      onInputChange={this.handleInputChange}
+                      value={{value: this.props.state.escenario, label: this.props.state.nombreEscenario }}
+                      onChange={this.cambioListadoEscenarioSelect.bind(this)}
+                    />
+                  </When>
+                  <When condition={this.props.state.tipo == 'CONCILIACION'}>
+                    <AsyncSelect
+                      cacheOptions
+                      loadOptions={this.loadOptionsConciliaciones.bind(this)}
+                      defaultOptions
+                      onInputChange={this.handleInputChange}
+                      value={{value: this.props.state.conciliacion, label: this.props.state.nombreConciliacion }}
+                      onChange={this.cambioListadoConciliacionSelect.bind(this)}
+                    />
+                  </When>
+                  <Otherwise>
+                    <select id='escenario' className='form-control' value={this.props.state.escenario}>
+                      <option value='0'>No aplica</option>
+                    </select>
+                  </Otherwise>
+                </Choose>
+                {/*
                   this.props.state.tipo!='' && this.props.state.tipo!='GENERAL' && this.props.state.tipo!='SISTEMA' && this.props.state.tipo!='SEGURIDAD' ?
                   <select id='escenario' className='form-control' value={this.props.state.escenario} onChange={this.handleInput.bind(this)}>
                     <option value="">Seleccione uno</option>
@@ -121,7 +170,7 @@ class IParametroForm extends React.Component{
                   <select id='escenario' className='form-control' value={this.props.state.escenario}>
                     <option value='0'>No aplica</option>
                   </select>
-                }
+                  */}
               </div>
             </If>
             <If condition={this.props.state.tipo!='SISTEMA' && this.props.state.tipo!='SEGURIDAD'}>
@@ -170,7 +219,7 @@ class IParametroForm extends React.Component{
               </If>
               <If condition={this.props.state.tipo == 'CONCILIACION'}>
                 {
-                  this.props.state.escenario!=undefined && this.props.state.escenario!="" && this.props.state.escenario!=0 && this.props.state.parametro!="" && this.props.state.valor!="" ?
+                  this.props.state.conciliacion!=undefined && this.props.state.conciliacion!="" && this.props.state.conciliacion!=0 && this.props.state.parametro!="" && this.props.state.valor!="" ?
                   <button onClick={this.grabarParametro.bind(this)} className="btn btn-primary">Grabar</button> :
                   <button className="btn btn-primary"  disabled>Formulario incompleto</button>
                 }
@@ -208,7 +257,36 @@ class IParametroForm extends React.Component{
                         <label htmlFor='escenario'>* Listado</label> :
                         <label htmlFor='escenario'>Listado</label>
                       }
-                      {
+
+                      <Choose>
+                        <When condition={this.props.state.tipo == 'ESCENARIO'} >
+                          <AsyncSelect
+                            cacheOptions
+                            loadOptions={this.loadOptionsEscenarios.bind(this)}
+                            defaultOptions
+                            onInputChange={this.handleInputChange}
+                            value={{value: this.props.state.escenario, label: this.props.state.nombreEscenario }}
+                            onChange={this.cambioListadoEscenarioSelect.bind(this)}
+                          />
+                        </When>
+                        <When condition={this.props.state.tipo == 'CONCILIACION'}>
+                          <AsyncSelect
+                            cacheOptions
+                            loadOptions={this.loadOptionsConciliaciones.bind(this)}
+                            defaultOptions
+                            onInputChange={this.handleInputChange}
+                            value={{value: this.props.state.conciliacion, label: this.props.state.nombreConciliacion }}
+                            onChange={this.cambioListadoConciliacionSelect.bind(this)}
+                          />
+                        </When>
+                        <Otherwise>
+                          <select id='escenario' className='form-control' value={this.props.state.escenario}>
+                            <option value='0'>No aplica</option>
+                          </select>
+                        </Otherwise>
+                      </Choose>
+
+                      {/*
                         this.props.state.tipo!='' && this.props.state.tipo!='GENERAL' && this.props.state.tipo!='SISTEMA' && this.props.state.tipo!='SEGURIDAD' ?
                         <AsyncSelect
                           cacheOptions
@@ -221,7 +299,7 @@ class IParametroForm extends React.Component{
                         <select id='escenario' className='form-control' value={this.props.state.escenario}>
                           <option value='0'>No aplica</option>
                         </select>
-                      }
+                      */}
 
 
                     </div>
@@ -253,7 +331,7 @@ class IParametroForm extends React.Component{
                       </If>
                       <If condition={this.props.state.tipo == 'CONCILIACION'}>
                         {
-                          this.props.state.escenario!="" && this.props.state.escenario!=0 && this.props.state.parametro!="" && this.props.state.valor!="" ?
+                          (this.props.state.escenario!=0 || this.props.state.conciliacion!=0) && this.props.state.parametro!="" && this.props.state.valor!="" ?
                           <button onClick={this.grabarParametro.bind(this)} className="btn btn-primary">Grabar</button> :
                           <button className="btn btn-primary"  disabled>Formulario incompleto</button>
                         }
@@ -278,13 +356,17 @@ const mapStateToProps = (state) =>{
       valor : state.parametroFormReducer.valor,
       descripcion : state.parametroFormReducer.descripcion,
       tipo : state.parametroFormReducer.tipo,
+
+      escenarios : state.parametroFormReducer.escenarios,
       escenario : state.parametroFormReducer.escenario,
-      escenario : state.parametroFormReducer.escenario,
-      nombreConciliacion: state.parametroFormReducer.escenarioDescripcion,
-      escenarios : state.parametroFormReducer.escenarios
+      nombreEscenario: state.parametroFormReducer.escenarioDescripcion,
+      
+      conciliaciones : state.parametroFormReducer.conciliaciones,
+      conciliacion: state.parametroFormReducer.conciliacion,
+      nombreConciliacion: state.parametroFormReducer.conciliacionDescripcion,
     }
   }
 }
 export default connect (mapStateToProps,{
-  updateFormParametros, saveParametro, cargarParametro, limpiarFormParametro, refreshListParametro, cargarListadoEnParametros, updateFormEscenarioParametros
+  updateFormParametros, saveParametro, cargarParametro, limpiarFormParametro, updateFormConciliacionParametros, cargarListadoEscenarioEnParametros, refreshListParametro, cargarListadoConciliacionEnParametros, updateFormEscenarioParametros
 })(IParametroForm)

@@ -12,22 +12,26 @@ class IQuery extends React.Component{
   }
 
   componentWillMount(){
-    this.props.cargarConciliacionesQuery()
+    this.props.cargarConciliacionesQuery() 
    
-    if(this.props.conciliacion!=undefined || this.props.registro!=undefined){
-      if(this.props.conciliacion != undefined && this.props.conciliacion != 0){
-        this.props.updConciliacionQuerys(this.props.conciliacion)
-      }else if(this.props.registro != undefined && this.props.registro != 0){
-        this.props.updConciliacionQuerys(this.props.registro)
-      }
-    }else if(this.props.escenario!=undefined){
-      this.props.updEscenarioQuerys(this.props.escenario)
-    }else if(this.props.params.idEscenario){
+    if(this.props.params.idEscenario){
       this.props.updEscenarioQuerys(this.props.params.idEscenario)
     }else{
       this.props.updEscenarioQuerys()
     }
   }
+
+  componentWillReceiveProps(nextProps) {
+    if(this.props.params.idEscenario != nextProps.params.idEscenario){
+      if(this.props.params.idEscenario){
+        this.props.updEscenarioQuerys(this.props.params.idEscenario)
+      }else{
+        this.props.updEscenarioQuerys()
+      }
+    }
+  }
+
+
 
   cambioConciliacionesQuery(e){
     //let jsonConciliacion = JSON.parse(e.target.value)

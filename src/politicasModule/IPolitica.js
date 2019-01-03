@@ -26,6 +26,16 @@ class IPolitica extends React.Component{
     window.location = '/politicas';  
   }
 
+  componentWillReceiveProps(nextProps) {
+    if(this.props.params.idpolitica != nextProps.params.idpolitica){
+      if(nextProps.params.idpolitica || nextProps.params.idpolitica){
+        this.props.refreshListPolitica(nextProps.params.idpolitica || nextProps.params.idpolitica)
+      }else{
+        this.props.refreshListPolitica()
+      }
+    }
+  }
+
   render(){
     return(
         <div className="container">

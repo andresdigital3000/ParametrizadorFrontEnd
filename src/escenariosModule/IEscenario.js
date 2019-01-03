@@ -11,9 +11,6 @@ class IEscenario extends React.Component{
   }
 
   componentWillMount(){
-    
-    //this.props.cargarImpactos()
-
     if(this.props.params.id){
       this.props.updConciliacion(this.props.params.id)
     }else if(this.props.params.idescenario){
@@ -21,20 +18,6 @@ class IEscenario extends React.Component{
     }else{
       this.props.refreshListEscenario()
     }
-    
-
-
-    /*
-    
-    if(this.props.escenario != undefined){
-      this.props.refreshListEscenario(this.props.escenario)
-    }else if(this.props.conciliacion != undefined && this.props.conciliacion != 0){
-      this.props.updConciliacion(this.props.conciliacion)
-    }else if(this.props.registro != undefined && this.props.registro != 0){
-      this.props.updConciliacion(this.props.registro)
-    }else{
-      this.props.updConciliacion(0)
-    }*/
   }
 
   cambioConciliacionesEscenario(e){

@@ -19,6 +19,16 @@ class IConciliacion extends React.Component{
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    if(this.props.params.idconciliacion != nextProps.params.idconciliacion){
+      if(nextProps.params.idconciliacion || nextProps.params.idconciliacion){
+        this.props.refreshListConciliacion(nextProps.params.idconciliacion || nextProps.params.idconciliacion)
+      }else{
+        this.props.refreshListConciliacion()
+      }
+    }
+  }
+
   limpiarForm(){
     this.props.limpiarFormConciliacion();
   }
@@ -121,6 +131,15 @@ class IConciliacion extends React.Component{
                         ),
                         filterMethod: (filter, row) =>
                             row[filter.id].toLowerCase().includes(filter.value.toLowerCase()) 
+                      },
+                      {
+                        Header: "QUERIES APROBADOS (SI/NO)",
+                        sortable: false,
+                        filterable: false,
+                        accessor: 'queryAprobacion',
+                        Cell: row => (
+                          <center>{row.value && row.value.length > 0 ? row.value[0].estadoAprobacion : 'NO'}</center>
+                        )
                       },
                       {
                         Header: "ACCIONES",

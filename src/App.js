@@ -1,7 +1,7 @@
 import React from 'react';
 import "isomorphic-fetch";
 import { render } from 'react-dom';
-import { Router, Route, browserHistory, IndexRoute, Match } from "react-router";
+import { Router, Route, browserHistory, IndexRoute, Match, Switch } from "react-router";
 import { createStore, applyMiddleware } from 'redux'
 import { Provider } from 'react-redux'
 import thunk from 'redux-thunk'
@@ -58,6 +58,7 @@ render((
             <Choose>
               <When condition = {window.localStorage.getItem("userrolname") === "Consultor"}>
                 <div>
+                  
                   <Route path="/resultados" component={IResultado}></Route>
                   <Route path="/indicadores" component={IIndicador}></Route>
                   <Route path="/indicadores/:idindicador" component={IIndicador}></Route>

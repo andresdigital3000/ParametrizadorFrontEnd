@@ -93,7 +93,9 @@ import {
     UPDATE_CONCILIACION_ESCENARIO,
     UPDATE_PARAMETROS_ESCENARIO_FORM_REQUEST,
     CARGAR_CONCILIACION_FORM_2,
-    UPDATE_ESCENARIO_QUERYS_FORM_REQUEST
+    UPDATE_ESCENARIO_QUERYS_FORM_REQUEST,
+    UPDATE_PARAMETROS_CONCILIACION_FORM_REQUEST,
+    CARGA_ESCENARIOS_EN_PARAMETROS
 } from './const'
 
 import React from 'react'
@@ -993,7 +995,6 @@ export const limpiarFormConciliacion = () => ({
 //Funcion para cargar la conciliacion en el formulario
 export const cargarConciliacion = (idconciliacion) => (dispatch, getState) => {
     APIInvoker.invokeGET('/conciliaciones/' + idconciliacion, response => {
-        console.log('sdvresponse', response)
         if (Array.isArray(response) == true) {
             //console.log("conciliacion traida al editar conciliaicion ===>>")
             //console.log(response)
@@ -2719,6 +2720,17 @@ const updateFormParametrosRequest = (field, value) => ({
     value: value
 })
 
+
+
+export const updateFormConciliacionParametros = (idConciliacion, descConciliacion) => (dispatch, getState) => {
+    console.log('dispatch', idConciliacion, descConciliacion)
+    dispatch({
+        type: UPDATE_PARAMETROS_CONCILIACION_FORM_REQUEST,
+        idConciliacion,
+        descConciliacion
+    })
+}
+
 export const updateFormEscenarioParametros = (idEscenario, descEscenario) => (dispatch, getState) => {
     console.log('dispatch', idEscenario, descEscenario)
     dispatch({
@@ -2734,6 +2746,8 @@ export const saveParametro = () => (dispatch, getState) => {
     //Si es un registro nuevo
     let codPadre = 0
     if (getState().parametroFormReducer.tipo == "CONCILIACION") {
+        codPadre = getState().parametroFormReducer.conciliacion
+    }else if(getState().parametroFormReducer.tipo == "ESCENARIO"){
         codPadre = getState().parametroFormReducer.escenario
     }
     APIInvoker.invokeGET('/parametros/findByAny?texto=V_Prefijo para parametros', responseval => {
@@ -2794,6 +2808,7 @@ export const cargarParametro = (idparametro) => (dispatch, getState) => {
                 let responseDecrypt = response.map(function (responseI, index, array) {
                     let devolver = {
                       codPadre: responseI.codPadre,
+                      codPadreDesc: responseI.codPadreDesc,
                       descripcion: responseI.descripcion,
                       fechaActualizacion: responseI.fechaActualizacion,
                       fechaCreacion: responseI.fechaCreacion,
@@ -2815,6 +2830,7 @@ export const cargarParametro = (idparametro) => (dispatch, getState) => {
             if (response.id != undefined) {
                 let responseDecrypt = {
                   codPadre: response.codPadre,
+                  codPadreDesc: response.codPadreDesc,
                   descripcion: response.descripcion,
                   fechaActualizacion: response.fechaActualizacion,
                   fechaCreacion: response.fechaCreacion,
@@ -2885,8 +2901,20 @@ export const cargarParametrosAVencer = () => (dispatch, getState)=>{
     })
 }
 
+
 //Funcion que carga el combo de escenarios
-export const cargarListadoEnParametros = (filter, callback) => (dispatch, getState) => {
+export const cargarListadoEscenarioEnParametros = (filter, callback) => (dispatch, getState) => {
+    APIInvoker.invokeGET(`/escenarios?name=${filter}`, response => {
+        if (Array.isArray(response) == true) {
+            dispatch(cargarListadoParametrosEscenarios(response))
+            let options = response.map(x => {return {value: x.id, label: x.nombre} })
+            callback(options)
+        }
+    })
+}
+
+//Funcion que carga el combo de conciliaciones
+export const cargarListadoConciliacionEnParametros = (filter, callback) => (dispatch, getState) => {
     APIInvoker.invokeGET(`/conciliaciones?name=${filter}`, response => {
         if (Array.isArray(response) == true) {
             dispatch(cargarListadoParametros(response))
@@ -2895,6 +2923,12 @@ export const cargarListadoEnParametros = (filter, callback) => (dispatch, getSta
         }
     })
 }
+
+//Envia resultado para llenar el combo a Reducer
+const cargarListadoParametrosEscenarios = (arrayEscenarios) => ({
+    type: CARGA_ESCENARIOS_EN_PARAMETROS,
+    lista: arrayEscenarios
+})
 
 //Envia resultado para llenar el combo a Reducer
 const cargarListadoParametros = (arrayEscenarios) => ({
