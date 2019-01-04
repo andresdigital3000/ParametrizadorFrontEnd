@@ -1436,7 +1436,7 @@ export const cargarComboConciliaciones = (filter, callback) => (dispatch, getSta
 }
 
 export const cargarComboConciliacionesEjecución = () => (dispatch, getState) => {
-    APIInvoker.invokeGET(`/conciliaciones`, response => {
+    APIInvoker.invokeGET('/conciliaciones', response => {
         if (Array.isArray(response) == true) {
             dispatch(cargarConciliaciones(response))
             dispatch(limpiarConciliacionSeleccionada())

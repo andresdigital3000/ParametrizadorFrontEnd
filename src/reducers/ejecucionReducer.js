@@ -29,7 +29,7 @@ export const ejecucionReducer = (state = initialState,action) =>{
     case UPDATE_VALUE_COMBO_CONCILIACIONES:
        let conciliac = JSON.parse(action.value)
        let fechaAg = new Date();
-       if (conciliac.transformaciones != undefined){
+       if (conciliac.transformaciones!=undefined && conciliac.transformaciones.length>0){
          if (conciliac.transformaciones[conciliac.transformaciones.length - 1].fechaAgendamiento != null){
             fechaAg = new Date(conciliac.transformaciones[conciliac.transformaciones.length - 1].fechaAgendamiento)
          } else fechaAg = null;
