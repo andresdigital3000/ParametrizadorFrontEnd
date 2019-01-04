@@ -1476,15 +1476,27 @@ export const doEjecutarConciliacion = () => (dispatch, getState) => {
     }
     //Obtiene los valores ODI de tabla Parametros
     APIInvoker.invokeGET('/odiRest/getOdiParametros', responseOdi => {
+      //Recuperar Usuario Odi
+      let odiUser = responseOdi.find(function (response) {if (response.parametro === "V_odiUsuario"){return response}});
+      //console.log("odiUser: " + (odiUser.tipo === "SEGURIDAD" ? decryptJS(odiUser.valor) : odiUser.valor))
+      //Recuperar Password Odi
+      let odiPassword = responseOdi.find(function (response) {if (response.parametro === "V_odiPassword"){return response}});
+      //console.log("odiPassword: " + (odiPassword.tipo === "SEGURIDAD" ? decryptJS(odiPassword.valor) : odiPassword.valor))
+      //Recuperar WorkRepository Odi
+      let odiWorkRepository = responseOdi.find(function (response) {if (response.parametro === "V_odiWorkRepository"){return response}});
+      //console.log("odiWorkRepository: " + (odiWorkRepository.tipo === "SEGURIDAD" ? decryptJS(odiWorkRepository.valor) : odiWorkRepository.valor))
+      //Recuperar Context Odi
+      let odiContext = responseOdi.find(function (response) {if (response.parametro === "V_odiContext"){return response}});
+      //console.log("odiContext: " + (odiContext.tipo === "SEGURIDAD" ? decryptJS(odiContext.valor) : odiContext.valor))
       //Si hay instancia recuperada de la ejecución
       if (idPlanInstancia == 0) {
           //Construir petición json para Backend
           let startEjecucion = {
-              "odiUser": (responseOdi[1].tipo === "SEGURIDAD" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
-              "odiPassword": (responseOdi[2].tipo === "SEGURIDAD" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
-              "workRepository": (responseOdi[3].tipo === "SEGURIDAD" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
+              "odiUser": (odiUser.tipo === "SEGURIDAD" ? decryptJS(odiUser.valor) : odiUser.valor),
+              "odiPassword": (odiPassword.tipo === "SEGURIDAD" ? decryptJS(odiPassword.valor) : odiPassword.valor),
+              "workRepository": (odiWorkRepository.tipo === "SEGURIDAD" ? decryptJS(odiWorkRepository.valor) : odiWorkRepository.valor),
               "loadPlanName": paqueteAsociado,
-              "contexto": (responseOdi[4].tipo === "SEGURIDAD" ? decryptJS(responseOdi[4].valor) : responseOdi[4].valor),
+              "contexto": (odiContext.tipo === "SEGURIDAD" ? decryptJS(odiContext.valor) : odiContext.valor),
               "params": [{
                       "nombre": "GLOBAL.V_CTL_PAQUETE",
                       "valor": "JP_NO_EXISTE"
@@ -1556,9 +1568,9 @@ export const doEjecutarConciliacion = () => (dispatch, getState) => {
       } else {
           //Consultar ejecución actual
           let consultarEjecucion = {
-              "odiUser": (responseOdi[1].tipo === "SEGURIDAD" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
-              "odiPassword": (responseOdi[2].tipo === "SEGURIDAD" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
-              "workRepository": (responseOdi[3].tipo === "SEGURIDAD" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
+            "odiUser": (odiUser.tipo === "SEGURIDAD" ? decryptJS(odiUser.valor) : odiUser.valor),
+            "odiPassword": (odiPassword.tipo === "SEGURIDAD" ? decryptJS(odiPassword.valor) : odiPassword.valor),
+            "workRepository": (odiWorkRepository.tipo === "SEGURIDAD" ? decryptJS(odiWorkRepository.valor) : odiWorkRepository.valor),
               "loadPlans": [{
                   "loadPlanInstanceId": idPlanInstancia,
                   "loadPlanRunNumber": configuration.webService.runCount
@@ -1569,16 +1581,15 @@ export const doEjecutarConciliacion = () => (dispatch, getState) => {
               console.log(consultarEjecucion)
           }
           APIInvoker.invokePOST('/odiRest/loadPlanStatus', consultarEjecucion, response => {
-
               if (response.ok) {
                   if (response[0].LoadPlanStatus != "R") {
                       //Construir petición json para Backend
                       let startEjecucion = {
-                          "odiUser": (responseOdi[1].tipo === "SEGURIDAD" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
-                          "odiPassword": (responseOdi[2].tipo === "SEGURIDAD" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
-                          "workRepository": (responseOdi[3].tipo === "SEGURIDAD" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
+                          "odiUser": (odiUser.tipo === "SEGURIDAD" ? decryptJS(odiUser.valor) : odiUser.valor),
+                          "odiPassword": (odiPassword.tipo === "SEGURIDAD" ? decryptJS(odiPassword.valor) : odiPassword.valor),
+                          "workRepository": (odiWorkRepository.tipo === "SEGURIDAD" ? decryptJS(odiWorkRepository.valor) : odiWorkRepository.valor),
                           "loadPlanName": paqueteAsociado,
-                          "contexto": (responseOdi[4].tipo === "SEGURIDAD" ? decryptJS(responseOdi[4].valor) : responseOdi[4].valor),
+                          "contexto": (odiContext.tipo === "SEGURIDAD" ? decryptJS(odiContext.valor) : odiContext.valor),
                           "params": [{
                                   "nombre": "GLOBAL.V_CTL_PAQUETE",
                                   "valor": "JP_NO_EXISTE"
@@ -1676,11 +1687,19 @@ export const doCancelarConciliacion = () => (dispatch, getState) => {
     }
     console.log('idPlanInstancia', idPlanInstancia)
     if (idPlanInstancia && idPlanInstancia != 0) {
+      //Obtiene los valores ODI de tabla Parametros
+      APIInvoker.invokeGET('/odiRest/getOdiParametros', responseOdi => {
+        //Recuperar Usuario Odi
+        let odiUser = responseOdi.find(function (response) {if (response.parametro === "V_odiUsuario"){return response}});
+        //Recuperar Password Odi
+        let odiPassword = responseOdi.find(function (response) {if (response.parametro === "V_odiPassword"){return response}});
+        //Recuperar WorkRepository Odi
+        let odiWorkRepository = responseOdi.find(function (response) {if (response.parametro === "V_odiWorkRepository"){return response}});
         //Construir petición json para Backend
         let consultarEjecucion = {
-            "odiUser": (responseOdi[1].tipo === "SEGURIDAD" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
-            "odiPassword": (responseOdi[2].tipo === "SEGURIDAD" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
-            "workRepository": (responseOdi[3].tipo === "SEGURIDAD" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
+            "odiUser": (odiUser.tipo === "SEGURIDAD" ? decryptJS(odiUser.valor) : odiUser.valor),
+            "odiPassword": (odiPassword.tipo === "SEGURIDAD" ? decryptJS(odiPassword.valor) : odiPassword.valor),
+            "workRepository": (odiWorkRepository.tipo === "SEGURIDAD" ? decryptJS(odiWorkRepository.valor) : odiWorkRepository.valor),
             "loadPlans": [{
                 "loadPlanInstanceId": idPlanInstancia,
                 "loadPlanRunNumber": configuration.webService.runCount
@@ -1699,9 +1718,9 @@ export const doCancelarConciliacion = () => (dispatch, getState) => {
                 if (response[0].LoadPlanStatus == "R") {
                     //Construir petición json para Backend
                     let stopEjecucion = {
-                        "odiUser": (responseOdi[1].tipo === "SEGURIDAD" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
-                        "odiPassword": (responseOdi[2].tipo === "SEGURIDAD" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
-                        "workRepository": (responseOdi[3].tipo === "SEGURIDAD" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
+                        "odiUser": (odiUser.tipo === "SEGURIDAD" ? decryptJS(odiUser.valor) : odiUser.valor),
+                        "odiPassword": (odiPassword.tipo === "SEGURIDAD" ? decryptJS(odiPassword.valor) : odiPassword.valor),
+                        "workRepository": (odiWorkRepository.tipo === "SEGURIDAD" ? decryptJS(odiWorkRepository.valor) : odiWorkRepository.valor),
                         "loadPlanInstance": idPlanInstancia,
                         "stopLevel": configuration.webService.stopLevel
                     }
@@ -1749,13 +1768,13 @@ export const doCancelarConciliacion = () => (dispatch, getState) => {
                 }
             }
         })
+      })
     } else {
         toast.error("No hay ejecuciones en ODI para esta conciliación", {
             position: toast.POSITION.BOTTOM_RIGHT,
         })
     }
 }
-
 
 //Programar Conciliaciones
 //Actualizar tecla por tecla los campos del formulario de conciliaciones
@@ -1955,17 +1974,25 @@ export const aprobarRenglonResultado = (idRenglon) => (dispatch, getState) => {
 
             //Obtiene los valores ODI de tabla Parametros
             APIInvoker.invokeGET('/odiRest/getOdiParametros', responseOdi => {
+              //Recuperar Usuario Odi
+              let odiUser = responseOdi.find(function (response) {if (response.parametro === "V_odiUsuario"){return response}});
+              //Recuperar Password Odi
+              let odiPassword = responseOdi.find(function (response) {if (response.parametro === "V_odiPassword"){return response}});
+              //Recuperar WorkRepository Odi
+              let odiWorkRepository = responseOdi.find(function (response) {if (response.parametro === "V_odiWorkRepository"){return response}});
+              //Recuperar Context Odi
+              let odiContext = responseOdi.find(function (response) {if (response.parametro === "V_odiContext"){return response}});
               //Construir petición json para Backend
               if (paqueteAsociado != 0) {
                   APIInvoker.invokeGET('/resconciliacion/' + idRenglon, responseResConciliacion => {
                       let paramCodConciliacion = responseResConciliacion.codConciliacion
                       let paramIdEjecucion = responseResConciliacion.idEjecucion
                       let startEjecucion = {
-                        "odiUser": (responseOdi[1].tipo === "SEGURIDAD" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
-                        "odiPassword": (responseOdi[2].tipo === "SEGURIDAD" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
-                        "workRepository": (responseOdi[3].tipo === "SEGURIDAD" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
+                          "odiUser": (odiUser.tipo === "SEGURIDAD" ? decryptJS(odiUser.valor) : odiUser.valor),
+                          "odiPassword": (odiPassword.tipo === "SEGURIDAD" ? decryptJS(odiPassword.valor) : odiPassword.valor),
+                          "workRepository": (odiWorkRepository.tipo === "SEGURIDAD" ? decryptJS(odiWorkRepository.valor) : odiWorkRepository.valor),
                           "loadPlanName": paqueteAsociado,
-                          "contexto": (responseOdi[4].tipo === "SEGURIDAD" ? decryptJS(responseOdi[4].valor) : responseOdi[4].valor),
+                          "contexto": (odiContext.tipo === "SEGURIDAD" ? decryptJS(odiContext.valor) : odiContext.valor),
                           "params": [{
                                   "nombre": "PRY_GAI.V_0553_COD_CONCILIACION",
                                   "valor": paramCodConciliacion
@@ -2031,24 +2058,32 @@ export const rechazarRenglonResultado = (idRenglon) => (dispatch, getState) => {
             let paqueteAsociado = (response[0].tipo === "SEGURIDAD" ? decryptJS(response[0].valor) : response[0].valor)
             //Obtiene los valores ODI de tabla Parametros
             APIInvoker.invokeGET('/odiRest/getOdiParametros', responseOdi => {
+              //Recuperar Usuario Odi
+              let odiUser = responseOdi.find(function (response) {if (response.parametro === "V_odiUsuario"){return response}});
+              //Recuperar Password Odi
+              let odiPassword = responseOdi.find(function (response) {if (response.parametro === "V_odiPassword"){return response}});
+              //Recuperar WorkRepository Odi
+              let odiWorkRepository = responseOdi.find(function (response) {if (response.parametro === "V_odiWorkRepository"){return response}});
+              //Recuperar Context Odi
+              let odiContext = responseOdi.find(function (response) {if (response.parametro === "V_odiContext"){return response}});
               //Construir petición json para Backend
               let startEjecucion = {
-                  "odiUser": (responseOdi[1].tipo === "SEGURIDAD" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
-                  "odiPassword": (responseOdi[2].tipo === "SEGURIDAD" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
-                  "workRepository": (responseOdi[3].tipo === "SEGURIDAD" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
+                  "odiUser": (odiUser.tipo === "SEGURIDAD" ? decryptJS(odiUser.valor) : odiUser.valor),
+                  "odiPassword": (odiPassword.tipo === "SEGURIDAD" ? decryptJS(odiPassword.valor) : odiPassword.valor),
+                  "workRepository": (odiWorkRepository.tipo === "SEGURIDAD" ? decryptJS(odiWorkRepository.valor) : odiWorkRepository.valor),
                   "loadPlanName": paqueteAsociado,
-                  "contexto": (responseOdi[4].tipo === "SEGURIDAD" ? decryptJS(responseOdi[4].valor) : responseOdi[4].valor),
+                  "contexto": (odiContext.tipo === "SEGURIDAD" ? decryptJS(odiContext.valor) : odiContext.valor)
               }
               if (paqueteAsociado != 0) {
                   APIInvoker.invokeGET('/resconciliacion/' + idRenglon, responseResConciliacion => {
                       let paramCodConciliacion = responseResConciliacion.codConciliacion
                       let paramIdEjecucion = responseResConciliacion.idEjecucion
                       let startEjecucion = {
-                          "odiUser": (responseOdi[1].tipo === "SEGURIDAD" ? decryptJS(responseOdi[1].valor) : responseOdi[1].valor),
-                          "odiPassword": (responseOdi[2].tipo === "SEGURIDAD" ? decryptJS(responseOdi[2].valor) : responseOdi[2].valor),
-                          "workRepository": (responseOdi[3].tipo === "SEGURIDAD" ? decryptJS(responseOdi[3].valor) : responseOdi[3].valor),
+                          "odiUser": (odiUser.tipo === "SEGURIDAD" ? decryptJS(odiUser.valor) : odiUser.valor),
+                          "odiPassword": (odiPassword.tipo === "SEGURIDAD" ? decryptJS(odiPassword.valor) : odiPassword.valor),
+                          "workRepository": (odiWorkRepository.tipo === "SEGURIDAD" ? decryptJS(odiWorkRepository.valor) : odiWorkRepository.valor),
                           "loadPlanName": paqueteAsociado,
-                          "contexto": (responseOdi[4].tipo === "SEGURIDAD" ? decryptJS(responseOdi[4].valor) : responseOdi[4].valor),
+                          "contexto": (odiContext.tipo === "SEGURIDAD" ? decryptJS(odiContext.valor) : odiContext.valor),
                           "params": [{
                                   "nombre": "PRY_GAI.V_0553_COD_CONCILIACION",
                                   "valor": paramCodConciliacion
