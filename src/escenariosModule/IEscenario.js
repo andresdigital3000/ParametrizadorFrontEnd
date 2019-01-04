@@ -20,6 +20,22 @@ class IEscenario extends React.Component{
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    if(this.props.location.pathname !== nextProps.location.pathname){
+      console.log(this.props, nextProps)
+      if(nextProps.params.id){
+        nextProps.updConciliacion(nextProps.params.id)
+      }else if(nextProps.params.idescenario){
+        this.props.updConciliacion(nextProps.params.idescenario)
+        nextProps.refreshListEscenario(nextProps.params.idescenario)
+      }else{
+        this.props.updConciliacion(undefined)
+        nextProps.refreshListEscenario()
+      }
+    }
+  }
+
+
   cambioConciliacionesEscenario(e){
     this.props.updConciliacion(e.target.value)
   }

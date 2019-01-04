@@ -22,11 +22,11 @@ class IQuery extends React.Component{
   }
 
   componentWillReceiveProps(nextProps) {
-    if(this.props.params.idEscenario != nextProps.params.idEscenario){
-      if(this.props.params.idEscenario){
-        this.props.updEscenarioQuerys(this.props.params.idEscenario)
+    if(this.props.location.pathname !== nextProps.location.pathname){
+      if(nextProps.params.idEscenario){
+        nextProps.updEscenarioQuerys(nextProps.params.idEscenario)
       }else{
-        this.props.updEscenarioQuerys()
+        nextProps.updEscenarioQuerys()
       }
     }
   }
