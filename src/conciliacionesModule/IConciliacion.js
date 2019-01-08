@@ -136,9 +136,9 @@ class IConciliacion extends React.Component{
                         Header: "QUERIES APROBADOS (SI/NO)",
                         sortable: false,
                         filterable: false,
-                        accessor: 'queryAprobacion',
+                        accessor: 'queryAprobaciones',
                         Cell: row => (
-                          <center>{row.value && row.value.length > 0 ? row.value[0].estadoAprobacion : 'NO'}</center>
+                          <center>{row.value && row.value.length > 0 && row.value[0].estadoAprobacion == 1 ? 'SI' : 'NO'}</center>
                         )
                       },
                       {
