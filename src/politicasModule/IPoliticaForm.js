@@ -9,7 +9,7 @@ import { updateFormPoliticas, savePolitica, cargarPolitica, limpiarFormPolitica,
 class IPoliticaForm extends React.Component{
   constructor(){
     super(...arguments)
-    
+
   }
 
   componentDidMount(){
@@ -54,18 +54,18 @@ class IPoliticaForm extends React.Component{
             </header>
             <input id='id' ref='id' type='hidden' value={this.props.state.id}/>
             <div className="form-group">
-              <label htmlFor='nombre'>* Nombre</label>
-              <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un nombre de política' autoComplete='off'  maxLength='100'/>
+              <label htmlFor='nombre'>* Código - Se colocará el prefijo PO_ automaticamente</label>
+              <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite el código' autoComplete='off'  maxLength='100'/>
               <small id="nombreHelp" className="form-text text-muted">Que sea descriptivo pero breve</small>
             </div>
             <div className="form-group">
               <label htmlFor='descripcion'>* Descripción</label>
-              <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite una descripcion de la política'  maxLength='254' autoComplete='off'/>
+              <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite una descripcion'  maxLength='254' autoComplete='off'/>
               <small id="descripcionHelp" className="form-text text-muted">Defina para la política</small>
             </div>
             <div className="form-group">
               <label htmlFor='objetivo'>* Objetivo</label>
-              <textarea id='objetivo' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.objetivo} onChange={this.handleInput.bind(this)} placeholder='Digite el objetivo de la política'  maxLength='200' autoComplete='off'/>
+              <textarea id='objetivo' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.objetivo} onChange={this.handleInput.bind(this)} placeholder='Digite el objetivo'  maxLength='200' autoComplete='off'/>
               <small id="objetivoHelp" className="form-text text-muted">Defina para la política</small>
             </div>
             <div className="form-group">
@@ -93,31 +93,31 @@ class IPoliticaForm extends React.Component{
                   <div className="modal-body">
                     <input id='id' ref='id' type='hidden' value={this.props.state.id}/>
                     <div className="form-group">
-                      <label htmlFor='nombre'>* Nombre</label>
-                      <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} onBlur={this.nombreIngresado.bind(this)} placeholder='Digite un nombre de política' placeholder='Digite un nombre de política' autoComplete='off' maxLength='100'/>
+                      <label htmlFor='nombre'>* Código - Se colocará el prefijo PO_ automaticamente</label>
+                      <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} onBlur={this.nombreIngresado.bind(this)} placeholder='Digite el código' autoComplete='off' maxLength='100'/>
                       <small id="nombreHelp" className="form-text text-muted">Que sea descriptivo</small>
                       {
                         this.props.state.errorNombre=="A"?
                       <div className="alert alert-danger">
-                        <strong>Error! </strong> El nombre de la política ya existe
+                        <strong>Error! </strong> El código de la política ya existe
                       </div>
                       : <span></span>
                       }
                     </div>
                     <div className="form-group">
                       <label htmlFor='descripcion'>* Descripción</label>
-                      <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite una descripción para la política'  maxLength='254' autoComplete='off'/>
+                      <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite una descripción'  maxLength='254' autoComplete='off'/>
                       <small id="descripcionHelp" className="form-text text-muted">Defina para la política</small>
                     </div>
                     <div className="form-group">
                       <label htmlFor='objetivo'>* Objetivo</label>
-                      <textarea id='objetivo' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.objetivo} onChange={this.handleInput.bind(this)} placeholder='Digite el objetivo de la política'  maxLength='200' autoComplete='off'/>
+                      <textarea id='objetivo' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.objetivo} onChange={this.handleInput.bind(this)} placeholder='Digite el objetivo'  maxLength='200' autoComplete='off'/>
                       <small id="objetivoHelp" className="form-text text-muted">Defina para la política</small>
                     </div>
                   </div>
                   <div className="modal-footer">
                     (*) Obligatorio
-                    <hr/>                   
+                    <hr/>
                     <button onClick={this.props.limpiarFormPolitica.bind(this)} type="button" className="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                     {
                       this.props.state.nombre!="" && this.props.state.objetivo!="" && this.props.state.descripcion!="" && this.props.state.errorNombre=="" ?
