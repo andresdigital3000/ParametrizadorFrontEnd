@@ -150,13 +150,13 @@ class IConciliacionForm extends React.Component{
                   <div className="modal-body">
                     <div className="form-group">
                       <label htmlFor='nombre'>* Código</label>
-                      <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un nombre de conciliación' autoComplete='off' maxLength='100'/>
-                      <small id="nombreHelp" className="form-text text-muted">Que sea descriptivo</small>
+                      <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un código de conciliación' autoComplete='off' maxLength='100'/>
+                      <small id="nombreHelp" className="form-text text-muted">Debe incluir el número</small>
                     </div>
                     <div className="form-group">
                       <label htmlFor='descripcion'>* Nombre</label>
-                      <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite una descripción para la conciliación'  maxLength='200' autoComplete='off'/>
-                      <small id="descripcionHelp" className="form-text text-muted">Defina para la política</small>
+                      <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite el nombre de la conciliación'  maxLength='200' autoComplete='off'/>
+                      <small id="descripcionHelp" className="form-text text-muted">Nombre para la conciliación</small>
                     </div>
                     <div className="form-group">
                       <label htmlFor='webservice'>* Paquete</label>
