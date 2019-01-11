@@ -108,6 +108,7 @@ class IConciliacionForm extends React.Component{
               <label htmlFor='politica'>* Política</label>
               <AsyncSelect
                 cacheOptions
+                noOptionsMessage = {() => "No hay resultados"}
                 loadOptions={this.loadOptions.bind(this)}
                 defaultOptions
                 onInputChange={this.handleInputChange}
@@ -176,6 +177,7 @@ class IConciliacionForm extends React.Component{
                       <label htmlFor='politica'>* Política</label>
                       <AsyncSelect
                         cacheOptions
+                        noOptionsMessage = {() => "No hay resultados"}
                         loadOptions={this.loadOptions.bind(this)}
                         defaultOptions
                         onInputChange={this.handleInputChange}

@@ -653,9 +653,8 @@ const irAPaginaPoliticas = (pagina) => ({
 //Funcion que carga el combo de politicas
 export const cargarComboPoliticas = (filter, callback) => (dispatch, getState) => {
     APIInvoker.invokeGET(`/politicas/findPoliticasSinConciliacion?name=${filter}`, response => {
-        if (Array.isArray(response) == true) {
+        if (Array.isArray(response)) {
             if (response[0].id != undefined) {
-                console.log("response", response)
                 dispatch(cargarPoliticas(response))
                 let options = response.map(x => {return {value: x.id, label: x.nombre} })
                 console.log("options ", options)
@@ -665,6 +664,8 @@ export const cargarComboPoliticas = (filter, callback) => (dispatch, getState) =
                     position: toast.POSITION.BOTTOM_RIGHT
                 })
             }
+        }else if(response.codigo == 404){
+            callback( [])
         }
     })
 }
@@ -1577,12 +1578,12 @@ export const doEjecutarConciliacion = () => (dispatch, getState) => {
               }]
           }
           if (configuration.webService.debug == 1) {
-              console.log("REQUEST STATUS LOAD PLAN ===>")
+              console.log("REQUEST STATUS LOAD PLAN 2 ===>")
               console.log(consultarEjecucion)
           }
           APIInvoker.invokePOST('/odiRest/loadPlanStatus', consultarEjecucion, response => {
               if (response.ok) {
-                  if (response[0].LoadPlanStatus != "R") {
+                  if (response.body[0].LoadPlanStatus != "R") {
                       //Construir petición json para Backend
                       let startEjecucion = {
                           "odiUser": (odiUser.tipo === "SEGURIDAD" ? decryptJS(odiUser.valor) : odiUser.valor),
@@ -1610,48 +1611,57 @@ export const doEjecutarConciliacion = () => (dispatch, getState) => {
                                   console.log("RESPUESTA START REST ==>")
                                   console.log(response)
                               }
-                              if (response.StartedRunInformation != undefined) {
-                                  let idInstance = 0
-                                  if (response.StartedRunInformation.OdiLoadPlanInstanceId != undefined) {
-                                      idInstance = response.StartedRunInformation.OdiLoadPlanInstanceId
-                                      dispatch(mostrarModal("alert alert-success", "Inicio de ejecución de proceso exitoso :" + idInstance))
-                                  }
-                                  if (idInstance != 0) {
-                                      let ejecucion_salvar = {
-                                          nombre: nomConciliacionEjecucion,
-                                          idPlanInstance: idInstance,
-                                          idConciliacion: idConciliacionEjecucion,
-                                          username: window.localStorage.getItem("nombreUsuario")
-                                      }
-                                      APIInvoker.invokePOST('/ejecucionproceso', ejecucion_salvar, response2 => {
-                                          if (response2.idPlanInstance != undefined) {
-                                              console.log("Se almacenó la información de la ejecución")
-                                              dispatch(cargarComboConciliaciones())
-                                          } else {
-                                              toast.error("No fue posible almacenar la información de la ejecución", {
-                                                  position: toast.POSITION.BOTTOM_RIGHT
-                                              })
-                                          }
-                                      }, error => {
-                                          console.log('No almacenó la información de la ejecución')
-                                      })
-                                  } else {
-                                      toast.error("No se pudo obtener un id de ejecución desde ODI", {
-                                          position: toast.POSITION.BOTTOM_RIGHT
-                                      })
-                                  }
-                              } else {
-                                  if (response.codigo != undefined) {
-                                      toast.error("Error ODI: " + response.descripcion, {
-                                          position: toast.POSITION.BOTTOM_RIGHT
-                                      })
-                                  } else {
-                                      toast.error("Error General", {
-                                          position: toast.POSITION.BOTTOM_RIGHT
-                                      })
-                                      console.log(response)
-                                  }
+                              if(response.ok){
+                                if (response.body.StartedRunInformation != undefined) {
+                                    let idInstance = 0
+                                    if (response.body.StartedRunInformation.OdiLoadPlanInstanceId != undefined) {
+                                        idInstance = response.body.StartedRunInformation.OdiLoadPlanInstanceId
+                                        dispatch(mostrarModal("alert alert-success", "Inicio de ejecución de proceso exitoso :" + idInstance))
+                                    }
+                                    if (idInstance != 0) {
+                                        let ejecucion_salvar = {
+                                            nombre: nomConciliacionEjecucion,
+                                            idPlanInstance: idInstance,
+                                            idConciliacion: idConciliacionEjecucion,
+                                            username: window.localStorage.getItem("nombreUsuario")
+                                        }
+                                        APIInvoker.invokePOST('/ejecucionproceso', ejecucion_salvar, response2 => {
+                                            if (response2.idPlanInstance != undefined) {
+                                                console.log("Se almacenó la información de la ejecución")
+                                                dispatch(cargarComboConciliaciones())
+                                            } else {
+                                                toast.error("No fue posible almacenar la información de la ejecución", {
+                                                    position: toast.POSITION.BOTTOM_RIGHT
+                                                })
+                                            }
+                                        }, error => {
+                                            toast.error("No almacenó la información de la ejecución", {
+                                                position: toast.POSITION.BOTTOM_RIGHT
+                                            })
+                                        })
+                                    } else {
+                                        toast.error("No se pudo obtener un id de ejecución desde ODI", {
+                                            position: toast.POSITION.BOTTOM_RIGHT
+                                        })
+                                    }
+                                } else {
+                                    if (response.body.codigo != undefined) {
+                                        toast.error("Error ODI: " + response.descripcion, {
+                                            position: toast.POSITION.BOTTOM_RIGHT
+                                        })
+                                    } else {
+                                        toast.error(response.descripcion, {
+                                            position: toast.POSITION.BOTTOM_RIGHT
+                                        })
+                                        console.log(response)
+                                    }
+                                }
+                              }else{
+                                toast.error(response.description, {
+                                    position: toast.POSITION.BOTTOM_RIGHT
+                                })
                               }
+                              
                           })
                       } else {
                           toast.error("Esta conciliación no tiene paquete asociado", {
@@ -1659,6 +1669,7 @@ export const doEjecutarConciliacion = () => (dispatch, getState) => {
                           })
                       }
                   } else {
+                      alert('2')
                       toast.error("Se encuentra en ejecución " + idPlanInstancia, {
                           position: toast.POSITION.BOTTOM_RIGHT
                       })
@@ -1706,7 +1717,7 @@ export const doCancelarConciliacion = () => (dispatch, getState) => {
             }]
         }
         if (configuration.webService.debug == 1) {
-            console.log("REQUEST STATUS LOAD PLAN ===>")
+            console.log("REQUEST STATUS LOAD PLAN  1===>")
             console.log(consultarEjecucion)
         }
         APIInvoker.invokePOST('/odiRest/loadPlanStatus', consultarEjecucion, response => {

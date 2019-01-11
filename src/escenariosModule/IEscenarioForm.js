@@ -100,6 +100,7 @@ class IEscenarioForm extends React.Component{
             <div className="form-group">
               <label htmlFor='conciliacion'>* Conciliación</label>
               <AsyncSelect
+                noOptionsMessage = {() => "No hay resultados"}
                 cacheOptions
                 loadOptions={this.loadOptions.bind(this)}
                 defaultOptions
@@ -157,6 +158,7 @@ class IEscenarioForm extends React.Component{
                       <label htmlFor='conciliacion'>* Conciliación</label>
                       <AsyncSelect
                         cacheOptions
+                        noOptionsMessage = {() => "No hay resultados"}
                         loadOptions={this.loadOptions.bind(this)}
                         defaultOptions
                         onInputChange={this.handleInputChange}

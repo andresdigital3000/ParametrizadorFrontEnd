@@ -91,6 +91,7 @@ class IQueryForm extends React.Component{
               <label htmlFor='escenario'>* Escenario</label>
               <AsyncSelect
                 cacheOptions
+                noOptionsMessage = {() => "No hay resultados"}
                 loadOptions={this.loadOptions.bind(this)}
                 defaultOptions
                 onInputChange={this.handleInputChange}
@@ -141,6 +142,7 @@ class IQueryForm extends React.Component{
                       <label htmlFor='escenario'>* Escenario</label>
                       <AsyncSelect
                         cacheOptions
+                        noOptionsMessage = {() => "No hay resultados"}
                         loadOptions={this.loadOptions.bind(this)}
                         defaultOptions
                         onInputChange={this.handleInputChange}
