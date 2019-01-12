@@ -1579,7 +1579,7 @@ export const doEjecutarConciliacion = () => (dispatch, getState) => {
           }
           APIInvoker.invokePOST('/odiRest/loadPlanStatus', consultarEjecucion, response => {
               if (response.ok) {
-                  if (response.body[0].LoadPlanStatus != "R") {
+                  if (response.body[0].loadPlanStatus != "R") {
                       //Construir petición json para Backend
                       let startEjecucion = {
                           "odiUser": (odiUser.tipo === "SEGURIDAD" ? decryptJS(odiUser.valor) : odiUser.valor),
@@ -1665,7 +1665,6 @@ export const doEjecutarConciliacion = () => (dispatch, getState) => {
                           })
                       }
                   } else {
-                      alert('2')
                       toast.error("Se encuentra en ejecución " + idPlanInstancia, {
                           position: toast.POSITION.BOTTOM_RIGHT
                       })
