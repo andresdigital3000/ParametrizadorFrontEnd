@@ -1514,10 +1514,10 @@ export const doEjecutarConciliacion = () => (dispatch, getState) => {
                       console.log("RESPUESTA START REST 11 ==>")
                       console.log(response)
                   }
-                  if (response.StartedRunInformation != undefined) {
+                  if (response.ok) {
                       let idInstance = 0
-                      if (response.StartedRunInformation.OdiLoadPlanInstanceId != undefined) {
-                          idInstance = response.StartedRunInformation.OdiLoadPlanInstanceId
+                      if (response.body.startedRunInformation.odiLoadPlanInstanceId != undefined) {
+                          idInstance = response.body.startedRunInformation.odiLoadPlanInstanceId
                           dispatch(mostrarModal("alert alert-success", "Inicio de ejecución de proceso exitoso :" + idInstance))
                       }
                       if (idInstance != 0) {
@@ -1545,16 +1545,9 @@ export const doEjecutarConciliacion = () => (dispatch, getState) => {
                           })
                       }
                   } else {
-                      if (response.codigo != undefined) {
-                          toast.error("Error ODI: " + response.descripcion, {
-                              position: toast.POSITION.BOTTOM_RIGHT
-                          })
-                      } else {
-                          toast.error("Error General", {
-                              position: toast.POSITION.BOTTOM_RIGHT
-                          })
-                          console.log(response)
-                      }
+                    toast.error(response.description, {
+                        position: toast.POSITION.BOTTOM_RIGHT
+                    })
                   }
               })
           } else {
@@ -1642,11 +1635,11 @@ export const doEjecutarConciliacion = () => (dispatch, getState) => {
                                     }
                                 } else {
                                     if (response.body.codigo != undefined) {
-                                        toast.error("Error ODI: " + response.descripcion, {
+                                        toast.error("Error ODI: " + response.description, {
                                             position: toast.POSITION.BOTTOM_RIGHT
                                         })
                                     } else {
-                                        toast.error(response.descripcion, {
+                                        toast.error(response.description, {
                                             position: toast.POSITION.BOTTOM_RIGHT
                                         })
                                         console.log(response)
@@ -1739,38 +1732,24 @@ export const doCancelarConciliacion = () => (dispatch, getState) => {
                             console.log("RESPUESTA STOP REST ==>")
                             console.log(response1)
                         }
-                        if (response1.StoppedRunInformation != undefined) {
+                        if (response1.ok) {
                             //dispatch(cargarComboConciliaciones())
-                            dispatch(mostrarModal("alert alert-success", "Se detuvo la ejecución :" + response1.StoppedRunInformation.OdiLoadPlanInstanceId))
+                            dispatch(mostrarModal("alert alert-success", "Se detuvo la ejecución :" + response1.body.stoppedRunInformation.odiLoadPlanInstanceId))
                         } else {
-                            if (response1.codigo != undefined) {
-                                toast.error("Error ODI: " + response1.descripcion, {
-                                    position: toast.POSITION.BOTTOM_RIGHT,
-                                })
-                            } else {
-                                toast.error("Error General", {
-                                    position: toast.POSITION.BOTTOM_RIGHT
-                                })
-                                console.log(response1)
-                            }
+                            toast.error("Error ODI: " + response1.description, {
+                                position: toast.POSITION.BOTTOM_RIGHT,
+                            })
                         }
                     })
                 } else {
-                    console.log("Ejecucion de conciliación id : " + idPlanInstancia + " en estado : " + response.body[0].loadPlanStatus)
                     toast.error("Sólo pueden detenerse conciliaciones en estado 'R'", {
                         position: toast.POSITION.BOTTOM_RIGHT,
                     })
                 }
             } else {
-                if (response.body[0].codigo != undefined) {
-                    toast.error("Error ODI: " + response.body[0].descripcion, {
-                        position: toast.POSITION.BOTTOM_RIGHT,
-                    })
-                } else {
-                    toast.error("Error General", {
-                        position: toast.POSITION.BOTTOM_RIGHT
-                    })
-                }
+                toast.error(response.description, {
+                    position: toast.POSITION.BOTTOM_RIGHT
+                })
             }
         })
       })
