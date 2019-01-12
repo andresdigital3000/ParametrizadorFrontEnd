@@ -80,8 +80,8 @@ class IConciliacionForm extends React.Component{
               </div>
             </header>
             <div className="form-group">
-              <label htmlFor='nombre'>* Código</label>
-              <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un nombre de conciiación' autoComplete='off' maxLength='100'/>
+              <label htmlFor='nombre'>* Código - El prefijo CO_ se colocará automaticamente</label>
+              <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un código de conciiación' autoComplete='off' maxLength='100'/>
               <small id="nombreHelp" className="form-text text-muted">Que sea descriptivo pero breve</small>
             </div>
             <div className="form-group">
@@ -149,14 +149,14 @@ class IConciliacionForm extends React.Component{
                   </div>
                   <div className="modal-body">
                     <div className="form-group">
-                      <label htmlFor='nombre'>* Código</label>
-                      <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite un nombre de conciliación' autoComplete='off' maxLength='100'/>
-                      <small id="nombreHelp" className="form-text text-muted">Que sea descriptivo</small>
+                      <label htmlFor='nombre'>* Código - El prefijo CO_ se colocará automaticamente</label>
+                      <input id='nombre' type='text' className='form-control form-control-lg' value={this.props.state.nombre} onChange={this.handleInput.bind(this)} placeholder='Digite el código' autoComplete='off' maxLength='100'/>
+                      <small id="nombreHelp" className="form-text text-muted">Debe ser breve y descriptivo</small>
                     </div>
                     <div className="form-group">
                       <label htmlFor='descripcion'>* Nombre</label>
-                      <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite una descripción para la conciliación'  maxLength='200' autoComplete='off'/>
-                      <small id="descripcionHelp" className="form-text text-muted">Defina para la política</small>
+                      <textarea id='descripcion' type='text' className='form-control form-control-lg' className='form-control form-control-lg' value={this.props.state.descripcion} onChange={this.handleInput.bind(this)} placeholder='Digite el nombre de la conciliación'  maxLength='200' autoComplete='off'/>
+                      <small id="descripcionHelp" className="form-text text-muted">Nombre para la conciliación</small>
                     </div>
                     <div className="form-group">
                       <label htmlFor='webservice'>* Paquete</label>

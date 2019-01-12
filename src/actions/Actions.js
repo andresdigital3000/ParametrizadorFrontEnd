@@ -903,12 +903,12 @@ export const saveConciliacion = () => (dispatch, getState) => {
     if (emailRegex.test(email)) {
         APIInvoker.invokeGET('/parametros/findByAny?texto=V_Prefijo para conciliaciones', responseval => {
             if (responseval[0].valor != undefined) {
-                let long_parametro = decryptJS(responseval[0].valor).length;
+                let long_parametro = (responseval[0].tipo === "SEGURIDAD" ? decryptJS(responseval[0].valor) : responseval[0].valor).length;
                 if (id_conciliacion == 0 || id_conciliacion == undefined) {
                     //Si es un registro nuevo
                     let conciliacion_salvar = {
                         id: getState().conciliacionFormReducer.id,
-                        nombre: decryptJS(responseval[0].valor).toUpperCase() + getState().conciliacionFormReducer.nombre,
+                        nombre: (responseval[0].tipo === "SEGURIDAD" ? decryptJS(responseval[0].valor) : responseval[0].valor).toUpperCase() + getState().conciliacionFormReducer.nombre,
                         descripcion: getState().conciliacionFormReducer.descripcion,
                         usuarioAsignado: getState().conciliacionFormReducer.emailasignado,
                         requiereAprobacion: getState().conciliacionFormReducer.requiereAprobacion,
@@ -947,7 +947,7 @@ export const saveConciliacion = () => (dispatch, getState) => {
                     }
                     let conciliacion_salvar = {
                         id: getState().conciliacionFormReducer.id,
-                        nombre: decryptJS(responseval[0].valor).toUpperCase() + getState().conciliacionFormReducer.nombre,
+                        nombre: (responseval[0].tipo === "SEGURIDAD" ? decryptJS(responseval[0].valor) : responseval[0].valor).toUpperCase() + getState().conciliacionFormReducer.nombre,
                         descripcion: getState().conciliacionFormReducer.descripcion,
                         usuarioAsignado: getState().conciliacionFormReducer.emailasignado,
                         requiereAprobacion: getState().conciliacionFormReducer.requiereAprobacion,
@@ -1479,16 +1479,12 @@ export const doEjecutarConciliacion = () => (dispatch, getState) => {
     APIInvoker.invokeGET('/odiRest/getOdiParametros', responseOdi => {
       //Recuperar Usuario Odi
       let odiUser = responseOdi.find(function (response) {if (response.parametro === "V_odiUsuario"){return response}});
-      //console.log("odiUser: " + (odiUser.tipo === "SEGURIDAD" ? decryptJS(odiUser.valor) : odiUser.valor))
       //Recuperar Password Odi
       let odiPassword = responseOdi.find(function (response) {if (response.parametro === "V_odiPassword"){return response}});
-      //console.log("odiPassword: " + (odiPassword.tipo === "SEGURIDAD" ? decryptJS(odiPassword.valor) : odiPassword.valor))
       //Recuperar WorkRepository Odi
       let odiWorkRepository = responseOdi.find(function (response) {if (response.parametro === "V_odiWorkRepository"){return response}});
-      //console.log("odiWorkRepository: " + (odiWorkRepository.tipo === "SEGURIDAD" ? decryptJS(odiWorkRepository.valor) : odiWorkRepository.valor))
       //Recuperar Context Odi
       let odiContext = responseOdi.find(function (response) {if (response.parametro === "V_odiContext"){return response}});
-      //console.log("odiContext: " + (odiContext.tipo === "SEGURIDAD" ? decryptJS(odiContext.valor) : odiContext.valor))
       //Si hay instancia recuperada de la ejecución
       if (idPlanInstancia == 0) {
           //Construir petición json para Backend
@@ -1661,7 +1657,7 @@ export const doEjecutarConciliacion = () => (dispatch, getState) => {
                                     position: toast.POSITION.BOTTOM_RIGHT
                                 })
                               }
-                              
+
                           })
                       } else {
                           toast.error("Esta conciliación no tiene paquete asociado", {
