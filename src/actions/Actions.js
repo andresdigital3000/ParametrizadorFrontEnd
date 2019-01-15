@@ -1475,7 +1475,29 @@ export const doEjecutarConciliacion = () => (dispatch, getState) => {
     if (getState().ejecucionReducer.conciliacion.ejecucionesProceso.length > 0) {
         idPlanInstancia = getState().ejecucionReducer.conciliacion.ejecucionesProceso[0].idPlanInstance
     }
+    let startEjecucion = {
+        "paqueteWs": paqueteAsociado,
+        "idConciliacion": idConciliacionEjecucion,
+        "userName" : window.localStorage.getItem("nombreUsuario")
+    }
+    APIInvoker.invokePOST('/conciliaciones/ejecutar', startEjecucion, response => {
+        if(response.ok){
+            if (response.body.startedRunInformation != undefined) {
+                let idInstance = 0
+                if (response.body.startedRunInformation.odiLoadPlanInstanceId != undefined) {
+                    idInstance = response.body.startedRunInformation.odiLoadPlanInstanceId
+                    dispatch(mostrarModal("alert alert-success", "Inicio de ejecución de proceso exitoso :" + idInstance))
+                }
+
+            } 
+        } else{
+            toast.error(response.description, {
+                position: toast.POSITION.BOTTOM_RIGHT
+            })
+        }
+    });
     //Obtiene los valores ODI de tabla Parametros
+    /*
     APIInvoker.invokeGET('/odiRest/getOdiParametros', responseOdi => {
       //Recuperar Usuario Odi
       let odiUser = responseOdi.find(function (response) {if (response.parametro === "V_odiUsuario"){return response}});
@@ -1670,6 +1692,7 @@ export const doEjecutarConciliacion = () => (dispatch, getState) => {
           })
       }
     })
+    */
 }
 
 export const doCancelarConciliacion = () => (dispatch, getState) => {
