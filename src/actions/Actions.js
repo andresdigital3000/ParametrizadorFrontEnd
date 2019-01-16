@@ -173,9 +173,15 @@ export const loginRequest = () => (dispatch, getState) => {
                   })
                 }else{
                   dispatch(cerrarModalLoad())
-                  toast.error("Nombre de usuario o contraseña incorrectos, verifique", {
-                      position: toast.POSITION.BOTTOM_CENTER
-                  })
+                  if (response.headers.get("LDAPerror").includes("Invalid Credentials")) {
+                    toast.error("Nombre de usuario o contraseña incorrectos, verifique", {
+                        position: toast.POSITION.BOTTOM_CENTER
+                    })
+                  }else if (response.headers.get("LDAPerror").includes("Connection timed out")){
+                    toast.error("No se pudo conectar con el LDAP " + credentials.ip + ":" + credentials.port, {
+                        position: toast.POSITION.BOTTOM_CENTER
+                    })
+                  }
                 }
               }, error => {
                   dispatch(cerrarModalLoad())
@@ -230,9 +236,15 @@ export const loginRequest = () => (dispatch, getState) => {
                   })
                 }else{
                   dispatch(cerrarModalLoad())
-                  toast.error("Nombre de usuario o contraseña incorrectos, verifique", {
-                      position: toast.POSITION.BOTTOM_CENTER
-                  })
+                  if (response.headers.get("LDAPerror").includes("Invalid Credentials")) {
+                    toast.error("Nombre de usuario o contraseña incorrectos, verifique", {
+                        position: toast.POSITION.BOTTOM_CENTER
+                    })
+                  }else if (response.headers.get("LDAPerror").includes("Connection timed out")){
+                    toast.error("No se pudo conectar con el LDAP " + credentials.ip + ":" + credentials.port, {
+                        position: toast.POSITION.BOTTOM_CENTER
+                    })
+                  }
                 }
               }, error => {
                 dispatch(cerrarModalLoad())
@@ -1493,7 +1505,7 @@ export const doEjecutarConciliacion = () => (dispatch, getState) => {
                     dispatch(mostrarModal("alert alert-success", "Inicio de ejecución de proceso exitoso :" + idInstance))
                 }
 
-            } 
+            }
         } else{
             toast.error(response.description, {
                 position: toast.POSITION.BOTTOM_RIGHT
