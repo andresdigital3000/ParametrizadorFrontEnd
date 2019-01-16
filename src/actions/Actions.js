@@ -1437,7 +1437,7 @@ export const cargarComboConciliaciones = (filter, callback) => (dispatch, getSta
 }
 
 export const cargarComboConciliacionesEjecución = () => (dispatch, getState) => {
-    APIInvoker.invokeGET('/conciliaciones', response => {
+    APIInvoker.invokeGET('/conciliaciones/conciliacionesEjecutables', response => {
         if (Array.isArray(response) == true) {
             dispatch(cargarConciliaciones(response))
             dispatch(limpiarConciliacionSeleccionada())
@@ -1480,7 +1480,11 @@ export const doEjecutarConciliacion = () => (dispatch, getState) => {
         "idConciliacion": idConciliacionEjecucion,
         "userName" : window.localStorage.getItem("nombreUsuario")
     }
+     //Si hay instancia recuperada de la ejecución
+    // if (idPlanInstancia == 0 || idPlanInstancia == undefined) {
+    dispatch(mostrarModalLoad());
     APIInvoker.invokePOST('/conciliaciones/ejecutar', startEjecucion, response => {
+        dispatch(cerrarModalLoad());
         if(response.ok){
             if (response.body.startedRunInformation != undefined) {
                 let idInstance = 0
@@ -1496,6 +1500,7 @@ export const doEjecutarConciliacion = () => (dispatch, getState) => {
             })
         }
     });
+
     //Obtiene los valores ODI de tabla Parametros
     /*
     APIInvoker.invokeGET('/odiRest/getOdiParametros', responseOdi => {
