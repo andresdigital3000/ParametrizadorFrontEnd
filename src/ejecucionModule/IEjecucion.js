@@ -51,7 +51,7 @@ class IEjecucion extends React.Component{
             <div className="form-group">
               {
                 this.props.state.conciliacion.id!=0 && this.props.state.conciliacion!='' && this.props.state.conciliacion!={"id":0,"nombre":"Ninguna"} ?
-                <button id='ejecutar' className='btn btn-primary' onClick={() => toast.info(<IMsg {...this.props} mensaje='Está seguro de ejecutar la conciliación?' accion='ejecutar'/>, { autoClose: false, position: toast.POSITION.BOTTOM_CENTER })}>Ejecutar proceso</button> :
+                <button id='ejecutar' className='btn btn-primary' onClick={() => toast.info(<IMsg {...this.props} mensaje={`{Está seguro de ejecutar la conciliación ${this.props.state.conciliacion.nombre}?`} accion='ejecutar'/>, { autoClose: false, position: toast.POSITION.BOTTOM_CENTER })}>Ejecutar proceso</button> :
                 <button id='ejecutar' className='btn btn-primary' disabled>Ejecutar proceso</button>
               }
               &nbsp;&nbsp;&nbsp;&nbsp;
@@ -64,7 +64,7 @@ class IEjecucion extends React.Component{
             <div className="form-group">
               {
                 this.props.state.conciliacion.id!=0 && this.props.state.conciliacion!='' && this.props.state.conciliacion!={"id":0,"nombre":"Ninguna"} ?
-                <button id='cancelar' className='btn btn-warning' onClick={() => toast.info(<IMsg {...this.props} mensaje='Está seguro de detener la ejecución de la conciliación?' accion='cancelar'/>, { autoClose: false, position: toast.POSITION.BOTTOM_CENTER })}>Abortar proceso</button> :
+                <button id='cancelar' className='btn btn-warning' onClick={() => toast.info(<IMsg {...this.props} mensaje={`¿Está seguro de detener la ejecución de la conciliación  ${this.props.state.conciliacion.nombre}?`} accion='cancelar'/>, { autoClose: false, position: toast.POSITION.BOTTOM_CENTER })}>Abortar proceso</button> :
                 <button id='cancelar' className='btn btn-warning' disabled>Abortar proceso</button>
               }
             </div>
