@@ -1502,7 +1502,7 @@ export const doEjecutarConciliacion = () => (dispatch, getState) => {
                 let idInstance = 0
                 if (response.body.startedRunInformation.odiLoadPlanInstanceId != undefined) {
                     idInstance = response.body.startedRunInformation.odiLoadPlanInstanceId
-                    dispatch(mostrarModal("alert alert-success", "Inicio de ejecución de proceso exitoso :" + idInstance))
+                    dispatch(mostrarModal("alert alert-success", "Inicio de ejecución de proceso exitoso :" + idInstance + ", paquete: " + getState().ejecucionReducer.conciliacion.transformaciones[0].paqueteWs))
                 }
 
             }
@@ -1741,7 +1741,7 @@ export const doCancelarConciliacion = () => (dispatch, getState) => {
                     let idInstance = 0
                     if (response.body.startedRunInformation.odiLoadPlanInstanceId != undefined) {
                         idInstance = response.body.startedRunInformation.odiLoadPlanInstanceId
-                        dispatch(mostrarModal("alert alert-success", "Inicio de ejecución de proceso exitoso :" + idInstance))
+                        dispatch(mostrarModal("alert alert-success", "Cancelación de proceso exitosa :" + idInstance + ", paquete: " + getState().ejecucionReducer.conciliacion.transformaciones[0].paqueteWs))
                     }
     
                 }
