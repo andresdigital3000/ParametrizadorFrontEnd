@@ -25,7 +25,7 @@ class IMsg extends React.Component{
         <b>{this.props.mensaje}</b>
         <div>
           <div className="button-wrap">
-            <If condition={this.props.mensaje.startsWith('{Está seguro de ejecutar la conciliación')}>
+            <If condition={this.props.mensaje.startsWith('¿Está seguro de ejecutar la conciliación')}>
               <button className="btn btn-danger" onClick={this.doConciliacion.bind(this)}>Si</button>&nbsp;&nbsp;&nbsp;
             </If>
             <If condition={this.props.mensaje.startsWith('¿Está seguro de detener la ejecución')}>

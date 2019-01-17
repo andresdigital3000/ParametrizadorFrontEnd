@@ -1725,9 +1725,35 @@ export const doCancelarConciliacion = () => (dispatch, getState) => {
         idPlanInstancia = getState().ejecucionReducer.conciliacion.ejecucionesProceso[0].idPlanInstance
     }
     console.log('idPlanInstancia', idPlanInstancia)
-    if (idPlanInstancia && idPlanInstancia != 0) {
+  //  if (idPlanInstancia && idPlanInstancia != 0) {
+        let startEjecucion = {
+            "paqueteWs": paqueteAsociado,
+            "idConciliacion": idConciliacionEjecucion,
+            "userName" : window.localStorage.getItem("nombreUsuario")
+        }
+         //Si hay instancia recuperada de la ejecución
+        // if (idPlanInstancia == 0 || idPlanInstancia == undefined) {
+        dispatch(mostrarModalLoad());
+        APIInvoker.invokePOST('/conciliaciones/cancelar', startEjecucion, response => {
+            dispatch(cerrarModalLoad());
+            if(response.ok){
+                if (response.body.startedRunInformation != undefined) {
+                    let idInstance = 0
+                    if (response.body.startedRunInformation.odiLoadPlanInstanceId != undefined) {
+                        idInstance = response.body.startedRunInformation.odiLoadPlanInstanceId
+                        dispatch(mostrarModal("alert alert-success", "Inicio de ejecución de proceso exitoso :" + idInstance))
+                    }
+    
+                }
+            } else{
+                toast.error(response.description, {
+                    position: toast.POSITION.BOTTOM_RIGHT
+                })
+            }
+        });
+
       //Obtiene los valores ODI de tabla Parametros
-      APIInvoker.invokeGET('/odiRest/getOdiParametros', responseOdi => {
+     /* APIInvoker.invokeGET('/odiRest/getOdiParametros', responseOdi => {
         //Recuperar Usuario Odi
         let odiUser = responseOdi.find(function (response) {if (response.parametro === "V_odiUsuario"){return response}});
         //Recuperar Password Odi
@@ -1797,7 +1823,7 @@ export const doCancelarConciliacion = () => (dispatch, getState) => {
         toast.error("No hay ejecuciones en ODI para esta conciliación", {
             position: toast.POSITION.BOTTOM_RIGHT,
         })
-    }
+    }*/
 }
 
 //Programar Conciliaciones
