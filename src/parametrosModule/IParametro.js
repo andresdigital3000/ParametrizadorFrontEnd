@@ -93,6 +93,7 @@ class IParametro extends React.Component{
                         Header: "ACCIONES",
                         accessor: 'tipo',
                         filterable: false,
+                        sortable: false,
                         Cell: row => (
                           <div style={{textAlign: 'center'}}>
                             <Link to={"/parametros/edit/"+row.row._original.id} className="btn btn-info" style={{marginRight: '10px'}}><i className="fa fa-pencil"/></Link>
