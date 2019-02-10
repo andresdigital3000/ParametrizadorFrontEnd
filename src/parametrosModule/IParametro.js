@@ -91,7 +91,6 @@ class IParametro extends React.Component{
                       },
                       {
                         Header: "ACCIONES",
-                        accessor: 'tipo',
                         filterable: false,
                         sortable: false,
                         Cell: row => (
