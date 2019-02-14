@@ -19,7 +19,7 @@ function startServer() {
 
   app.use('/public', express.static(__dirname + '/public'))
   app.use('/resources', express.static('resources'));
-  
+
   app.get('/*', function (req, res) {
         console.log("router ==>")
         res.sendFile(path.join(__dirname, 'index.html'))

@@ -2,7 +2,6 @@ var webpack = require('webpack');
 
 module.exports = {
   entry: [
-    'webpack-hot-middleware/client',
     __dirname + "/src/App.js",
   ],
   output: {

@@ -144,7 +144,7 @@ export const loginRequest = () => (dispatch, getState) => {
               APIInvoker.invokePOST_Login('/usuarios/login', credentials, response => {
                 if(response.ok){
                   dispatch(cerrarModalLoad())
-                  window.localStorage.setItem("token",response.headers.get("authorization"))
+                  window.localStorage.setItem("token", response.headers.get("authorization"))
                   //Obtiene el valor parametrizado del tiempo para cierre de sesion automático
                   APIInvoker.invokeGET('/parametros/findByAny?texto=V_tiempoExpiraSesion', responsetime => {
                       if (Array.isArray(responsetime) == true) {
@@ -1743,7 +1743,7 @@ export const doCancelarConciliacion = () => (dispatch, getState) => {
                         idInstance = response.body.startedRunInformation.odiLoadPlanInstanceId
                         dispatch(mostrarModal("alert alert-success", "Cancelación de proceso exitosa :" + idInstance + ", paquete: " + getState().ejecucionReducer.conciliacion.transformaciones[0].paqueteWs))
                     }
-    
+
                 }
             } else{
                 toast.error(response.description, {

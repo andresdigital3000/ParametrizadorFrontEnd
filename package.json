@@ -38,6 +38,7 @@
     "jsonwebtoken": "^8.3.0",
     "moment": "^2.21.0",
     "node-xml": "^1.0.2",
+    "prop-types": "^15.7.1",
     "react": "^15.6.2",
     "react-addons-css-transition-group": "^15.6.2",
     "react-addons-update": "^15.6.2",
