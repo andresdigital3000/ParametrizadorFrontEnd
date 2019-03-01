@@ -175,14 +175,14 @@ class IParametroForm extends React.Component{
             </If>
             <If condition={this.props.state.tipo!='SISTEMA' && this.props.state.tipo!='SEGURIDAD'}>
               <div className="form-group">
-                <label htmlFor='parametro'>* Parámetro</label>
+                <label htmlFor='parametro'>* Parámetro - Se colocará el prefijo V_ automaticamente</label>
                 <input id='parametro' type='text' className='form-control form-control-lg' value={this.props.state.parametro} onChange={this.handleInput.bind(this)} placeholder='Digite el nombre del parámetro' autoComplete='off' maxLength='100'/>
                 <small id="parametroHelp" className="form-text text-muted">Nombre del parámetro</small>
               </div>
             </If>
             <If condition={this.props.state.tipo=='SISTEMA' || this.props.state.tipo=='SEGURIDAD'}>
               <div className="form-group">
-                <label htmlFor='parametro'>* Parámetro</label>
+                <label htmlFor='parametro'>* Parámetro - Se colocará el prefijo V_ automaticamente</label>
                 <input id='parametro' type='text' className='form-control form-control-lg' value={this.props.state.parametro} placeholder='Digite el nombre del parámetro' autoComplete='off' maxLength='100' readOnly/>
                 <small id="parametroHelp" className="form-text text-muted">Nombre del parámetro</small>
               </div>
@@ -304,7 +304,7 @@ class IParametroForm extends React.Component{
 
                     </div>
                     <div className="form-group">
-                      <label htmlFor='parametro'>* Parámetro</label>
+                      <label htmlFor='parametro'>* Parámetro - Se colocará el prefijo V_ automaticamente</label>
                       <input id='parametro' type='text' className='form-control form-control-lg' value={this.props.state.parametro} onChange={this.handleInput.bind(this)} placeholder='Digite el nombre del parámetro' autoComplete='off' maxLength='100'/>
                       <small id="parametroHelp" className="form-text text-muted">nombre del parámetro</small>
                     </div>
