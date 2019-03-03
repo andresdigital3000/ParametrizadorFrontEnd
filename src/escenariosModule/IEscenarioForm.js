@@ -115,7 +115,7 @@ class IEscenarioForm extends React.Component{
               <hr/>
               <Link to={"/escenarios"} onClick={this.props.limpiarFormEscenario.bind(this)} className="btn btn-warning">Regresar</Link>&nbsp;&nbsp;&nbsp;
               {
-                this.props.state.nombre!="" && this.props.state.conciliacion!="0" && this.props.state.descripcion!="" ?
+                this.props.state.nombre!="" && (this.props.state.idConciliacion !="0" && this.props.state.idConciliacion != '') && this.props.state.descripcion!="" ?
                 <button onClick={this.props.saveEscenario.bind(this)} className="btn btn-primary">Grabar</button> :
                 <button className="btn btn-primary" disabled>Formulario incompleto</button>
               }
@@ -173,7 +173,7 @@ class IEscenarioForm extends React.Component{
                     <hr/>
                     <button onClick={this.limpiarEscenario.bind(this)} type="button" className="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                     {
-                      this.props.state.conciliacion!='0' && this.props.state.nombre!="" && this.props.state.descripcion!="" ?
+                      this.props.state.idConciliacion!="0" && this.props.state.idConciliacion!="" && this.props.state.nombre!="" && this.props.state.descripcion!="" ?
                       <button onClick={this.grabarEscenario.bind(this)} className="btn btn-primary">Grabar</button> :
                       <button className="btn btn-primary" disabled>Formulario incompleto</button>
                     }
