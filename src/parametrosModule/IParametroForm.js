@@ -322,14 +322,14 @@ class IParametroForm extends React.Component{
                       (*) Obligatorio
                       <hr/>
                       <button onClick={this.limpiarParametro.bind(this)} type="button" className="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                      <If condition={this.props.state.tipo != 'CONCILIACION'}>
+                      <If condition={this.props.state.tipo != 'CONCILIACION' && this.props.state.tipo != 'ESCENARIO'}>
                         {
                           this.props.state.parametro!="" && this.props.state.valor!="" ?
                           <button onClick={this.grabarParametro.bind(this)} className="btn btn-primary">Grabar</button> :
                           <button className="btn btn-primary"  disabled>Formulario incompleto</button>
                         }
                       </If>
-                      <If condition={this.props.state.tipo == 'CONCILIACION'}>
+                      <If condition={this.props.state.tipo == 'CONCILIACION' || this.props.state.tipo == 'ESCENARIO'}>
                         {
                           (this.props.state.escenario!=0 || this.props.state.conciliacion!=0) && this.props.state.parametro!="" && this.props.state.valor!="" ?
                           <button onClick={this.grabarParametro.bind(this)} className="btn btn-primary">Grabar</button> :
