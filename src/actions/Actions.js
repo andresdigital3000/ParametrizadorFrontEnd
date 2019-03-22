@@ -2527,7 +2527,7 @@ const cargarEscenarios = (arrayEscenarios) => ({
 
 //Funcion que carga el combo de parametros
 export const cargarComboParametros = (idEscenario) => (dispatch, getState) => {
-    APIInvoker.invokeGET('/parametros/paraIndicadores?tipo=conciliacion&codpadre=' + idEscenario, response => {
+    APIInvoker.invokeGET('/parametros/paraIndicadores?tipo=escenario&codpadre=' + idEscenario, response => {
         if (Array.isArray(response) == true) {
             dispatch(cargarParametros(response))
         }
