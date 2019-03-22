@@ -48,7 +48,7 @@ export const indicadorFormReducer = (state = initialState,action) =>{
         })
     case UPDATE_FORMULA:
         return update(state,{
-          formula : {$set: state.formula+action.value}
+          formula : {$set: state.formula+action.value+'!'}
         })
     case UPDATE_ESCENARIO_EN_INDICADORES:
         return update(state,{
