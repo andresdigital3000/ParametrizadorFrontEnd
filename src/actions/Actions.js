@@ -2512,10 +2512,13 @@ const updEscenarioReducerIndicadores = (objEscenario) => ({
 })
 
 //Funcion que carga el combo de escenarios
-export const cargarComboEscenarios = () => (dispatch, getState) => {
-    APIInvoker.invokeGET('/escenarios', response => {
+export const cargarComboEscenarios = (filter, callback) => (dispatch, getState) => {
+    APIInvoker.invokeGET(`/escenarios?name=${filter}`, response => {
         if (Array.isArray(response) == true) {
             dispatch(cargarEscenarios(response))
+           // dispatch(limpiarEscenarioSeleccionado());
+            let options = response.map(x => {return {value: x.id, label: x.nombre} })
+            callback(options)
         }
     })
 }

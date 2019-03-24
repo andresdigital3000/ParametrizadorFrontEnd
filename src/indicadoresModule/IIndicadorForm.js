@@ -5,7 +5,7 @@ import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { Link } from 'react-router';
 import { connect } from 'react-redux'
 import { updateFormIndicadores, saveIndicador, cargarIndicador, limpiarFormIndicador, cargarComboEscenarios, updEscenario, refreshListIndicador, cargarComboParametros, updResultadoReducerIndicadores, updFormula } from '../actions/Actions';
-
+import AsyncSelect from 'react-select/lib/Async'
 class IIndicadorForm extends React.Component{
   constructor(){
     super(...arguments)
@@ -13,7 +13,7 @@ class IIndicadorForm extends React.Component{
 
   componentWillMount(){
     //Cargar el combo de politicas
-    this.props.cargarComboEscenarios()
+   // this.props.cargarComboEscenarios()
   }
 
   componentDidMount(){
@@ -25,6 +25,16 @@ class IIndicadorForm extends React.Component{
       this.props.limpiarFormIndicador()
     }
   }
+
+  loadOptions(inputValue, callback) {
+    let realInput = inputValue || ''
+    if(realInput.length < 3) {
+      callback( [{value: 0, label: 'Capture al menos 3 caracteres'}])
+      return
+    }else{
+      this.props.cargarComboEscenarios(realInput, callback)
+    }
+  };
 
   //Detecta cambios de estado en textbox
   handleInput(e){
@@ -49,6 +59,15 @@ class IIndicadorForm extends React.Component{
     this.props.saveIndicador()
     //this.props.refreshListEscenario()
     //this.props.updConciliacion(0)
+  }
+
+  cambioEscenarioSelect(newValue){
+    if(newValue.value == 0 ){
+      this.props.updEscenario(null, null)
+    }else{
+      this.props.updEscenario(newValue.value, newValue.label)
+    }
+    this.props.cargarComboParametros(newValue.value)
   }
 
   //Limpiar el formulario
@@ -91,14 +110,16 @@ class IIndicadorForm extends React.Component{
             </div>
             <div className="form-group">
               <label htmlFor='escenario'>* Escenario</label>
-              <select id="escenario" name="escenario" className='form-control' value={this.props.state.idEscenario} onChange={this.cambioEscenarios.bind(this)}>
-                <option value={this.props.state.idEscenario}>{this.props.state.nombreEscenario}</option>
-                {this.props.state.escenarios.map(function(currentValue,index,array){
-                  return(
-                    <option key={currentValue.id} value={currentValue.id}>{currentValue.nombre}</option>
-                  );
-                })}
-              </select>
+              <AsyncSelect
+                noOptionsMessage = {() => "No hay resultados"}
+                cacheOptions
+                loadOptions={this.loadOptions.bind(this)}
+                defaultOptions
+                onInputChange={this.handleInputChange}
+                value={{value: this.props.state.idEscenario, label: this.props.state.nombreEscenario }}
+                onChange={this.cambioEscenarioSelect.bind(this)}
+              />
+
               <small id="nombreHelp" className="form-text text-muted">Escenario al que se le creará el indicador</small>
             </div>
             <div className="form-group">
@@ -153,14 +174,15 @@ class IIndicadorForm extends React.Component{
                     </div>
                     <div className="form-group">
                       <label htmlFor='escenario'>* Escenario</label>
-                      <select id="escenario" name="escenario" className='form-control' value={this.props.state.idEscenario} onChange={this.cambioEscenarios.bind(this)}>
-                        <option value='0'>Seleccione uno</option>
-                        {this.props.state.escenarios.map(function(currentValue,index,array){
-                          return(
-                            <option key={currentValue.id} value={currentValue.id}>{currentValue.nombre}</option>
-                          );
-                        })}
-                      </select>
+                      <AsyncSelect
+                noOptionsMessage = {() => "No hay resultados"}
+                cacheOptions
+                loadOptions={this.loadOptions.bind(this)}
+                defaultOptions
+                onInputChange={this.handleInputChange}
+                value={{value: this.props.state.idEscenario, label: this.props.state.nombreEscenario }}
+                onChange={this.cambioEscenarioSelect.bind(this)}
+              />
                       <small id="nombreHelp" className="form-text text-muted">Escenario al que se le creará el indicador</small>
                     </div>
                     <div className="form-group">
