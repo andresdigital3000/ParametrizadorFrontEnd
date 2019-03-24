@@ -91,7 +91,7 @@ class IConciliacionForm extends React.Component{
             </div>
             <div className="form-group">
               <label htmlFor='webservice'>* Paquete</label>
-              <input id='webservice' type='text' className='form-control form-control-lg' value={this.props.state.webservice} onChange={this.handleInput.bind(this)} placeholder='Digite Web Service' autoComplete='off' maxLength='100'/>
+              <input id='webservice' type='text' className='form-control form-control-lg' value={this.props.state.webservice} onChange={this.handleInput.bind(this)} placeholder='Digite nombre paquete ODI' autoComplete='off' maxLength='100'/>
               <small id="webserviceHelp" className="form-text text-muted">Paquete</small>
             </div>
             <div className="form-group">
@@ -160,7 +160,7 @@ class IConciliacionForm extends React.Component{
                     </div>
                     <div className="form-group">
                       <label htmlFor='webservice'>* Paquete</label>
-                      <input id='webservice' type='text' className='form-control form-control-lg' value={this.props.state.webservice} onChange={this.handleInput.bind(this)} placeholder='Digite Web service' autoComplete='off' maxLength='100'/>
+                      <input id='webservice' type='text' className='form-control form-control-lg' value={this.props.state.webservice} onChange={this.handleInput.bind(this)} placeholder='Digite nombre paquete ODI' autoComplete='off' maxLength='100'/>
                       <small id="webserviceHelp" className="form-text text-muted">Paquete</small>
                     </div>
                     <div className="form-group">

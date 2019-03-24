@@ -72,13 +72,13 @@ class IParametro extends React.Component{
                               row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
                       },
                       {
-                          Header: "NOMBRE",
+                          Header: "VALOR",
                           accessor: "valor",
                           filterMethod: (filter, row) =>
                               row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
                       },
                       {
-                        Header: "POLÍTICA",
+                        Header: "DESCRIPCIÓN",
                         accessor: "descripcion",
                         filterMethod: (filter, row) =>
                             row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
