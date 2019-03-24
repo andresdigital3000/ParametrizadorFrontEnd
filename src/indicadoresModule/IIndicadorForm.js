@@ -126,12 +126,18 @@ class IIndicadorForm extends React.Component{
               <label htmlFor='parametro'>Parámetros</label>
               <select id="parametro" name="parametro" className='form-control' multiple value={this.props.state.parametro} onChange={this.anadirVariable.bind(this)}>
                 {this.props.state.parametros.map(function(currentValue,index,array){
+                  if (currentValue.tipo == "GENERAL"){
                   return(
-                    <option key={currentValue.parametro} value={currentValue.parametro}>{currentValue.parametro} : {currentValue.valor}</option>
+                    <option style={{ backgroundColor: 'white', color: 'blue' }} key={currentValue.parametro} value={currentValue.parametro}>{currentValue.parametro} : {currentValue.valor}</option>
                   );
+                  } else{
+                    return(
+                      <option key={currentValue.parametro} value={currentValue.parametro}>{currentValue.parametro} : {currentValue.valor}</option>
+                    );
+                  }
                 })}
               </select>
-              <small id="nombreHelp" className="form-text text-muted">Parametros o variables, haga click para añadir al final de la fórmula</small>
+              <small id="nombreHelp" className="form-text text-muted">Parametros o variables, haga click para añadir al final de la fórmula, en azul los parámetros generales</small>
             </div>
             <div className="form-group">
               <label htmlFor='formula'>* Fórmula</label>
@@ -189,9 +195,15 @@ class IIndicadorForm extends React.Component{
                       <label htmlFor='parametro'>Parámetros</label>
                       <select id="parametro" name="parametro" className='form-control' multiple value={this.props.state.parametro} onChange={this.anadirVariable.bind(this)}>
                         {this.props.state.parametros.map(function(currentValue,index,array){
-                          return(
-                            <option key={currentValue.parametro} value={currentValue.parametro}>{currentValue.parametro} : {currentValue.valor}</option>
-                          );
+                           if (currentValue.tipo == "GENERAL"){
+                            return(
+                              <option style={{ backgroundColor: 'white', color: 'blue' }} key={currentValue.parametro} value={currentValue.parametro}>{currentValue.parametro} : {currentValue.valor}</option>
+                            );
+                            } else{
+                              return(
+                                <option key={currentValue.parametro} value={currentValue.parametro}>{currentValue.parametro} : {currentValue.valor}</option>
+                              );
+                            }
                         })}
                       </select>
                       <small id="nombreHelp" className="form-text text-muted">Parámetros o variables, haga click para añadir al final de la fórmula</small>
